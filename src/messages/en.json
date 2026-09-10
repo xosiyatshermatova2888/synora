@@ -1,0 +1,728 @@
+{
+  "metadata": {
+    "title": "AI-Powered Restaurant Management",
+    "description": "SYNORA is an intelligent restaurant operating system for POS, kitchen, inventory, CRM, analytics and AI-powered business management."
+  },
+  "pages": {
+    "about": "About SYNORA",
+    "ai": "SYNORA AI",
+    "blog": "Blog",
+    "demo": "Product Demo",
+    "docs": "Documentation",
+    "features": "Features",
+    "help": "Help",
+    "login": "Login",
+    "pricing": "Pricing",
+    "contact": "Contact",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
+  "nav": {
+    "products": "Products",
+    "solutions": "Solutions",
+    "ai": "AI",
+    "pricing": "Pricing",
+    "resources": "Resources",
+    "login": "Login",
+    "startTrial": "Start Free Trial",
+    "blog": "Blog",
+    "help": "Help",
+    "docs": "Docs"
+  },
+  "hero": {
+    "badge": "AI-NATIVE RESTAURANT OPERATING SYSTEM",
+    "headline1": "Your restaurant.",
+    "headline2": "One intelligent system.",
+    "description": "Manage orders, kitchen, inventory, customers and finances — all in one powerful platform, enhanced by AI.",
+    "primaryCta": "Start 14-Day Free Trial",
+    "secondaryCta": "Watch Demo",
+    "noCard": "No credit card required.",
+    "todayRevenue": "Today's Revenue",
+    "orders": "Orders",
+    "averageCheck": "Average Check",
+    "profit": "Profit"
+  },
+  "trust": {
+    "headline": "Everything your restaurant needs to run smarter."
+  },
+  "problems": {
+    "id": "Problem",
+    "headline": "Running a restaurant shouldn't feel this complicated.",
+    "cards": {
+      "tooMany": {
+        "title": "Too many systems",
+        "text": "POS, cashier, waiter apps, delivery, accounting — scattered across separate tools that don't talk to each other."
+      },
+      "lost": {
+        "title": "Lost orders",
+        "text": "Orders get misheard, misplaced or forgotten between the front of house, kitchen and delivery channels."
+      },
+      "unclear": {
+        "title": "Unclear numbers",
+        "text": "At the end of the day you don't really know what you earned, what you spent or where the money went."
+      },
+      "reactive": {
+        "title": "Reactive decisions",
+        "text": "You discover problems after they happen — never in time to act before they cost you."
+      }
+    },
+    "closing": "SYNORA brings it all together."
+  },
+  "solution": {
+    "id": "Solution",
+    "headline": "One restaurant. One system.",
+    "orderSources": "Order sources",
+    "engine": "SYNORA ORDER ENGINE",
+    "outcomes": "Powered outcomes",
+    "sources": ["QR", "Telegram", "Waiter", "Cashier", "Delivery"],
+    "destinations": ["Cashier", "Kitchen", "Inventory", "CRM", "Finance", "Analytics", "AI"]
+  },
+  "features": {
+    "id": "Features",
+    "headline": "Everything your restaurant needs.",
+    "items": {
+      "pos": { "title": "POS & Cashier", "text": "Fast, reliable point of sale with tables, splits and end-of-day reports." },
+      "waiter": { "title": "Waiter App", "text": "Your staff take and send orders from the floor, instantly." },
+      "kitchen": { "title": "Kitchen Management", "text": "Queue, prioritise and prepare with clear kitchen workflows." },
+      "qr": { "title": "QR Menu", "text": "Guests scan, browse and order straight from their phones." },
+      "telegram": { "title": "Telegram Orders", "text": "Accept and manage orders through Telegram without extra apps." },
+      "inventory": { "title": "Inventory", "text": "Track stock in real time and avoid running out mid-shift." },
+      "crm": { "title": "CRM & Loyalty", "text": "Know your regulars and keep them coming back." },
+      "analytics": { "title": "Analytics", "text": "Sales, cost and performance — clear numbers that make sense." },
+      "ai": { "title": "AI Assistant", "text": "Ask questions about your business and get answers that help you act." }
+    }
+  },
+  "how": {
+    "id": "How it works",
+    "headline": "From order to insight — automatically.",
+    "steps": [
+      { "title": "Order", "text": "A guest orders through QR, Telegram, waiter, cashier or delivery." },
+      { "title": "Process", "text": "SYNORA routes every order to the right place — instantly." },
+      { "title": "Operate", "text": "Kitchen, inventory and finance update automatically as you work." },
+      { "title": "Understand", "text": "Smart analytics and AI turn your data into actions." }
+    ]
+  },
+  "dashboard": {
+    "id": "Dashboard",
+    "headline": "See your entire restaurant at a glance.",
+    "description": "From today's sales to tomorrow's inventory needs, SYNORA gives you the information that matters.",
+    "tabs": {
+      "overview": "Overview",
+      "orders": "Orders",
+      "kitchen": "Kitchen",
+      "inventory": "Inventory",
+      "crm": "CRM",
+      "analytics": "Analytics",
+      "ai": "AI"
+    },
+    "salesChart": "Sales (7 days)",
+    "aiInsight": "AI Insight"
+  },
+  "ai": {
+    "badge": "SYNORA AI",
+    "headline": "Your restaurant data can do more.",
+    "description": "SYNORA doesn't just show you numbers. It understands what's happening, why it's happening and what you should do next.",
+    "cards": {
+      "whatHappened": { "title": "What happened?", "text": "Spot changes in sales, orders and costs the moment they occur." },
+      "why": { "title": "Why?", "text": "SYNORA connects the dots to explain the reason behind every change." },
+      "whatNext": { "title": "What's next?", "text": "Anticipate demand, stock and staffing before the day begins." },
+      "whatDo": { "title": "What should I do?", "text": "Get clear, actionable recommendations you can act on today." }
+    },
+    "cta": "Explore SYNORA AI"
+  },
+  "demo": {
+    "id": "AI Demo",
+    "title": "Ask SYNORA anything about your restaurant.",
+    "you": "You",
+    "ai": "SYNORA AI",
+    "demoMode": "Demo mode — try a suggested question below",
+    "chipsHeading": "Suggested questions",
+    "chips": [
+      "What should I restock?",
+      "Which dish makes the most profit?",
+      "Why are sales down?",
+      "Which branch performs best?"
+    ],
+    "conversation": [
+      {
+        "role": "user",
+        "text": "Why did my sales drop today?"
+      },
+      {
+        "role": "ai",
+        "text": "Sales are 7.8% lower than yesterday. The main difference came from lunch orders, which decreased by 14%. Your top-selling dish, Osh, also sold 9% fewer portions. **Recommendation:** consider a lunch promotion between 12:00–15:00."
+      }
+    ],
+    "canned": {
+      "restock": "Based on the last 7 days, Osh rice, fresh greens and cooking oil will run out within 2 days at current pace. **Recommendation:** place a delivery order today for rice (40 kg) and greens. Order oil by Wednesday to avoid a gap."
+      ,
+      "profit": "Osh has the highest margin at 68%, followed by Lagman at 61%. Your drinks line brings fast, small wins. **Recommendation:** promote the highest-margin dishes on your QR menu during lunch."
+      ,
+      "down": "Sales are down 7.8% since yesterday. Lunch orders fell 14%, and your top dish, Osh, sold 9% fewer portions. **Recommendation:** run a lunch promotion between 12:00–15:00."
+      ,
+      "branch": "Branch 02 is leading this week with 12% higher sales and the lowest food cost at 29%. Branch 03 needs attention with a 34% food cost. **Recommendation:** review pricing and portioning at Branch 03."
+    }
+  },
+  "branches": {
+    "id": "Multi-branch",
+    "headline": "One view of every location.",
+    "description": "Manage menus, performance, inventory and operations across all your branches.",
+    "hq": "HQ",
+    "sales": "Sales",
+    "stock": "Stock",
+    "staff": "Staff"
+  },
+  "integrations": {
+    "headline": "Connect the tools you already use.",
+    "categories": [
+      { "title": "Telegram", "text": "Orders and customer updates where your guests already chat." },
+      { "title": "Payments", "text": "Accept card and mobile payments at the counter." },
+      { "title": "Fiscal systems", "text": "Comply with local fiscal and accounting rules." },
+      { "title": "Printers", "text": "Kitchen and receipt printers that just work." },
+      { "title": "KDS", "text": "Kitchen display systems that keep the pass moving." },
+      { "title": "QR", "text": "Pay-at-table and menu ordering through QR codes." },
+      { "title": "Delivery", "text": "Bring external delivery channels into one order flow." },
+      { "title": "API", "text": "Extend and connect SYNORA to your own tools." }
+    ]
+  },
+  "pricing": {
+    "id": "Pricing",
+    "headline": "Choose the way you want to grow.",
+    "plans": [
+      { "name": "Business", "price": "299 000", "unit": "UZS/mo", "badge": null, "features": ["POS & cashier", "Waiter app", "Kitchen display", "QR menu", "Telegram orders", "Basic reports"] },
+      { "name": "Pro", "price": "499 000", "unit": "UZS/mo", "badge": "Most Popular", "features": ["Everything in Business", "Inventory & recipes", "Food cost", "CRM & loyalty", "Advanced analytics", "Multi-branch (up to 3)"] },
+      { "name": "AI Premium", "price": "799 000", "unit": "UZS/mo", "badge": "AI Powered", "features": ["Everything in Pro", "SYNORA AI assistant", "AI recommendations", "Predictive stocking", "Priority support"] },
+      { "name": "Enterprise", "price": null, "unit": "Custom", "badge": null, "features": ["Everything in AI Premium", "Unlimited branches", "Dedicated manager", "Custom integrations", "On-site training"] }
+    ],
+    "annual": "Annual",
+    "monthly": "Monthly",
+    "trial": "Start Free Trial",
+    "contact": "Contact Sales"
+  },
+  "trial": {
+    "id": "Trial",
+    "headline": "Try SYNORA free for 14 days.",
+    "description": "Explore the complete restaurant operating system before you decide.",
+    "primaryCta": "Start 14-Day Free Trial",
+    "secondaryCta": "Talk to Sales",
+    "noCard": "No credit card required."
+  },
+  "form": {
+    "name": "Full name",
+    "namePlaceholder": "Your name",
+    "restaurant": "Restaurant name",
+    "restaurantPlaceholder": "Your restaurant",
+    "email": "Work email",
+    "emailPlaceholder": "you@restaurant.com",
+    "phone": "Phone",
+    "phonePlaceholder": "+998 90 123 45 67",
+    "submit": "Start Free Trial",
+    "contactSubmit": "Send Message",
+    "successTitle": "Thank you!",
+    "successText": "Your request has been received. Our team will contact you shortly.",
+    "required": "This field is required",
+    "emailInvalid": "Enter a valid email address",
+    "contactTitle": "Talk to Sales",
+    "contactDescription": "Tell us about your restaurant and we'll help you choose the right plan.",
+    "message": "Message",
+    "messagePlaceholder": "Tell us about your restaurant"
+  },
+  "faq": {
+    "id": "FAQ",
+    "headline": "Frequently asked questions",
+    "items": [
+      { "q": "What is SYNORA?", "a": "SYNORA is an AI-native restaurant operating system that combines POS, kitchen, inventory, CRM, analytics and more into one platform." },
+      { "q": "Do I need new hardware?", "a": "No. SYNORA runs on the devices you already have — tablets, phones and computers — and connects to common printers and kitchen displays." },
+      { "q": "How long does setup take?", "a": "Most restaurants go live within a few days. Our team helps you import your menu and set up your kitchen and ordering flow." },
+      { "q": "Can I use SYNORA across multiple branches?", "a": "Yes. Pro and above include multi-branch management so you can run every location from one view." },
+      { "q": "How does the AI work?", "a": "SYNORA AI reads your own restaurant's data — sales, orders, inventory and costs — to explain what's happening and recommend actions. It never invents numbers." },
+      { "q": "Is my data secure?", "a": "Yes. Your data is stored securely and only used to operate your restaurant. We never share it with third parties." },
+      { "q": "Can I try before paying?", "a": "Absolutely. Start a free 14-day trial with full access to the platform. No credit card required." },
+      { "q": "What support is available?", "a": "Every plan includes support, and AI Premium and Enterprise receive priority support through our team." }
+    ]
+  },
+  "final": {
+    "headline": "Ready to run your restaurant smarter?",
+    "subheadline": "One system. Every order. Smarter decisions.",
+    "primaryCta": "Start 14-Day Free Trial",
+    "secondaryCta": "Talk to Sales"
+  },
+  "footer": {
+    "tagline": "Your restaurant. One intelligent system.",
+    "product": "Product",
+    "company": "Company",
+    "resources": "Resources",
+    "legal": "Legal",
+    "rights": "All rights reserved.",
+    "links": {
+      "features": "Features",
+      "pricing": "Pricing",
+      "ai": "AI",
+      "demo": "Demo",
+      "about": "About",
+      "contact": "Contact",
+      "blog": "Blog",
+      "help": "Help",
+      "docs": "Docs",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
+    }
+  },
+  "legal": {
+    "privacyTitle": "Privacy Policy",
+    "termsTitle": "Terms of Service",
+    "lastUpdated": "Last updated",
+    "contact": "For privacy inquiries, contact"
+  },
+  "stub": {
+    "comingSoon": "Coming soon",
+    "backHome": "Back to home"
+  },
+  "landing": {
+    "features": {
+      "eyebrow": "PRODUCT",
+      "title": "Everything your restaurant needs.",
+      "subtitle": "Every order, every dish, every payment — routed and tracked in one intelligent system."
+    },
+    "pricing": {
+      "eyebrow": "PRICING",
+      "title": "Choose the way you want to grow.",
+      "subtitle": "Simple, monthly plans with everything included. No credit card required to start."
+    },
+    "ai": {
+      "eyebrow": "SYNORA AI",
+      "title": "Your restaurant data can do more.",
+      "subtitle": "Ask questions about sales, stock and performance — and get answers you can act on."
+    },
+    "demo": {
+      "eyebrow": "PRODUCT DEMO",
+      "title": "Try SYNORA AI yourself.",
+      "subtitle": "Ask the demo assistant anything a restaurant owner would. No installation required."
+    },
+    "about": {
+      "eyebrow": "ABOUT SYNORA",
+      "title": "Built for restaurants, not around them.",
+      "subtitle": "We are building the operating system the restaurant industry has been missing.",
+      "intro": "SYNORA was created to solve one problem: restaurants run on too many disconnected tools. Orders get lost between the cashier and the kitchen, numbers never add up at the end of the day, and owners only learn what happened after it already did. We build one system that connects every part of the restaurant — orders, kitchen, payments, tables and analytics — so the data flows automatically and the owner always knows what is happening.",
+      "cards": [
+        { "icon": "oneSystem", "title": "One system", "text": "POS, kitchen, payments, tables and reports live together. Nothing is copied between tools, because there is only one source of truth." },
+        { "icon": "aiNative", "title": "AI-native by design", "text": "AI is not an add-on. It reads your own restaurant's data to explain what happened, why it happened and what to do next." },
+        { "icon": "private", "title": "Private and secure", "text": "Your data belongs to you. Tenants are isolated, secrets stay encrypted and data is never shared or sold." },
+        { "icon": "mission", "title": "Serving restaurants first", "text": "We measure success by how much time and money the system saves the people who run real restaurants." }
+      ],
+      "valuesTitle": "How we work",
+      "values": [
+        "We ship the features restaurants actually use — the rest stays off the roadmap.",
+        "We never invent numbers. Every report and recommendation comes from real order data.",
+        "We keep the system fast, even when the floor is at its busiest.",
+        "We listen to the kitchen, the waiters and the owners — not just to the loudest voice."
+      ]
+    },
+    "docs": {
+      "eyebrow": "DEVELOPERS",
+      "title": "SYNORA API documentation",
+      "subtitle": "Everything you need to integrate your own tools with the SYNORA platform.",
+      "introTitle": "A clean, predictable REST API",
+      "introText": "Every resource follows the same patterns: JSON in and JSON out, authenticated with a bearer token, scoped to your restaurant. WebSockets keep the kitchen board live in real time. This page documents the public surface of the platform as it exists today.",
+      "baseTitle": "Base URL",
+      "baseText": "All API endpoints are versioned and served under /api/v1.",
+      "baseCode": "https://<your-synora-domain>/api/v1",
+      "authTitle": "Authentication",
+      "authText": "Register or sign in to receive a JWT access token. Send it as a Bearer token on every request. Refresh tokens rotate automatically in an httpOnly cookie.",
+      "authSteps": [
+        { "title": "Register", "text": "Create a workspace with POST /auth/register to get an access token in the response." },
+        { "title": "Authenticate", "text": "Send the token on every request: Authorization: Bearer <token>." },
+        { "title": "Refresh", "text": "When a token expires, call POST /auth/refresh with the refresh cookie and a fresh token pair is issued." }
+      ],
+      "endpointsTitle": "Endpoints",
+      "endpointsText": "Preview of the core API surface.",
+      "groups": [
+        {
+          "group": "Authentication",
+          "items": [
+            { "method": "POST", "path": "/auth/register", "note": "Create a workspace and get tokens" },
+            { "method": "POST", "path": "/auth/login", "note": "Sign in" },
+            { "method": "POST", "path": "/auth/refresh", "note": "Rotate tokens" },
+            { "method": "POST", "path": "/auth/logout", "note": "End the session" },
+            { "method": "GET", "path": "/auth/me", "note": "Current user and role" },
+            { "method": "POST", "path": "/auth/password-reset/request", "note": "Request a reset link" },
+            { "method": "POST", "path": "/auth/password-reset/confirm", "note": "Set a new password" }
+          ]
+        },
+        {
+          "group": "Menu",
+          "items": [
+            { "method": "GET", "path": "/menu/products", "note": "List and search products" },
+            { "method": "POST", "path": "/menu/products", "note": "Create a product" },
+            { "method": "PATCH", "path": "/menu/products/{id}", "note": "Update a product" },
+            { "method": "GET", "path": "/menu/categories", "note": "List categories" },
+            { "method": "POST", "path": "/menu/categories", "note": "Create a category" },
+            { "method": "GET", "path": "/menu/modifier-groups", "note": "List modifier groups" }
+          ]
+        },
+        {
+          "group": "Orders",
+          "items": [
+            { "method": "POST", "path": "/orders", "note": "Create an order" },
+            { "method": "GET", "path": "/orders", "note": "List orders with filters" },
+            { "method": "GET", "path": "/orders/active", "note": "Open orders" },
+            { "method": "PATCH", "path": "/orders/{id}/status", "note": "Advance or cancel an order" },
+            { "method": "PATCH", "path": "/orders/{id}/kitchen-status", "note": "Update kitchen status" }
+          ]
+        },
+        {
+          "group": "Kitchen",
+          "items": [
+            { "method": "GET", "path": "/kitchen/tickets", "note": "Kitchen board tickets" },
+            { "method": "PATCH", "path": "/kitchen/tickets/{id}/status", "note": "Move a ticket" },
+            { "method": "GET", "path": "/kitchen/stations", "note": "Kitchen stations" },
+            { "method": "WS", "path": "/ws/kitchen", "note": "Live kitchen events" }
+          ]
+        },
+        {
+          "group": "Tables",
+          "items": [
+            { "method": "GET", "path": "/tables", "note": "List tables" },
+            { "method": "POST", "path": "/tables", "note": "Create a table" },
+            { "method": "PATCH", "path": "/tables/{id}", "note": "Change status or seats" }
+          ]
+        },
+        {
+          "group": "Payments",
+          "items": [
+            { "method": "POST", "path": "/payments", "note": "Record a payment (cash, card, QR)" },
+            { "method": "GET", "path": "/orders/{id}/payments", "note": "Payments on an order" },
+            { "method": "POST", "path": "/payments/{order_id}/payme-checkout", "note": "Create a Payme checkout link" },
+            { "method": "POST", "path": "/payments/webhooks/payme", "note": "Payme webhook endpoint" },
+            { "method": "POST", "path": "/cash-shifts/open", "note": "Open the cash shift" },
+            { "method": "POST", "path": "/cash-shifts/{id}/close", "note": "Close the cash shift" }
+          ]
+        },
+        {
+          "group": "Files",
+          "items": [
+            { "method": "POST", "path": "/uploads/image", "note": "Upload a product image" }
+          ]
+        }
+      ],
+      "wsTitle": "Live kitchen via WebSocket",
+      "wsText": "Connect with a Bearer token and an optional branch filter to receive kitchen events as they happen.",
+      "wsCode": "ws://<your-synora-domain>/api/v1/ws/kitchen?token=<access-token>&branch_id=<id>",
+      "wsEvents": [
+        { "event": "order_sent_to_kitchen", "note": "New ticket on the board" },
+        { "event": "order_preparing", "note": "Ticket started" },
+        { "event": "order_ready", "note": "Ticket ready" },
+        { "event": "order_served", "note": "Ticket served" },
+        { "event": "ticket_removed", "note": "Ticket removed" }
+      ],
+      "securityTitle": "Security",
+      "securityText": "JWT access tokens are short-lived, refresh tokens rotate on every use, and all state is scoped to a single restaurant tenant. Nothing can be read or written outside your own workspace. Passwords and tokens are stored as hashes — the platform never stores plain text secrets.",
+      "swaggerText": "An interactive OpenAPI explorer is available at /api/docs while running in development and staging environments.",
+      "swaggerNote": "Production environments deliberately disable the interactive explorer to reduce the attack surface."
+    },
+    "help": {
+      "eyebrow": "HELP CENTER",
+      "title": "Get started with SYNORA",
+      "subtitle": "The essentials you need to run the busiest shift without thinking twice.",
+      "gettingTitle": "Getting started",
+      "getting": [
+        { "title": "Create your workspace", "text": "Register to create your restaurant and add your teammates as staff accounts with their own roles." },
+        { "title": "Build your menu", "text": "Add categories and products with prices from the Menu module. Products without a category are included in the list." },
+        { "title": "Set up tables", "text": "Add the tables on your floor so orders can be placed at a seat instead of a generic counter." },
+        { "title": "Open a cash shift", "text": "Before the first payment of the day, open a cash shift with an opening balance so the end-of-day numbers reconcile." },
+        { "title": "Place the first order", "text": "Create an order, add products, send it to the kitchen and watch the ticket appear on the live kitchen board." }
+      ],
+      "tasksTitle": "Common tasks",
+      "tasks": [
+        { "title": "Track the kitchen in real time", "text": "Open the Kitchen module. New orders land on the board instantly over a live connection and move as you update them." },
+        { "title": "Accept Payme payments", "text": "On an open order, use Pay online. A Payme checkout opens in a new tab and the order is marked paid automatically once the payment succeeds." },
+        { "title": "Settle the day", "text": "Close the cash shift, compare the expected balance with the drawer and review payments recorded across the day." },
+        { "title": "Reset a forgotten password", "text": "Use the forgot-password link at sign-in. A single-use link is emailed to you and expires within 45 minutes." },
+        { "title": "Swap branches", "text": "Branch filters in the dashboard, orders and kitchen let you run every location from the same workspace." }
+      ],
+      "supportTitle": "Still stuck?",
+      "supportText": "Browse the FAQ below for quick answers. If your question needs a person, use the contact form on this page and our team will get back to you — we read every message."
+    },
+    "blog": {
+      "eyebrow": "BLOG",
+      "title": "Stories from the kitchen.",
+      "subtitle": "How cafes, restaurants and food businesses run better with SYNORA.",
+      "soonTitle": "Articles are on the way",
+      "soonText": "We are writing practical guides and product stories. Until the first post goes live, the resources below will answer most of your questions.",
+      "linksTitle": "Until then, explore",
+      "links": [
+        { "href": "/docs", "title": "Documentation", "text": "Developers' guide to the API and real-time kitchen events." },
+        { "href": "/help", "title": "Help Center", "text": "Getting-started checklist and answers to common questions." },
+        { "href": "/about", "title": "About SYNORA", "text": "The story, mission and principles behind the system." }
+      ]
+    }
+  },
+  "auth": {
+    "title": "Welcome back",
+    "subtitle": "Sign in to your restaurant workspace",
+    "loginTab": "Sign in",
+    "registerTab": "Create account",
+    "email": "Email",
+    "emailPlaceholder": "you@restaurant.com",
+    "password": "Password",
+    "passwordPlaceholder": "••••••••",
+    "fullName": "Full name",
+    "fullNamePlaceholder": "John Smith",
+    "restaurantName": "Restaurant name",
+    "restaurantNamePlaceholder": "Sunny Cafe",
+    "signIn": "Sign in",
+    "createAccount": "Create account",
+    "newHere": "New to SYNORA?",
+    "haveAccount": "Already have an account?",
+    "passwordHelp": "At least 8 characters.",
+    "restaurantHelp": "Used to create your restaurant workspace.",
+    "invalidCredentials": "Invalid email or password.",
+    "registerFailed": "Registration failed. Try a different email.",
+    "genericError": "Something went wrong. Please try again.",
+    "signedIn": "Signed in.",
+    "forgotPassword": "Forgot password?",
+    "forgotTitle": "Reset your password",
+    "forgotSubtitle": "Enter the email for your SYNORA account and we'll send a reset link.",
+    "sendResetLink": "Send reset link",
+    "emailSentTitle": "Check your inbox",
+    "emailSentBody": "If an account exists for that address, a password reset link is on its way. It expires in 45 minutes.",
+    "backToLogin": "Back to sign in",
+    "resetTitle": "Choose a new password",
+    "resetSubtitle": "Use the link from the email. This token works once.",
+    "confirmPassword": "Confirm password",
+    "passwordsDontMatch": "Passwords don't match.",
+    "resetPassword": "Set new password",
+    "resetSuccessTitle": "Password updated",
+    "resetSuccessBody": "You can now sign in with your new password. All other sessions were signed out.",
+    "linkInvalid": "This link is invalid or has expired. Request a new one.",
+    "requestNewLink": "Request a new link"
+  },
+  "common": {
+    "actions": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "create": "Create",
+      "edit": "Edit",
+      "delete": "Delete",
+      "close": "Close",
+      "retry": "Retry",
+      "add": "Add",
+      "search": "Search",
+      "saved": "Saved"
+    },
+    "states": {
+      "loading": "Loading\u2026",
+      "empty": "Nothing here yet.",
+      "error": "Something went wrong."
+    },
+    "confirmDelete": "Delete this item? This cannot be undone.",
+    "genericError": "Something went wrong. Please try again.",
+    "orderStatus": {
+      "DRAFT": "Draft",
+      "OPEN": "Open",
+      "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled",
+      "PARTIALLY_PAID": "Partially paid",
+      "REFUNDED": "Refunded"
+    },
+    "kitchenStatus": {
+      "PENDING": "Pending",
+      "NEW": "New",
+      "PREPARING": "Preparing",
+      "READY": "Ready",
+      "SERVED": "Served"
+    },
+    "tableStatus": {
+      "AVAILABLE": "Available",
+      "OCCUPIED": "Occupied",
+      "RESERVED": "Reserved",
+      "DISABLED": "Disabled"
+    },
+    "paymentMethod": {
+      "CASH": "Cash",
+      "CARD": "Card",
+      "TRANSFER": "Transfer",
+      "QR": "QR",
+      "PAYME": "Payme"
+    },
+    "paymentStatus": {
+      "PAID": "Paid",
+      "PENDING": "Pending",
+      "FAILED": "Failed",
+      "VOID": "Voided",
+      "REFUNDED": "Refunded"
+    }
+  },
+  "shell": {
+    "nav": {
+      "overview": "Overview",
+      "menu": "Menu",
+      "tables": "Tables",
+      "orders": "Orders",
+      "kitchen": "Kitchen",
+      "payments": "Payments",
+      "logout": "Log out",
+      "open": "Open navigation",
+      "close": "Close navigation"
+    },
+    "breadcrumb": {
+      "home": "Dashboard"
+    },
+    "overview": {
+      "title": "Overview",
+      "description": "Your restaurant at a glance",
+      "branch": "Branch",
+      "todayRevenue": "Today\u2019s revenue",
+      "openOrders": "Open orders",
+      "tablesOccupied": "Tables occupied",
+      "menuItems": "Menu items",
+      "occupiedTables": "Occupied tables",
+      "modulesTitle": "Modules",
+      "modulesText": "Manage every part of the restaurant from one place",
+      "menuLabel": "Menu management",
+      "ordersLabel": "Orders",
+      "tablesLabel": "Tables",
+      "paymentsLabel": "Payments",
+      "statusTitle": "Status",
+      "loadError": "Failed to load dashboard"
+    }
+  },
+  "menuPage": {
+    "title": "Menu",
+    "description": "Manage categories and products",
+    "categories": "Categories",
+    "products": "Products",
+    "addCategory": "Add category",
+    "editCategory": "Edit category",
+    "deleteCategory": "Delete category",
+    "confirmDeleteCategory": "Delete this category? Its products will be kept without a category.",
+    "addProduct": "Add product",
+    "editProduct": "Edit product",
+    "deleteProduct": "Delete product",
+    "confirmDeleteProduct": "Delete this product? This cannot be undone.",
+    "categoryName": "Category name",
+    "categoryNamePlaceholder": "e.g. Main dishes",
+    "categoryDescription": "Description",
+    "categoryDescriptionPlaceholder": "Optional",
+    "sortOrder": "Sort order",
+    "allCategories": "All",
+    "productName": "Product name",
+    "productNamePlaceholder": "e.g. Plov",
+    "productDescription": "Description",
+    "productDescriptionPlaceholder": "Optional",
+    "price": "Price",
+    "costPrice": "Cost price",
+    "category": "Category",
+    "noProducts": "No products in this category yet",
+    "noCategories": "No categories yet. Create one to group your products."
+  },
+  "tablesPage": {
+    "title": "Tables",
+    "description": "Manage your dining area and table statuses",
+    "addTable": "Add table",
+    "editTable": "Edit table",
+    "confirmDelete": "Remove this table? This cannot be undone.",
+    "tableName": "Table name",
+    "tableNamePlaceholder": "e.g. T7",
+    "capacity": "Seats",
+    "status": "Status",
+    "filterAll": "All",
+    "noTables": "No tables yet. Add one to start managing the floor.",
+    "occupied": "Occupied",
+    "free": "Free"
+  },
+  "ordersPage": {
+    "title": "Orders",
+    "description": "Create, track and manage orders",
+    "newOrder": "New order",
+    "searchPlaceholder": "Search by order number\u2026",
+    "filterAll": "All statuses",
+    "orderNumber": "Order",
+    "table": "Table",
+    "itemsCount": "items",
+    "createdAt": "Created",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "tax": "Tax",
+    "total": "Total",
+    "items": "Items",
+    "notes": "Notes",
+    "source": "Source",
+    "empty": "No orders yet. Create the first one.",
+    "createOrderTitle": "New order",
+    "createOrderDescription": "Select a table and add products",
+    "selectTable": "Table",
+    "selectBranch": "Branch",
+    "tablePlaceholder": "Select a table",
+    "addItemLabel": "Add item",
+    "productPlaceholder": "Select a product",
+    "quantity": "Qty",
+    "addQty": "Increase quantity",
+    "remQty": "Decrease quantity",
+    "remove": "Remove",
+    "kitchen": "Kitchen",
+    "orderTotal": "Order total",
+    "submitOrder": "Place order",
+    "noProductsToAdd": "No products available. Add some in the Menu module first.",
+    "detailTitle": "Order details",
+    "markPreparing": "Send to kitchen",
+    "markReady": "Mark ready",
+    "markServed": "Mark served",
+    "markCompleted": "Mark completed",
+    "markCancelled": "Cancel order",
+    "markRefund": "Refund",
+    "statusChanged": "Status updated",
+    "orderCreated": "Order created"
+  },
+  "paymentsPage": {
+    "title": "Payments",
+    "description": "Record payments and manage the cash register",
+    "recordPayment": "Record payment",
+    "amount": "Amount",
+    "method": "Method",
+    "reference": "Reference",
+    "referencePlaceholder": "Transaction ID (optional)",
+    "paid": "Paid",
+    "remaining": "Remaining",
+    "itemCount": "items",
+    "paymentRecorded": "Payment recorded",
+    "openOrdersTitle": "Orders to collect",
+    "noOpenOrders": "No orders open for payment",
+    "paymentsTitle": "Recent payments",
+    "noPayments": "No payments recorded yet",
+    "cashShiftTitle": "Cash shift",
+    "openShift": "Open cash shift",
+    "closeShift": "Close cash shift",
+    "openingBalance": "Opening balance",
+    "closingBalance": "Closing balance",
+    "expectedBalance": "Expected balance",
+    "openedAt": "Opened",
+    "shiftOpen": "Shift is open",
+    "shiftClosed": "No open shift",
+    "shiftOpened": "Cash shift opened",
+    "shiftClosedOk": "Cash shift closed",
+    "payOnline": "Pay online (Payme)",
+    "paymeOpened": "Payme check-out opened in a new tab"
+  },
+  "kitchenPage": {
+    "title": "Kitchen",
+    "description": "Live kitchen board",
+    "branch": "Branch",
+    "columnNew": "New",
+    "columnPreparing": "Preparing",
+    "columnReady": "Ready",
+    "itemCount": "{count, plural, one {# item} other {# items}}",
+    "table": "Table",
+    "order": "Order",
+    "minutes": "{m} min",
+    "justNow": "just now",
+    "markPreparing": "Start preparing",
+    "markReady": "Ready",
+    "markServed": "Mark served",
+    "noTickets": "The board is clear. New orders appear here instantly.",
+    "live": "Live",
+    "reconnecting": "Reconnecting…",
+    "ticketMoved": "Ticket updated",
+    "loadError": "Failed to load the kitchen board"
+  }
+}

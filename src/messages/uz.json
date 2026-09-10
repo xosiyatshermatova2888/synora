@@ -1,0 +1,728 @@
+{
+  "metadata": {
+    "title": "AI bilan jihozlangan restoran boshqaruvi",
+    "description": "SYNORA — POS, oshxona, ombor, CRM, tahlillar va AI yordamida boshqaruv uchun aqlli restoran operatsion tizimi."
+  },
+  "pages": {
+    "about": "SYNORA haqida",
+    "ai": "SYNORA AI",
+    "blog": "Blog",
+    "demo": "Mahsulot demosi",
+    "docs": "Hujjatlar",
+    "features": "Imkoniyatlar",
+    "help": "Yordam",
+    "login": "Kirish",
+    "pricing": "Narxlar",
+    "contact": "Bog`lanish",
+    "privacy": "Maxfiylik siyosati",
+    "terms": "Xizmat shartlari"
+  },
+  "nav": {
+    "products": "Mahsulotlar",
+    "solutions": "Yechimlar",
+    "ai": "AI",
+    "pricing": "Narxlar",
+    "resources": "Resurslar",
+    "login": "Kirish",
+    "startTrial": "Bepul sinov",
+    "blog": "Blog",
+    "help": "Yordam",
+    "docs": "Hujjatlar"
+  },
+  "hero": {
+    "badge": "AI-NATIVE RESTORAN OPERATSION TIZIMI",
+    "headline1": "Sizning restoraningiz.",
+    "headline2": "Bitta aqlli tizim.",
+    "description": "Buyurtmalar, oshxona, ombor, mijozlar va moliyani — AI kuchaytirilgan yagona platformada boshqaring.",
+    "primaryCta": "14 kunlik bepul sinov",
+    "secondaryCta": "Demoni ko‘rish",
+    "noCard": "Bank kartasi talab qilinmaydi.",
+    "todayRevenue": "Bugungi daromad",
+    "orders": "Buyurtmalar",
+    "averageCheck": "O‘rtacha chek",
+    "profit": "Foyda"
+  },
+  "trust": {
+    "headline": "Restoraningizni yanada aqlli boshqarish uchun hamma narsa."
+  },
+  "problems": {
+    "id": "Muammo",
+    "headline": "Restoran boshqarish bunchalik murakkab bo‘lmasligi kerak.",
+    "cards": {
+      "tooMany": {
+        "title": "Juda ko‘p tizimlar",
+        "text": "POS, kassa, ofitsiant ilovalari, yetkazib berish, hisob-kitob — bir-biri bilan aloqa qilmaydigan alohida vositalarga sochilgan."
+      },
+      "lost": {
+        "title": "Yo‘qotilgan buyurtmalar",
+        "text": "Buyurtmalar zal, oshxona va yetkazib berish kanallari o‘rtasida noto‘g‘ri eshitiladi, yo‘qoladi yoki unutiladi."
+      },
+      "unclear": {
+        "title": "Noaniq raqamlar",
+        "text": "Kun oxirida nima topganingizni, nimaga sarflaganingizni va pul qayerga ketganini aniq bilmaysiz."
+      },
+      "reactive": {
+        "title": "Reaktiv qarorlar",
+        "text": "Muammolarni ular sodir bo‘lgandan keyin bilib olasiz — hech qachon qimmatga tushmasdan oldin harakat qilishga ulgurmaysiz."
+      }
+    },
+    "closing": "SYNORA barchasini bir joyga jamlaydi."
+  },
+  "solution": {
+    "id": "Yechim",
+    "headline": "Bitta restoran. Bitta tizim.",
+    "orderSources": "Buyurtma manbalari",
+    "engine": "SYNORA BUYURTMA MVTI",
+    "outcomes": "Quvvatlangan natijalar",
+    "sources": ["QR", "Telegram", "Ofitsiant", "Kassa", "Yetkazib berish"],
+    "destinations": ["Kassa", "Oshxona", "Ombor", "CRM", "Moliya", "Tahlil", "AI"]
+  },
+  "features": {
+    "id": "Imkoniyatlar",
+    "headline": "Restoraningizga kerak bo‘lgan hamma narsa.",
+    "items": {
+      "pos": { "title": "POS va kassa", "text": "Stollar, bo‘lish va kun oxiri hisobotlari bilan tez, ishonchli savdo nuqtasi." },
+      "waiter": { "title": "Ofitsiant ilovasi", "text": "Xodimlaringiz buyurtmalarni zalda qabul qilib, darhol yuboradi." },
+      "kitchen": { "title": "Oshxona boshqaruvi", "text": "Aniq oshxona jarayonlari bilan navbat, ustuvorlik va tayyorlash." },
+      "qr": { "title": "QR menyu", "text": "Mehmonlar skanerlab, ko‘rib, telefonidan buyurtma beradi." },
+      "telegram": { "title": "Telegram buyurtmalar", "text": "Qo‘shimcha ilovalarsiz Telegram orqali buyurtma qabul qiling va boshqaring." },
+      "inventory": { "title": "Ombor", "text": "Zaxirani real vaqtda kuzating va smena o‘rtasida tugab qolishdan saqlaning." },
+      "crm": { "title": "CRM va sodiqlik", "text": "Doimiy mijozlaringizni bilib, ularni qaytishga undang." },
+      "analytics": { "title": "Tahlil", "text": "Savdo, xarajat va samaradorlik — tushunarli, aniq raqamlar." },
+      "ai": { "title": "AI yordamchisi", "text": "Biznesingiz haqida savollar bering va harakat qilishga yordam beradigan javoblar oling." }
+    }
+  },
+  "how": {
+    "id": "Qanday ishlaydi",
+    "headline": "Buyurtmadan natijagacha — avtomatik.",
+    "steps": [
+      { "title": "Buyurtma", "text": "Mehmon QR, Telegram, ofitsiant, kassa yoki yetkazib berish orqali buyurtma beradi." },
+      { "title": "Jarayon", "text": "SYNORA har bir buyurtmani to‘g‘ri joyga — darhol yo‘naltiradi." },
+      { "title": "Boshqarish", "text": "Siz ishlayotganingizda oshxona, ombor va moliya avtomatik yangilanadi." },
+      { "title": "Tushunish", "text": "Aqlli tahlil va AI ma’lumotlaringizni harakatga aylantiradi." }
+    ]
+  },
+  "dashboard": {
+    "id": "Panel",
+    "headline": "Butun restoraningizni bir qarashda ko‘ring.",
+    "description": "Bugungi savdodan ertangi ombor ehtiyojigacha, SYNORA sizga muhim ma’lumotlarni beradi.",
+    "tabs": {
+      "overview": "Umumiy",
+      "orders": "Buyurtmalar",
+      "kitchen": "Oshxona",
+      "inventory": "Ombor",
+      "crm": "CRM",
+      "analytics": "Tahlil",
+      "ai": "AI"
+    },
+    "salesChart": "Savdo (7 kun)",
+    "aiInsight": "AI tahlili"
+  },
+  "ai": {
+    "badge": "SYNORA AI",
+    "headline": "Restoraningiz ma’lumotlari ko‘proq ish bajaradi.",
+    "description": "SYNORA shunchaki raqamlarni ko‘rsatmaydi. Nima bo‘layotganini, nima uchun va keyin nima qilish kerakligini tushunadi.",
+    "cards": {
+      "whatHappened": { "title": "Nima bo‘ldi?", "text": "Savdo, buyurtma va xarajatlardagi o‘zgarishlarni sodir bo‘lishi bilan sezing." },
+      "why": { "title": "Nega?", "text": "SYNORA nuqtalarni bog‘lab, har bir o‘zgarish sababini tushuntiradi." },
+      "whatNext": { "title": "Keyin nima?", "text": "Kun boshlanishidan oldin talab, zaxira va xodimlarni oldindan biling." },
+      "whatDo": { "title": "Nima qilishim kerak?", "text": "Bugun harakat qilishingiz mumkin bo‘lgan aniq tavsiyalar oling." }
+    },
+    "cta": "SYNORA AI ni o‘rganing"
+  },
+  "demo": {
+    "id": "AI Demo",
+    "title": "Restoraningiz haqida SYNORA-dan hamma narsani so‘rang.",
+    "you": "Siz",
+    "ai": "SYNORA AI",
+    "demoMode": "Demo rejim — quyidagi tavsiya etilgan savollardan birini bosing",
+    "chipsHeading": "Tavsiya etilgan savollar",
+    "chips": [
+      "Nimani zaxiralashim kerak?",
+      "Qaysi taom eng ko‘p foyda keltiradi?",
+      "Savdo nima uchun pasaydi?",
+      "Qaysi filial eng yaxshi ishlaydi?"
+    ],
+    "conversation": [
+      {
+        "role": "user",
+        "text": "Nega bugun savdolarim tushdi?"
+      },
+      {
+        "role": "ai",
+        "text": "Savdo kechagi kunga nisbatan 7,8% past. Asosiy farq tushlik buyurtmalaridan — ular 14% ga kamaydi. Eng ko‘p sotiladigan taomingiz, Osh, ham 9% kamroq sotildi. **Tavsiya:** 12:00–15:00 oralig‘ida tushlik aksiyasini ko‘rib chiqing."
+      }
+    ],
+    "canned": {
+      "restock": "Oxirgi 7 kunga asoslanib, hozirgi sur’atda guruch, ko‘katlar va yog‘ 2 kun ichida tugaydi. **Tavsiya:** bugun guruch (40 kg) va ko‘katlarga buyurtma bering. Chorshanbagacha yog‘ga buyurtma bering."
+      ,
+      "profit": "Osh eng yuqori marjaga ega — 68%, undan keyin Lagman — 61%. Ichimliklar liniyasi tez kichik daromad keltiradi. **Tavsiya:** tushlik paytida QR menyuingizda eng yuqori marjali taomlarni targ‘ib qiling."
+      ,
+      "down": "Savdo kechagi kunga nisbatan 7,8% past. Tushlik buyurtmalari 14% ga kamaydi, eng ko‘p sotiladigan taomingiz Osh esa 9% kamroq sotildi. **Tavsiya:** 12:00–15:00 oralig‘ida tushlik aksiyasini o‘tkazing."
+      ,
+      "branch": "02-filial bu hafta yetakchi — savdo 12% yuqori, oziq-ovqat xarajati esa 29% bilan eng past. 03-filial 34% oziq-ovqat xarajati bilan e’tibor talab qiladi. **Tavsiya:** 03-filialda narx va porsiyalarni ko‘rib chiqing."
+    }
+  },
+  "branches": {
+    "id": "Ko‘p filial",
+    "headline": "Har bir joylashuvni bir ko‘rinishda.",
+    "description": "Barcha filiallaringiz bo‘ylab menyu, samaradorlik, ombor va operatsiyalarni boshqaring.",
+    "hq": "Boshqarma",
+    "sales": "Savdo",
+    "stock": "Ombor",
+    "staff": "Xodimlar"
+  },
+  "integrations": {
+    "headline": "O‘zingiz foydalanayotgan vositalarni ulang.",
+    "categories": [
+      { "title": "Telegram", "text": "Mehmonlaringiz suhbatlashayotgan joyda buyurtma va yangiliklar." },
+      { "title": "To‘lovlar", "text": "Kassada karta va mobil to‘lovlarni qabul qiling." },
+      { "title": "Fiskal tizimlar", "text": "Mahalliy fiskal va hisob-kitob qoidalariga moslaning." },
+      { "title": "Printerlar", "text": "Oshxona va chek printerlari shunchaki ishlaydi." },
+      { "title": "KDS", "text": "Oshxonani harakatda ushlab turadigan displey tizimlari." },
+      { "title": "QR", "text": "QR kod orqali stolda to‘lash va menyu buyurtmasi." },
+      { "title": "Yetkazib berish", "text": "Tashqi yetkazib berish kanallarini bitta buyurtma oqimiga ulang." },
+      { "title": "API", "text": "SYNORA-ni o‘z vositalaringizga ulang va kengaytiring." }
+    ]
+  },
+  "pricing": {
+    "id": "Narxlar",
+    "headline": "O‘sishingizni xohlagan usulni tanlang.",
+    "plans": [
+      { "name": "Business", "price": "299 000", "unit": "so‘m/oy", "badge": null, "features": ["POS va kassa", "Ofitsiant ilovasi", "Oshxona displeyi", "QR menyu", "Telegram buyurtmalar", "Asosiy hisobotlar"] },
+      { "name": "Pro", "price": "499 000", "unit": "so‘m/oy", "badge": "Eng ommabop", "features": ["Businessdagi hamma narsa", "Ombor va retseptlar", "Oziq-ovqat narxi", "CRM va sodiqlik", "Rivojlangan tahlil", "Ko‘p filial (3 tagacha)"] },
+      { "name": "AI Premium", "price": "799 000", "unit": "so‘m/oy", "badge": "AI kuchaytirilgan", "features": ["Prodagi hamma narsa", "SYNORA AI yordamchisi", "AI tavsiyalari", "Oldindan zaxiralash", "Imtiyozli qo‘llab-quvvatlash"] },
+      { "name": "Enterprise", "price": null, "unit": "Maxsus", "badge": null, "features": ["AI Premiumdagi hamma narsa", "Cheksiz filiallar", "Shaxsiy menejer", "Maxsus integratsiyalar", "Joyida o‘qitish"] }
+    ],
+    "annual": "Yillik",
+    "monthly": "Oylik",
+    "trial": "Bepul sinov",
+    "contact": "Savdo bilan bog‘lanish"
+  },
+  "trial": {
+    "id": "Sinov",
+    "headline": "SYNORA-ni 14 kun bepul sinab ko‘ring.",
+    "description": "Qaror qabul qilishdan oldin to‘liq restoran operatsion tizimini o‘rganing.",
+    "primaryCta": "14 kunlik bepul sinov",
+    "secondaryCta": "Savdo bilan bog‘lanish",
+    "noCard": "Bank kartasi talab qilinmaydi."
+  },
+  "form": {
+    "name": "To‘liq ism",
+    "namePlaceholder": "Ismingiz",
+    "restaurant": "Restoran nomi",
+    "restaurantPlaceholder": "Restoraningiz",
+    "email": "Ish emaili",
+    "emailPlaceholder": "you@restaurant.com",
+    "phone": "Telefon",
+    "phonePlaceholder": "+998 90 123 45 67",
+    "submit": "Bepul sinov",
+    "contactSubmit": "Xabar yuborish",
+    "successTitle": "Rahmat!",
+    "successText": "So‘rovingiz qabul qilindi. Jamoamiz tez orada siz bilan bog‘lanadi.",
+    "required": "Bu maydon majburiy",
+    "emailInvalid": "To‘g‘ri email kiriting",
+    "contactTitle": "Savdo bilan bog‘lanish",
+    "contactDescription": "Restoraningiz haqida ayting, sizga to‘g‘ri rejani tanlashda yordam beramiz.",
+    "message": "Xabar",
+    "messagePlaceholder": "Restoraningiz haqida ayting"
+  },
+  "faq": {
+    "id": "FAQ",
+    "headline": "Ko‘p so‘raladigan savollar",
+    "items": [
+      { "q": "SYNORA nima?", "a": "SYNORA — POS, oshxona, ombor, CRM, tahlil va boshqalarni bitta platformaga birlashtirgan AI-native restoran operatsion tizimi." },
+      { "q": "Yangi uskunaga ehtiyoj bormi?", "a": "Yo‘q. SYNORA sizdagi qurilmalarda — planshet, telefon va kompyuterlarda ishlaydi va oddiy printerlar hamda oshxona displeylariga ulanadi." },
+      { "q": "Sozlash qancha vaqt oladi?", "a": "Ko‘pchilik restoranlar bir necha kun ichida ishga tushadi. Jamoamiz menyuni import qilish va oshxona hamda buyurtma oqimini sozlashda yordam beradi." },
+      { "q": "SYNORA-ni bir nechta filialda ishlata olamanmi?", "a": "Ha. Pro va undan yuqori rejalar har bir joylashuvni bitta ko‘rinishdan boshqarish uchun ko‘p filial boshqaruvini o‘z ichiga oladi." },
+      { "q": "AI qanday ishlaydi?", "a": "SYNORA AI sizning restoraningiz ma’lumotlarini — savdo, buyurtma, ombor va xarajatlarni — o‘qib, nima bo‘layotganini tushuntiradi va tavsiya beradi. Raqamlarni o‘ylab topmaydi." },
+      { "q": "Ma’lumotlarim xavfsizmi?", "a": "Ha. Ma’lumotlaringiz xavfsiz saqlanadi va faqat restoraningizni boshqarish uchun ishlatiladi. Hech qachon uchinchi shaxslarga berilmaydi." },
+      { "q": "To‘lashdan oldin sinab ko‘ra olamanmi?", "a": "Albatta. Platformaga to‘liq kirish bilan bepul 14 kunlik sinovni boshlang. Bank kartasi talab qilinmaydi." },
+      { "q": "Qanday qo‘llab-quvvatlash mavjud?", "a": "Har bir reja qo‘llab-quvvatlashni o‘z ichiga oladi, AI Premium va Enterprise esa jamoamizdan imtiyozli qo‘llab-quvvatlash oladi." }
+    ]
+  },
+  "final": {
+    "headline": "Restoraningizni aqlliroq boshqarishga tayyormisiz?",
+    "subheadline": "Bitta tizim. Har bir buyurtma. Aqlliroq qarorlar.",
+    "primaryCta": "14 kunlik bepul sinov",
+    "secondaryCta": "Savdo bilan bog‘lanish"
+  },
+  "footer": {
+    "tagline": "Sizning restoraningiz. Bitta aqlli tizim.",
+    "product": "Mahsulot",
+    "company": "Kompaniya",
+    "resources": "Resurslar",
+    "legal": "Huquqiy",
+    "rights": "Barcha huquqlar himoyalangan.",
+    "links": {
+      "features": "Imkoniyatlar",
+      "pricing": "Narxlar",
+      "ai": "AI",
+      "demo": "Demo",
+      "about": "Biz haqimizda",
+      "contact": "Aloqa",
+      "blog": "Blog",
+      "help": "Yordam",
+      "docs": "Hujjatlar",
+      "privacy": "Maxfiylik siyosati",
+      "terms": "Xizmat shartlari"
+    }
+  },
+  "legal": {
+    "privacyTitle": "Maxfiylik siyosati",
+    "termsTitle": "Xizmat shartlari",
+    "lastUpdated": "Oxirgi yangilanish",
+    "contact": "Maxfiylik bo‘yicha savollar uchun bog‘laning"
+  },
+  "stub": {
+    "comingSoon": "Tez orada",
+    "backHome": "Bosh sahifaga qaytish"
+  },
+  "landing": {
+    "features": {
+      "eyebrow": "MAHSULOT",
+      "title": "Restoraningizga kerak bo'lgan hamma narsa.",
+      "subtitle": "Har bir buyurtma, har bir taom, har bir to'lov — bitta aqlli tizimda yo'naltiriladi va kuzatiladi."
+    },
+    "pricing": {
+      "eyebrow": "NARXLAR",
+      "title": "O'sish yo'lingizni tanlang.",
+      "subtitle": "Hammasi kirgan oddiy oylik tariflar. Boshlash uchun bank kartasi shart emas."
+    },
+    "ai": {
+      "eyebrow": "SYNORA AI",
+      "title": "Restoraningiz ma'lumotlari ko'proq ish qila oladi.",
+      "subtitle": "Savdo, ombor va natijalar haqida savol bering — va amal qilishingiz mumkin bo'lgan javob oling."
+    },
+    "demo": {
+      "eyebrow": "MAHSULOT DEMOSI",
+      "title": "SYNORA AI'ni o'zingiz sinab ko'ring.",
+      "subtitle": "Demo yordamchidan restoran egasi so'rashi mumkin bo'lgan har qanday savolni so'rang. O'rnatish shart emas."
+    },
+    "about": {
+      "eyebrow": "SYNORA HAQIDA",
+      "title": "Restoranlar uchun qurilgan, ular atrofida emas.",
+      "subtitle": "Biz restoran sanoatiga yetishmayotgan operatsion tizimni yaratmoqdamiz.",
+      "intro": "SYNORA bitta muammoni hal qilish uchun yaratilgan: restoranlar juda ko'p bir-biriga bog'lanmagan vositalarda ishlaydi. Buyurtmalar kassir va oshxona o'rtasida adashadi, kun oxirida raqamlar hech qachon bir-biriga to'g'ri kelmaydi, egalari esa hammasini keyin bilib qoladi. Biz restoranning har bir qismini — buyurtmalar, oshxona, to'lovlar, stollar va tahlillarni bitta tizimda birlashtiramiz. Ma'lumotlar avtomatik oqadi va egasi nima bo'layotganini har doim biladi.",
+      "cards": [
+        { "icon": "oneSystem", "title": "Bitta tizim", "text": "Kassa, oshxona, to'lovlar, stollar va hisobotlar bir joyda yashaydi. Vositalar o'rtasida hech narsa nusxalanmaydi, chunki bitta yagona manba mavjud." },
+        { "icon": "aiNative", "title": "AI-to'g'ridan-to'g'ri dizaynda", "text": "AI qo'shimcha emas. U restoraningiz ma'lumotlarini o'qib, nima bo'lganini, nima uchun va endi nima qilishni tushuntiradi." },
+        { "icon": "private", "title": "Shaxsiy va xavfsiz", "text": "Ma'lumotlar sizga tegishli. Tenantlar izolyatsiyalangan, sirlar shifrlangan, ma'lumotlar hech qachon ulashilmaydi yoki sotilmaydi." },
+        { "icon": "mission", "title": "Restoranlar birinchi o'rinda", "text": "Muvaffaqiyatni tizim haqiqiy restoran egalariga tejagan vaqt va pul bilan o'lchaymiz." }
+      ],
+      "valuesTitle": "Qanday ishlaymiz",
+      "values": [
+        "Restoranlar haqiqatan ishlatadigan funksiyalarni chiqaramiz — qolganlari yo'l xaritasida qoladi.",
+        "Raqamlarni o'ylab topmaymiz. Har bir hisobot va tavsiya haqiqiy buyurtma ma'lumotlaridan keladi.",
+        "Tizimni tez saqlaymiz, hatto eng gavjum paytda ham.",
+        "Oshxona, ofitsiantlar va egalarni tinglaymiz — eng baland ovozni emas."
+      ]
+    },
+    "docs": {
+      "eyebrow": "DASTURCHILAR",
+      "title": "SYNORA API hujjatlari",
+      "subtitle": "O'z vositalaringizni SYNORA platformasiga ulash uchun kerak bo'lgan hamma narsa.",
+      "introTitle": "Toza va bashorat qilinadigan REST API",
+      "introText": "Har bir resurs bir xil tartibda ishlaydi: JSON kirish va chiqish, bearer-token bilan autentifikatsiya, restoraningiz doirasida cheklangan. WebSocketlar oshxona taxtasini real vaqtda jonli ushlab turadi. Bu sahifa platformaning bugungi ochiq yuzasini tavsiflaydi.",
+      "baseTitle": "Asosiy URL",
+      "baseText": "Barcha API manzillari versiyalangan va /api/v1 ostida xizmat qiladi.",
+      "baseCode": "https://<sizning-synora-domeningiz>/api/v1",
+      "authTitle": "Autentifikatsiya",
+      "authText": "Ro'yxatdan o'ting yoki kiring va JWT access-token oling. Uni har bir so'rovga Bearer token sifatida yuboring. Refresh-tokenlar httpOnly cookie'da avtomatik aylanadi.",
+      "authSteps": [
+        { "title": "Ro'yxatdan o'tish", "text": "Javobda access-token olish uchun POST /auth/register bilan ish maydoni yarating." },
+        { "title": "Autentifikatsiya", "text": "Tokenni har bir so'rovda yuboring: Authorization: Bearer <token>." },
+        { "title": "Yangilash", "text": "Token muddati tugagach, refresh-cookie bilan POST /auth/refresh chaqiring va yangi token juftligi beriladi." }
+      ],
+      "endpointsTitle": "Manzillar",
+      "endpointsText": "Asosiy API yuzasining ko'rinishi.",
+      "groups": [
+        {
+          "group": "Autentifikatsiya",
+          "items": [
+            { "method": "POST", "path": "/auth/register", "note": "Ish maydoni yaratish va token olish" },
+            { "method": "POST", "path": "/auth/login", "note": "Kirish" },
+            { "method": "POST", "path": "/auth/refresh", "note": "Tokenlarni yangilash" },
+            { "method": "POST", "path": "/auth/logout", "note": "Sessiyani tugatish" },
+            { "method": "GET", "path": "/auth/me", "note": "Joriy foydalanuvchi va rol" },
+            { "method": "POST", "path": "/auth/password-reset/request", "note": "Tiklash havolasini so'rash" },
+            { "method": "POST", "path": "/auth/password-reset/confirm", "note": "Yangi parol o'rnatish" }
+          ]
+        },
+        {
+          "group": "Menyu",
+          "items": [
+            { "method": "GET", "path": "/menu/products", "note": "Mahsulotlar ro'yxati va qidiruv" },
+            { "method": "POST", "path": "/menu/products", "note": "Mahsulot yaratish" },
+            { "method": "PATCH", "path": "/menu/products/{id}", "note": "Mahsulotni yangilash" },
+            { "method": "GET", "path": "/menu/categories", "note": "Kategoriyalar ro'yxati" },
+            { "method": "POST", "path": "/menu/categories", "note": "Kategoriya yaratish" },
+            { "method": "GET", "path": "/menu/modifier-groups", "note": "Modifikator guruhlari ro'yxati" }
+          ]
+        },
+        {
+          "group": "Buyurtmalar",
+          "items": [
+            { "method": "POST", "path": "/orders", "note": "Buyurtma yaratish" },
+            { "method": "GET", "path": "/orders", "note": "Filtrlar bilan buyurtmalar ro'yxati" },
+            { "method": "GET", "path": "/orders/active", "note": "Ochiq buyurtmalar" },
+            { "method": "PATCH", "path": "/orders/{id}/status", "note": "Buyurtmani o'zgartirish yoki bekor qilish" },
+            { "method": "PATCH", "path": "/orders/{id}/kitchen-status", "note": "Oshxona holatini yangilash" }
+          ]
+        },
+        {
+          "group": "Oshxona",
+          "items": [
+            { "method": "GET", "path": "/kitchen/tickets", "note": "Oshxona taxtasi ticketlari" },
+            { "method": "PATCH", "path": "/kitchen/tickets/{id}/status", "note": "Ticketni ko'chirish" },
+            { "method": "GET", "path": "/kitchen/stations", "note": "Oshxona stantsiyalari" },
+            { "method": "WS", "path": "/ws/kitchen", "note": "Jonli oshxona hodisalari" }
+          ]
+        },
+        {
+          "group": "Stollar",
+          "items": [
+            { "method": "GET", "path": "/tables", "note": "Stollar ro'yxati" },
+            { "method": "POST", "path": "/tables", "note": "Stol yaratish" },
+            { "method": "PATCH", "path": "/tables/{id}", "note": "Holat yoki o'rindiqlarni o'zgartirish" }
+          ]
+        },
+        {
+          "group": "To'lovlar",
+          "items": [
+            { "method": "POST", "path": "/payments", "note": "To'lov yozish (naqd, karta, QR)" },
+            { "method": "GET", "path": "/orders/{id}/payments", "note": "Buyurtmadagi to'lovlar" },
+            { "method": "POST", "path": "/payments/{order_id}/payme-checkout", "note": "Payme checkout havolasi yaratish" },
+            { "method": "POST", "path": "/payments/webhooks/payme", "note": "Payme webhook manzili" },
+            { "method": "POST", "path": "/cash-shifts/open", "note": "Kassa smenasini ochish" },
+            { "method": "POST", "path": "/cash-shifts/{id}/close", "note": "Kassa smenasini yopish" }
+          ]
+        },
+        {
+          "group": "Fayllar",
+          "items": [
+            { "method": "POST", "path": "/uploads/image", "note": "Mahsulot rasmini yuklash" }
+          ]
+        }
+      ],
+      "wsTitle": "WebSocket orqali jonli oshxona",
+      "wsText": "Bearer token va ixtiyoriy filial filtri bilan ulaning va oshxona hodisalarini ular sodir bo'layotganda qabul qiling.",
+      "wsCode": "ws://<sizning-synora-domeningiz>/api/v1/ws/kitchen?token=<access-token>&branch_id=<id>",
+      "wsEvents": [
+        { "event": "order_sent_to_kitchen", "note": "Taxtada yangi ticket" },
+        { "event": "order_preparing", "note": "Ticket boshlandi" },
+        { "event": "order_ready", "note": "Ticket tayyor" },
+        { "event": "order_served", "note": "Ticket berildi" },
+        { "event": "ticket_removed", "note": "Ticket olib tashlandi" }
+      ],
+      "securityTitle": "Xavfsizlik",
+      "securityText": "JWT access-tokenlar qisqa muddatli, refresh-tokenlar har foydalanishda aylanadi va barcha holat bitta restoran tenanti doirasida cheklangan. O'z ish maydoningizdan tashqarida hech narsa o'qib yoki yozib bo'lmaydi. Parollar va tokenlar hesh ko'rinishida saqlanadi — platforma ochiq matn sirlarini hech qachon saqlamaydi.",
+      "swaggerText": "Interaktiv OpenAPI eksploreri ishlab chiqish va sinov muhitlarida /api/docs manzilida mavjud.",
+      "swaggerNote": "Ishlab chiqarish muhitlari xavfsizlik yuzasini kamaytirish uchun interaktiv eksplorerni ataylab o'chiradi."
+    },
+    "help": {
+      "eyebrow": "YORDAM MARKAZI",
+      "title": "SYNORA bilan boshlang",
+      "subtitle": "Eng gavjum smena uchun kerak bo'lgan asosiy bilimlar.",
+      "gettingTitle": "Boshlash",
+      "getting": [
+        { "title": "Ish maydoni yarating", "text": "Ro'yxatdan o'tib restoraningizni yarating va o'z rollari bilan xodimlarni qo'shing." },
+        { "title": "Menyuni shakllantiring", "text": "Menyu modulida kategoriya va narxlar bilan mahsulotlar qo'shing." },
+        { "title": "Stollarni o'rnating", "text": "Zalingizdagi stollarni qo'shing, shunda buyurtmalar ma'lum joyga bog'lanadi." },
+        { "title": "Kassa smenasini oching", "text": "Kunni birinchi to'lovidan oldin boshlang'ich balans bilan kassa smenasini oching." },
+        { "title": "Birinchi buyurtmani joylashtiring", "text": "Buyurtma yarating, mahsulotlar qo'shing, oshxonaga yuboring va ticketni jonli taxtada kuzating." }
+      ],
+      "tasksTitle": "Keng tarqalgan vazifalar",
+      "tasks": [
+        { "title": "Oshxonani real vaqtda kuzatish", "text": "Oshxona modulini oching. Yangi buyurtmalar jonli ulanish orqali darhol taxtaga tushadi." },
+        { "title": "Payme to'lovlarini qabul qilish", "text": "Ochiq buyurtmada Onlayn to'lash tugmasini bosing. Payme checkout yangi oynada ochiladi va to'lov muvaffaqiyatli bo'lgach, buyurtma avtomatik to'langan deb belgilanadi." },
+        { "title": "Kunni yakunlash", "text": "Kassa smenasini yoping, kutilgan balansni naycha bilan solishtiring va kun davomidagi to'lovlarni ko'rib chiqing." },
+        { "title": "Unutilgan parolni tiklash", "text": "Kirish sahifasidagi parolni unutdingizmi havolasidan foydalaning. Bir martalik havola emailga yuboriladi va 45 daqiqada tugaydi." },
+        { "title": "Filiallarni almashtirish", "text": "Boshqaruv paneli, buyurtmalar va oshxonadagi filial filtrlari bilan barcha manzillarni bitta maydondan boshqaring." }
+      ],
+      "supportTitle": "Hali ham muammo bormi?",
+      "supportText": "Tez javoblar uchun quyidagi FAQ'ni ko'rib chiqing. Inson kerak bo'lsa, ushbu sahifadagi aloqa formasidan foydalaning — har bir xabarni o'qiymiz."
+    },
+    "blog": {
+      "eyebrow": "BLOG",
+      "title": "Oshxonadan hikoyalar.",
+      "subtitle": "Kafelar, restoranlar va oziq-ovqat bizneslari SYNORA bilan qanday yaxshi ishlashi haqida.",
+      "soonTitle": "Maqolalar tayyorlanmoqda",
+      "soonText": "Amaliy qo'llanmalar va mahsulot hikoyalarini yozmoqdamiz. Birinchi maqola chiqmaguncha quyidagi resurslar aksariyat savollarga javob beradi.",
+      "linksTitle": "Shu vaqtgacha kashf eting",
+      "links": [
+        { "href": "/docs", "title": "Hujjatlar", "text": "API va real vaqtli oshxona hodisalari bo'yicha dasturchilar qo'llanmasi." },
+        { "href": "/help", "title": "Yordam markazi", "text": "Boshlash nazorat ro'yxati va keng tarqalgan savollarga javoblar." },
+        { "href": "/about", "title": "SYNORA haqida", "text": "Tizim ortidagi hikoya, missiya va tamoyillar." }
+      ]
+    }
+  },
+  "auth": {
+    "title": "Xush kelibsiz",
+    "subtitle": "Restoran ish muhitiga kiring",
+    "loginTab": "Kirish",
+    "registerTab": "Akkaunt yaratish",
+    "email": "Elektron pochta",
+    "emailPlaceholder": "you@restaurant.com",
+    "password": "Parol",
+    "passwordPlaceholder": "••••••••",
+    "fullName": "To‘liq ism",
+    "fullNamePlaceholder": "Ali Karimov",
+    "restaurantName": "Restoran nomi",
+    "restaurantNamePlaceholder": "Quyoshli kafe",
+    "signIn": "Kirish",
+    "createAccount": "Akkaunt yaratish",
+    "newHere": "SYNORA’da yangimisiz?",
+    "haveAccount": "Akkauntingiz bormi?",
+    "passwordHelp": "Kamida 8 ta belgi.",
+    "restaurantHelp": "Restoran ish muhitini yaratish uchun ishlatiladi.",
+    "invalidCredentials": "Pochta yoki parol noto‘g‘ri.",
+    "registerFailed": "Ro‘yxatdan o‘tish amalga oshmadi. Boshqa pochta sinab ko‘ring.",
+    "genericError": "Nimadir noto‘g‘ri ketdi. Qayta urinib ko‘ring.",
+    "signedIn": "Tizimga kirdingiz.",
+    "forgotPassword": "Parolni unutdingizmi?",
+    "forgotTitle": "Parolingizni tiklash",
+    "forgotSubtitle": "SYNORA hisobingizdagi pochtani kiriting, biz tiklash havolasini yuboramiz.",
+    "sendResetLink": "Tiklash havolasini yuborish",
+    "emailSentTitle": "Pochtangizni tekshiring",
+    "emailSentBody": "Agar bu pochta orqali akkaunt mavjud bo‘lsa, tiklash havolasi yo‘lga chiqqan. Havola 45 daqiqa amal qiladi.",
+    "backToLogin": "Kirish sahifasiga qaytish",
+    "resetTitle": "Yangi parol tanlang",
+    "resetSubtitle": "E-pochtadagi havoladan foydalaning. U faqat bir marta ishlatiladi.",
+    "confirmPassword": "Parolni tasdiqlang",
+    "passwordsDontMatch": "Parollar mos kelmayapti.",
+    "resetPassword": "Yangi parolni o‘rnatish",
+    "resetSuccessTitle": "Parol yangilandi",
+    "resetSuccessBody": "Endi yangi parol bilan kiring. Boshqa barcha seanslar tugatildi.",
+    "linkInvalid": "Havola eskirgan yoki yaroqsiz. Yangisini so‘rang.",
+    "requestNewLink": "Yangi havola so‘rash"
+  },
+  "common": {
+    "actions": {
+      "save": "Saqlash",
+      "cancel": "Bekor qilish",
+      "create": "Yaratish",
+      "edit": "Tahrirlash",
+      "delete": "O‘chirish",
+      "close": "Yopish",
+      "retry": "Qayta urinish",
+      "add": "Qo‘shish",
+      "search": "Qidirish",
+      "saved": "Saqlangan"
+    },
+    "states": {
+      "loading": "Yuklanmoqda\u2026",
+      "empty": "Hozircha hech narsa yo‘q.",
+      "error": "Nimadir noto‘g‘ri ketdi."
+    },
+    "confirmDelete": "Bu elementni o‘chirasizmi? Buni ortga qaytarib bo‘lmaydi.",
+    "genericError": "Nimadir noto‘g‘ri ketdi. Qayta urinib ko‘ring.",
+    "orderStatus": {
+      "DRAFT": "Qoralama",
+      "OPEN": "Ochiq",
+      "COMPLETED": "Yakunlangan",
+      "CANCELLED": "Bekor qilingan",
+      "PARTIALLY_PAID": "Qisman to‘langan",
+      "REFUNDED": "Qaytarilgan"
+    },
+    "kitchenStatus": {
+      "PENDING": "Kutilmoqda",
+      "NEW": "Yangi",
+      "PREPARING": "Tayyorlanmoqda",
+      "READY": "Tayyor",
+      "SERVED": "Xizmat qilingan"
+    },
+    "tableStatus": {
+      "AVAILABLE": "Bo‘sh",
+      "OCCUPIED": "Band",
+      "RESERVED": "Zaxiralangan",
+      "DISABLED": "O‘chirilgan"
+    },
+    "paymentMethod": {
+      "CASH": "Naqd",
+      "CARD": "Karta",
+      "TRANSFER": "O‘tkazma",
+      "QR": "QR",
+      "PAYME": "Payme"
+    },
+    "paymentStatus": {
+      "PAID": "To‘langan",
+      "PENDING": "Kutilmoqda",
+      "FAILED": "Xato",
+      "VOID": "Bekor qilingan",
+      "REFUNDED": "Qaytarilgan"
+    }
+  },
+  "shell": {
+    "nav": {
+      "overview": "Umumiy",
+      "menu": "Menyu",
+      "tables": "Stollar",
+      "orders": "Buyurtmalar",
+      "kitchen": "Oshxona",
+      "payments": "To‘lovlar",
+      "logout": "Chiqish",
+      "open": "Navigatsiyani ochish",
+      "close": "Navigatsiyani yopish"
+    },
+    "breadcrumb": {
+      "home": "Boshqaruv paneli"
+    },
+    "overview": {
+      "title": "Umumiy",
+      "description": "Restoraningiz bir qarashda",
+      "branch": "Filial",
+      "todayRevenue": "Bugungi daromad",
+      "openOrders": "Ochiq buyurtmalar",
+      "tablesOccupied": "Band stollar",
+      "menuItems": "Menyu pozitsiyalari",
+      "occupiedTables": "Band stollar",
+      "modulesTitle": "Modullar",
+      "modulesText": "Restoranning barcha qismlarini bir joydan boshqaring",
+      "menuLabel": "Menyu boshqaruvi",
+      "ordersLabel": "Buyurtmalar",
+      "tablesLabel": "Stollar",
+      "paymentsLabel": "To‘lovlar",
+      "statusTitle": "Holat",
+      "loadError": "Panelni yuklab bo‘lmadi"
+    }
+  },
+  "menuPage": {
+    "title": "Menyu",
+    "description": "Kategoriyalar va mahsulotlarni boshqaring",
+    "categories": "Kategoriyalar",
+    "products": "Mahsulotlar",
+    "addCategory": "Kategoriya qo‘shish",
+    "editCategory": "Kategoriyani tahrirlash",
+    "deleteCategory": "Kategoriyani o‘chirish",
+    "confirmDeleteCategory": "Bu kategoriyani o‘chirasizmi? Mahsulotlar kategoriyasiz qoladi.",
+    "addProduct": "Mahsulot qo‘shish",
+    "editProduct": "Mahsulotni tahrirlash",
+    "deleteProduct": "Mahsulotni o‘chirish",
+    "confirmDeleteProduct": "Bu mahsulotni o‘chirasizmi? Buni ortga qaytarib bo‘lmaydi.",
+    "categoryName": "Kategoriya nomi",
+    "categoryNamePlaceholder": "Masalan, Asosiy taomlar",
+    "categoryDescription": "Tavsif",
+    "categoryDescriptionPlaceholder": "Ixtiyoriy",
+    "sortOrder": "Tartib raqami",
+    "allCategories": "Barchasi",
+    "productName": "Mahsulot nomi",
+    "productNamePlaceholder": "Masalan, Osh",
+    "productDescription": "Tavsif",
+    "productDescriptionPlaceholder": "Ixtiyoriy",
+    "price": "Narxi",
+    "costPrice": "Tannarxi",
+    "category": "Kategoriya",
+    "noProducts": "Bu kategoriyada hozircha mahsulotlar yo‘q",
+    "noCategories": "Hozircha kategoriyalar yo‘q. Mahsulotlarni guruhlash uchun birinchisini yarating."
+  },
+  "tablesPage": {
+    "title": "Stollar",
+    "description": "Zal va stol holatlarini boshqaring",
+    "addTable": "Stol qo‘shish",
+    "editTable": "Stolni tahrirlash",
+    "confirmDelete": "Bu stolni o‘chirasizmi? Buni ortga qaytarib bo‘lmaydi.",
+    "tableName": "Stol nomi",
+    "tableNamePlaceholder": "Masalan, T7",
+    "capacity": "O‘rinlar",
+    "status": "Holat",
+    "filterAll": "Barchasi",
+    "noTables": "Hozircha stollar yo‘q. Zalni boshqarishni boshlash uchun birinchisini qo‘shing.",
+    "occupied": "Band",
+    "free": "Bo‘sh"
+  },
+  "ordersPage": {
+    "title": "Buyurtmalar",
+    "description": "Buyurtmalarni yarating, kuzating va boshqaring",
+    "newOrder": "Yangi buyurtma",
+    "searchPlaceholder": "Buyurtma raqami bo‘yicha qidirish\u2026",
+    "filterAll": "Barcha holatlar",
+    "orderNumber": "Buyurtma",
+    "table": "Stol",
+    "itemsCount": "pozitsiya",
+    "createdAt": "Yaratilgan",
+    "subtotal": "Oraliq summa",
+    "discount": "Chegirma",
+    "tax": "Soliq",
+    "total": "Jami",
+    "items": "Pozitsiyalar",
+    "notes": "Izohlar",
+    "source": "Manba",
+    "empty": "Hozircha buyurtmalar yo‘q. Birinchisini yarating.",
+    "createOrderTitle": "Yangi buyurtma",
+    "createOrderDescription": "Stolni tanlang va mahsulotlarni qo‘shing",
+    "selectTable": "Stol",
+    "selectBranch": "Filial",
+    "tablePlaceholder": "Stolni tanlang",
+    "addItemLabel": "Mahsulot qo‘shish",
+    "productPlaceholder": "Mahsulotni tanlang",
+    "quantity": "Soni",
+    "addQty": "Soni oshirish",
+    "remQty": "Soni kamaytirish",
+    "remove": "O‘chirish",
+    "kitchen": "Oshxona",
+    "orderTotal": "Buyurtma jami",
+    "submitOrder": "Buyurtmani rasmiylashtirish",
+    "noProductsToAdd": "Mavjud mahsulotlar yo‘q. Avval ularni «Menyu» modulida qo‘shing.",
+    "detailTitle": "Buyurtma tafsilotlari",
+    "markPreparing": "Oshxonaga yuborish",
+    "markReady": "Tayyor deb belgilash",
+    "markServed": "Xizmat qilingan deb belgilash",
+    "markCompleted": "Yakunlangan deb belgilash",
+    "markCancelled": "Buyurtmani bekor qilish",
+    "markRefund": "Qaytarish",
+    "statusChanged": "Holat yangilandi",
+    "orderCreated": "Buyurtma yaratildi"
+  },
+  "paymentsPage": {
+    "title": "To‘lovlar",
+    "description": "To‘lovlarni qayd eting va kassani boshqaring",
+    "recordPayment": "To‘lovni qayd etish",
+    "amount": "Summa",
+    "method": "Usul",
+    "reference": "Havola",
+    "referencePlaceholder": "Tranzaksiya ID (ixtiyoriy)",
+    "paid": "To‘langan",
+    "remaining": "Qolgan",
+    "itemCount": "pozitsiya",
+    "paymentRecorded": "To‘lov qayd etildi",
+    "openOrdersTitle": "To‘lov uchun buyurtmalar",
+    "noOpenOrders": "To‘lov uchun ochiq buyurtmalar yo‘q",
+    "paymentsTitle": "So‘nggi to‘lovlar",
+    "noPayments": "Hozircha to‘lovlar yo‘q",
+    "cashShiftTitle": "Kassa smenasi",
+    "openShift": "Smenani ochish",
+    "closeShift": "Smenani yopish",
+    "openingBalance": "Boshlang‘ich qoldiq",
+    "closingBalance": "Haqiqiy qoldiq",
+    "expectedBalance": "Kutilgan qoldiq",
+    "openedAt": "Ochilgan",
+    "shiftOpen": "Smena ochiq",
+    "shiftClosed": "Ochiq smena yo‘q",
+    "shiftOpened": "Smena ochildi",
+    "shiftClosedOk": "Smena yopildi",
+    "payOnline": "Onlayn to‘lov (Payme)",
+    "paymeOpened": "Payme to‘lov sahifasi yangi oynada ochildi"
+  },
+  "kitchenPage": {
+    "title": "Oshxona",
+    "description": "Jonli buyurtmalar taxtasi",
+    "branch": "Filial",
+    "columnNew": "Yangi",
+    "columnPreparing": "Tayyorlanmoqda",
+    "columnReady": "Tayyor",
+    "itemCount": "{count, plural, one {# ta mahsulot} other {# ta mahsulot}}",
+    "table": "Stol",
+    "order": "Buyurtma",
+    "minutes": "{m} daq",
+    "justNow": "hozirgina",
+    "markPreparing": "Tayyorlashni boshlash",
+    "markReady": "Tayyor",
+    "markServed": "Yetkazildi",
+    "noTickets": "Taxta bo‘sh. Yangi buyurtmalar shu zahoti chiqadi.",
+    "live": "Jonli",
+    "reconnecting": "Qayta ulanmoqda…",
+    "ticketMoved": "Holat yangilandi",
+    "loadError": "Oshxona taxtasini yuklab bo‘lmadi"
+  }
+}

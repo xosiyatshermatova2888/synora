@@ -1,0 +1,109 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: synora-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-synora}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-synora}
+      POSTGRES_DB: ${POSTGRES_DB:-synora}
+    ports:
+      - "${POSTGRES_PORT:-55432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-synora} -d ${POSTGRES_DB:-synora}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: synora-backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-synora}:${POSTGRES_PASSWORD:-synora}@postgres:5432/${POSTGRES_DB:-synora}
+      PGHOST: postgres
+      PGPORT: "5432"
+      PGUSER: ${POSTGRES_USER:-synora}
+      S3_ENDPOINT: http://minio:9000
+      S3_BUCKET: ${S3_BUCKET:-synora-uploads}
+      S3_ACCESS_KEY: ${MINIO_ROOT_USER:-synora}
+      S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-synoraLocalPass1}
+      S3_USE_PATH_STYLE: "true"
+      S3_PUBLIC_URL_BASE: http://localhost:9000
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')\""]
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+
+  minio:
+    image: minio/minio:latest
+    container_name: synora-minio
+    restart: unless-stopped
+    command: ["server", "/data", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-synora}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-synoraLocalPass1}
+    ports:
+      - "${MINIO_PORT:-9000}:9000"    # S3 API (public-read objects / S3_PUBLIC_URL_BASE)
+      - "9001:9001"                   # web console (dev only)
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  minio-init:
+    image: minio/mc:latest
+    container_name: synora-minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      until mc alias set local http://minio:9000 $${MINIO_ROOT_USER} $${MINIO_ROOT_PASSWORD} >/dev/null 2>&1; do sleep 2; done;
+      mc mb --ignore-existing local/$${S3_BUCKET};
+      mc anonymous set download local/$${S3_BUCKET};
+      "
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-synora}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-synoraLocalPass1}
+      S3_BUCKET: ${S3_BUCKET:-synora-uploads}
+    restart: "no"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        API_URL: http://backend:8000
+    container_name: synora-frontend
+    restart: unless-stopped
+    environment:
+      API_URL: http://backend:8000
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  uploads_data:
+  minio_data:

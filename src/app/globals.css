@@ -1,26 +1,120 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* SYNORA brand tokens — single source of truth.
+     Mirrored in tailwind.config.ts under theme.extend.colors. */
+  --background: #f6f7fa;
+  --background-secondary: #eceff4;
+  --surface: #ffffff;
+  --border-default: #e2e6ee;
+  --accent-primary: #5b46e8;
+  --accent-ai: #0c9ec7;
+  --success: #16a34a;
+  --warning: #d97706;
+  --error: #dc2626;
+  --text-primary: #101828;
+  --text-secondary: #566170;
 }
 
 @theme inline {
   --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background-secondary: var(--background-secondary);
+  --color-surface: var(--surface);
+  --color-border-default: var(--border-default);
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-ai: var(--accent-ai);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  scrollbar-color: var(--border-default) transparent;
 }
 
 body {
   background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Brand gradient utilities */
+.text-brand-gradient {
+  background: linear-gradient(120deg, var(--accent-primary), var(--accent-ai));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bg-brand-gradient {
+  background: linear-gradient(120deg, var(--accent-primary), var(--accent-ai));
+}
+
+/* AI radial glow (subtle, ~12% opacity) */
+.ai-glow {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(91, 70, 232, 0.12),
+    rgba(12, 158, 199, 0.06),
+    transparent 70%
+  );
+}
+
+/* Order-flow animated connection line */
+.flow-line {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--accent-primary) 0 8px,
+    transparent 8px 16px
+  );
+  background-size: 400% 100%;
+  animation: flowDash 1.4s linear infinite;
+}
+
+@keyframes flowDash {
+  to {
+    background-position: 200% 0;
+  }
+}
+
+/* AI pulse indicator */
+.ai-pulse {
+  animation: aiPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes aiPulse {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(12, 158, 199, 0.45);
+  }
+  50% {
+    opacity: 0.85;
+    box-shadow: 0 0 0 6px rgba(12, 158, 199, 0);
+  }
+}
+
+/* Subtle grid backdrop for hero/dashboard */
+.grid-backdrop {
+  background-image:
+    linear-gradient(to right, rgba(16, 24, 40, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(16, 24, 40, 0.07) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .flow-line {
+    animation: none;
+  }
+  .ai-pulse {
+    animation: none;
+  }
 }

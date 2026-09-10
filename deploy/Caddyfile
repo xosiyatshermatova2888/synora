@@ -1,0 +1,38 @@
+# SYNORA production reverse proxy (Caddy).
+#
+# Public -> { /api/* , /files/* } -> backend:8000 (FastAPI)
+#        -> { /images/* }          -> minio:9000 (public-read bucket)
+#        -> everything else        -> frontend:3000 (Next.js)
+#
+# TLS is free and automatic (Let's Encrypt, via the caddy_data volume).
+# Placeholders are substituted from ${DOMAIN}/${PUBLIC_APP_URL} at startup.
+
+{$DOMAIN} {
+    encode gzip
+
+    @api     path /api/*
+    @files   path /files/*
+    handle @api {
+        reverse_proxy backend:8000
+    }
+    handle @files {
+        reverse_proxy backend:8000
+    }
+
+    @images path /images/*
+    handle @images {
+        # Serve the public-read MinIO bucket stripped of the /images prefix.
+        uri strip_prefix /images
+        reverse_proxy minio:9000 minio:9000
+    }
+
+    # Everything else is the Next.js frontend.
+    handle {
+        reverse_proxy frontend:3000
+    }
+
+    header {
+        -Server
+        X-Content-Type-Options nosniff
+    }
+}
