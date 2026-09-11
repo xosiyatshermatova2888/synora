@@ -614,7 +614,14 @@
     "costPrice": "Cost price",
     "category": "Category",
     "noProducts": "No products in this category yet",
-    "noCategories": "No categories yet. Create one to group your products."
+    "noCategories": "No categories yet. Create one to group your products.",
+    "image": "Image",
+    "uploadImage": "Upload photo",
+    "changeImage": "Change photo",
+    "removeImage": "Remove photo",
+    "uploading": "Uploading...",
+    "uploadError": "Couldn't upload the image. Try again.",
+    "imageHint": "JPG, PNG or WebP, up to 5 MB"
   },
   "tablesPage": {
     "title": "Tables",

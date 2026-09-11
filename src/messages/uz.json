@@ -614,7 +614,14 @@
     "costPrice": "Tannarxi",
     "category": "Kategoriya",
     "noProducts": "Bu kategoriyada hozircha mahsulotlar yo‘q",
-    "noCategories": "Hozircha kategoriyalar yo‘q. Mahsulotlarni guruhlash uchun birinchisini yarating."
+    "noCategories": "Hozircha kategoriyalar yo‘q. Mahsulotlarni guruhlash uchun birinchisini yarating.",
+    "image": "Rasm",
+    "uploadImage": "Rasm yuklash",
+    "changeImage": "Rasmni almashtirish",
+    "removeImage": "Rasmni o‘chirish",
+    "uploading": "Yuklanmoqda...",
+    "uploadError": "Rasmni yuklab bo‘lmadi. Qaytadan urinib ko‘ring.",
+    "imageHint": "JPG, PNG yoki WebP, 5 MB gacha"
   },
   "tablesPage": {
     "title": "Stollar",

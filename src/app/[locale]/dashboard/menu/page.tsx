@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, ImageOff } from "lucide-react";
 import {
   CategoryOut,
   ProductOut,
@@ -17,6 +17,7 @@ import Modal from "@/components/Modal";
 import Button from "@/components/Button";
 import StateView from "@/components/dashboard/StateView";
 import PageHeader from "@/components/dashboard/PageHeader";
+import ImageUploadField from "@/components/ImageUploadField";
 
 type ModalState =
   | { type: "createCategory" }
@@ -103,9 +104,19 @@ export default function MenuPage() {
     setTimeout(() => setNotice(null), 3000);
   };
 
-  const handleCreateCategory = async (name: string, description: string, sortOrder: number) => {
+  const handleCreateCategory = async (
+    name: string,
+    description: string,
+    sortOrder: number,
+    imageUrl: string | null
+  ) => {
     try {
-      await menuApi.createCategory({ name, description: description || null, sort_order: sortOrder });
+      await menuApi.createCategory({
+        name,
+        description: description || null,
+        sort_order: sortOrder,
+        image_url: imageUrl,
+      });
       setModal(null);
       flash(tc("actions.saved"));
       loadCategories();
@@ -118,13 +129,15 @@ export default function MenuPage() {
     category: CategoryOut,
     name: string,
     description: string,
-    sortOrder: number
+    sortOrder: number,
+    imageUrl: string | null
   ) => {
     try {
       await menuApi.updateCategory(category.id, {
         name,
         description: description || null,
         sort_order: sortOrder,
+        image_url: imageUrl,
       });
       setModal(null);
       flash(tc("actions.saved"));
@@ -153,6 +166,7 @@ export default function MenuPage() {
     costPrice: string;
     categoryId: string | null;
     available: boolean;
+    imageUrl: string | null;
   }) => {
     try {
       await menuApi.createProduct({
@@ -162,6 +176,7 @@ export default function MenuPage() {
         cost_price: payload.costPrice || "0.00",
         category_id: payload.categoryId,
         is_available: payload.available,
+        image_url: payload.imageUrl,
       });
       setModal(null);
       flash(tc("actions.saved"));
@@ -180,6 +195,7 @@ export default function MenuPage() {
       costPrice: string;
       categoryId: string | null;
       available: boolean;
+      imageUrl: string | null;
     }
   ) => {
     try {
@@ -190,6 +206,7 @@ export default function MenuPage() {
         cost_price: payload.costPrice || "0.00",
         category_id: payload.categoryId,
         is_available: payload.available,
+        image_url: payload.imageUrl,
       });
       setModal(null);
       flash(tc("actions.saved"));
@@ -334,6 +351,20 @@ export default function MenuPage() {
                     className="flex flex-col justify-between gap-3 rounded-lg border border-border-default bg-background p-4"
                   >
                     <div>
+                      <div className="mb-3 h-28 w-full overflow-hidden rounded-lg bg-background-secondary">
+                        {product.image_url ? (
+                          // eslint-disable-next-line @next/next/no-img-element -- see ImageUploadField
+                          <img
+                            src={product.image_url}
+                            alt={product.name}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-text-secondary/40">
+                            <ImageOff className="h-6 w-6" aria-hidden="true" />
+                          </div>
+                        )}
+                      </div>
                       <div className="flex items-start justify-between gap-2">
                         <p className="font-medium text-text-primary">
                           {product.name}
@@ -405,7 +436,9 @@ export default function MenuPage() {
         <CategoryFormModal
           title={t("addCategory")}
           onClose={() => setModal(null)}
-          onSubmit={(name, desc, order) => handleCreateCategory(name, desc, order)}
+          onSubmit={(name, desc, order, imageUrl) =>
+            handleCreateCategory(name, desc, order, imageUrl)
+          }
         />
       )}
 
@@ -414,8 +447,8 @@ export default function MenuPage() {
           title={t("editCategory")}
           initial={modal.category}
           onClose={() => setModal(null)}
-          onSubmit={(name, desc, order) =>
-            handleUpdateCategory(modal.category, name, desc, order)
+          onSubmit={(name, desc, order, imageUrl) =>
+            handleUpdateCategory(modal.category, name, desc, order, imageUrl)
           }
         />
       )}
@@ -489,13 +522,19 @@ function CategoryFormModal({
   title: string;
   initial?: CategoryOut;
   onClose: () => void;
-  onSubmit: (name: string, description: string, sortOrder: number) => void;
+  onSubmit: (
+    name: string,
+    description: string,
+    sortOrder: number,
+    imageUrl: string | null
+  ) => void;
 }) {
   const t = useTranslations("menuPage");
   const tc = useTranslations("common");
   const [name, setName] = useState(initial?.name ?? "");
   const [description, setDescription] = useState(initial?.description ?? "");
   const [sortOrder, setSortOrder] = useState(String(initial?.sort_order ?? 0));
+  const [imageUrl, setImageUrl] = useState<string | null>(initial?.image_url ?? null);
 
   return (
     <Modal open onClose={onClose} title={title}>
@@ -503,9 +542,10 @@ function CategoryFormModal({
         className="space-y-4"
         onSubmit={(e) => {
           e.preventDefault();
-          onSubmit(name.trim(), description.trim(), parseInt(sortOrder, 10) || 0);
+          onSubmit(name.trim(), description.trim(), parseInt(sortOrder, 10) || 0, imageUrl);
         }}
       >
+        <ImageUploadField value={imageUrl} onChange={setImageUrl} label={t("image")} />
         <div>
           <label className="mb-1 block text-sm font-medium text-text-primary">
             {t("categoryName")}
@@ -564,6 +604,7 @@ interface ProductFormValues {
   costPrice: string;
   categoryId: string | null;
   available: boolean;
+  imageUrl: string | null;
 }
 
 function ProductFormModal({
@@ -591,6 +632,7 @@ function ProductFormModal({
     initial?.category_id ?? defaultCategoryId ?? ""
   );
   const [available, setAvailable] = useState(initial?.is_available ?? true);
+  const [imageUrl, setImageUrl] = useState<string | null>(initial?.image_url ?? null);
 
   return (
     <Modal open onClose={onClose} title={title}>
@@ -605,9 +647,11 @@ function ProductFormModal({
             costPrice,
             categoryId: categoryId || null,
             available,
+            imageUrl,
           });
         }}
       >
+        <ImageUploadField value={imageUrl} onChange={setImageUrl} label={t("image")} />
         <div>
           <label className="mb-1 block text-sm font-medium text-text-primary">
             {t("productName")}

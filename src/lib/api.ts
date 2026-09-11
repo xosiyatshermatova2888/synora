@@ -230,12 +230,14 @@ export interface CategoryOut {
 export interface CategoryCreate {
   name: string;
   description?: string | null;
+  image_url?: string | null;
   sort_order?: number;
 }
 
 export interface CategoryUpdate {
   name?: string;
   description?: string | null;
+  image_url?: string | null;
   sort_order?: number;
   is_active?: boolean;
 }
@@ -246,6 +248,7 @@ export interface ProductCreate {
   description?: string | null;
   price: string;
   cost_price?: string;
+  image_url?: string | null;
   is_available?: boolean;
   modifier_group_ids?: string[];
 }
@@ -256,6 +259,7 @@ export interface ProductUpdate {
   description?: string | null;
   price?: string;
   cost_price?: string;
+  image_url?: string | null;
   is_available?: boolean;
   is_active?: boolean;
 }
@@ -745,5 +749,38 @@ export const paymentsApi = {
       method: "POST",
       body: { actual_closing_balance: actualClosingBalance, version },
     });
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Upload endpoint (multipart/form-data — bypasses the JSON `request` helper,
+// but shares its auth token + silent-refresh-on-401 behavior).
+// ---------------------------------------------------------------------------
+export interface UploadResponse {
+  url: string;
+  filename: string;
+}
+
+export const uploadsApi = {
+  async uploadImage(file: File): Promise<UploadResponse> {
+    const form = new FormData();
+    form.append("file", file);
+
+    const send = (token: string | null) =>
+      fetch(`${API_BASE}/v1/uploads/image`, {
+        method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        body: form,
+      });
+
+    let res = await send(accessToken);
+    if (res.status === 401) {
+      const refreshed = await refreshSession();
+      res = refreshed ? await send(accessToken) : res;
+    }
+    if (!res.ok) {
+      throw new ApiError(res.status, await parseError(res));
+    }
+    return (await res.json()) as UploadResponse;
   },
 };

@@ -37,7 +37,7 @@ export default function LoginForm() {
               restaurant_name: restaurantName,
             });
       setAccessToken(token.access_token);
-      router.push("/");
+      router.push("/dashboard");
     } catch (err) {
       if (err instanceof ApiError) {
         if (err.status === 401) setError(t("invalidCredentials"));
