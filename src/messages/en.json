@@ -584,7 +584,14 @@
       "tablesLabel": "Tables",
       "paymentsLabel": "Payments",
       "statusTitle": "Status",
-      "loadError": "Failed to load dashboard"
+      "loadError": "Failed to load dashboard",
+      "welcome": "Welcome back, {name}!",
+      "quickStart": "Steps to get started",
+      "stepRestaurantCreated": "Restaurant created",
+      "stepMenuAdded": "Menu items added",
+      "stepTableAdded": "Table added",
+      "stepFirstOrder": "First order created",
+      "allSet": "All set! Every step is done 🎉"
     }
   },
   "menuPage": {

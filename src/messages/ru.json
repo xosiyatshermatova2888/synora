@@ -584,7 +584,14 @@
       "tablesLabel": "Столы",
       "paymentsLabel": "Оплата",
       "statusTitle": "Статус",
-      "loadError": "Не удалось загрузить панель управления"
+      "loadError": "Не удалось загрузить панель управления",
+      "welcome": "Добро пожаловать, {name}!",
+      "quickStart": "Шаги для начала работы",
+      "stepRestaurantCreated": "Ресторан создан",
+      "stepMenuAdded": "В меню добавлены позиции",
+      "stepTableAdded": "Добавлен стол",
+      "stepFirstOrder": "Создан первый заказ",
+      "allSet": "Отлично! Все шаги выполнены 🎉"
     }
   },
   "menuPage": {

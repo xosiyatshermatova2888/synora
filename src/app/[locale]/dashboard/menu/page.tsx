@@ -348,7 +348,7 @@ export default function MenuPage() {
                 {products.data.map((product) => (
                   <li
                     key={product.id}
-                    className="flex flex-col justify-between gap-3 rounded-lg border border-border-default bg-background p-4"
+                    className="flex flex-col justify-between gap-3 rounded-lg border border-border-default bg-background p-4 shadow-sm transition-shadow hover:shadow-md"
                   >
                     <div>
                       <div className="mb-3 h-28 w-full overflow-hidden rounded-lg bg-background-secondary">

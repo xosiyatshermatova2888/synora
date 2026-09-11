@@ -584,7 +584,14 @@
       "tablesLabel": "Stollar",
       "paymentsLabel": "To‘lovlar",
       "statusTitle": "Holat",
-      "loadError": "Panelni yuklab bo‘lmadi"
+      "loadError": "Panelni yuklab bo‘lmadi",
+      "welcome": "Xush kelibsiz, {name}!",
+      "quickStart": "Boshlash uchun qadamlar",
+      "stepRestaurantCreated": "Restoran yaratildi",
+      "stepMenuAdded": "Menyuga mahsulot qo‘shildi",
+      "stepTableAdded": "Stol qo‘shildi",
+      "stepFirstOrder": "Birinchi buyurtma yaratildi",
+      "allSet": "Ajoyib! Barcha qadamlar bajarildi 🎉"
     }
   },
   "menuPage": {

@@ -88,12 +88,15 @@ function SidebarContent({
             key={item.href}
             href={item.href}
             onClick={onNavigate}
-            className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+            className={`relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
               active
                 ? "bg-accent-primary/10 text-accent-primary"
                 : "text-text-secondary hover:bg-background-secondary hover:text-text-primary"
             }`}
           >
+            {active && (
+              <span className="absolute -left-4 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-brand-gradient" />
+            )}
             <Icon className="h-5 w-5 shrink-0" />
             <span>{t(`nav.${item.labelKey}`)}</span>
           </Link>
@@ -129,7 +132,9 @@ export default function DashboardShell({
       {/* Desktop sidebar */}
       <aside className="hidden h-screen lg:flex lg:w-64 lg:shrink-0 lg:flex-col lg:border-r lg:border-border-default">
         <Link href="/dashboard" className="flex h-16 items-center gap-2 px-6">
-          <div className="h-8 w-8 rounded-lg bg-accent-primary" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-gradient text-sm font-bold text-white shadow-sm">
+            S
+          </div>
           <span className="text-lg font-bold text-text-primary">SYNORA</span>
         </Link>
         <SidebarContent
@@ -169,7 +174,9 @@ export default function DashboardShell({
               <div className="flex h-16 items-center justify-between px-6">
                 <Link href="/dashboard" onClick={() => setMobileOpen(false)}>
                   <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 rounded-lg bg-accent-primary" />
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-gradient text-sm font-bold text-white shadow-sm">
+                      S
+                    </div>
                     <span className="text-lg font-bold text-text-primary">
                       SYNORA
                     </span>
@@ -207,7 +214,7 @@ export default function DashboardShell({
 
       {/* Main area */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-16 shrink-0 items-center gap-4 border-b border-border-default px-4 lg:px-6">
+        <header className="flex h-16 shrink-0 items-center gap-4 border-b border-border-default bg-surface/80 px-4 backdrop-blur-sm lg:px-6">
           <button
             onClick={() => setMobileOpen(true)}
             aria-label={t("nav.open")}
@@ -235,7 +242,7 @@ export default function DashboardShell({
             <span className="hidden text-sm font-medium text-text-primary sm:block">
               {user?.full_name}
             </span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-primary/20 text-xs font-bold text-accent-primary">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-gradient text-xs font-bold text-white shadow-sm">
               {user?.full_name?.charAt(0)?.toUpperCase()}
             </div>
           </div>
