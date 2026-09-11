@@ -632,6 +632,7 @@
     "price": "Narxi",
     "costPrice": "Tannarxi",
     "category": "Kategoriya",
+    "available": "Mavjud",
     "noProducts": "Bu kategoriyada hozircha mahsulotlar yo‘q",
     "noCategories": "Hozircha kategoriyalar yo‘q. Mahsulotlarni guruhlash uchun birinchisini yarating.",
     "image": "Rasm",

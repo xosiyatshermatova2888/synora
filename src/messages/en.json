@@ -632,6 +632,7 @@
     "price": "Price",
     "costPrice": "Cost price",
     "category": "Category",
+    "available": "Available",
     "noProducts": "No products in this category yet",
     "noCategories": "No categories yet. Create one to group your products.",
     "image": "Image",
