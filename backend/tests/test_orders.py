@@ -17,11 +17,11 @@ from app.models.order import Order
 from tests.conftest import owner_headers, waiter_headers
 
 
-def _order_payload(world, *, product_id=None, table_id=None, modifiers=None, discount="0.00", quantity=1):
+def _order_payload(world, *, product_id=None, table_id=None, modifiers=None, discount="0.00", quantity=1, source="POS"):
     return {
         "branch_id": str(world.branch_a.id),
         "table_id": str(table_id) if table_id else None,
-        "source": "POS",
+        "source": source,
         "discount": discount,
         "items": [
             {
@@ -61,6 +61,22 @@ class TestCreateOrder:
         row = await db.scalar(select(Order).where(Order.id == uuid.UUID(order["id"])))
         assert row is not None
         assert row.order_number == 1
+
+    def test_waiter_order_gets_10pct_service_charge(self, client, world):
+        res = _create(client, world, headers=waiter_headers(world), source="WAITER")
+        assert res.status_code == 201, res.text
+        order = res.json()
+        assert order["subtotal"] == "45000.00"
+        assert order["service_charge"] == "4500.00"
+        assert order["tax"] == "0.00"  # kept separate — never merged with tax
+        assert order["total"] == "49500.00"
+
+    def test_pos_order_has_no_service_charge(self, client, world):
+        res = _create(client, world, source="POS")
+        assert res.status_code == 201, res.text
+        order = res.json()
+        assert order["service_charge"] == "0.00"
+        assert order["total"] == "45000.00"
 
     def test_order_total_includes_modifier_price(self, client, world):
         res = _create(

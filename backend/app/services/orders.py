@@ -36,6 +36,12 @@ from app.utils.errors import BusinessRuleError, ConflictError, NotFoundError
 
 IDEMPOTENCY_WINDOW = timedelta(hours=24)
 
+# Flat table-service charge on waiter-placed orders only (POS/QR/etc. don't
+# carry a service charge). Not yet restaurant-configurable — a fixed 10% per
+# current product decision; if that needs to vary per restaurant later, this
+# is the one place to make it a setting.
+WAITER_SERVICE_CHARGE_RATE = Decimal("0.10")
+
 # Allowed state machine (Section 12). A completed order may later be refunded;
 # a partially-paid order may later complete or refund.
 _TRANSITIONS: dict[str, set[str]] = {
@@ -170,7 +176,12 @@ async def create_order(
 
     from app.services.pricing import calculate_totals
 
-    totals = calculate_totals(items_total, payload.discount)
+    service_charge_rate = (
+        WAITER_SERVICE_CHARGE_RATE if payload.source == "WAITER" else Decimal("0.00")
+    )
+    totals = calculate_totals(
+        items_total, payload.discount, service_charge_rate=service_charge_rate
+    )
 
     next_number = await _next_order_number(session, restaurant_id)
     order = Order(
@@ -183,6 +194,7 @@ async def create_order(
         subtotal=totals.subtotal,
         discount=totals.discount,
         tax=totals.tax,
+        service_charge=totals.service_charge,
         total=totals.total,
         notes=payload.notes,
         waiter_user_id=current_user_id,

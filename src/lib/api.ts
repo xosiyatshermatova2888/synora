@@ -341,6 +341,7 @@ export interface OrderOut {
   subtotal: string;
   discount: string;
   tax: string;
+  service_charge: string;
   total: string;
   currency: string;
   notes: string | null;

@@ -749,6 +749,14 @@ function OrderDetailModal({
             <dt className="text-text-secondary">{t("tax")}</dt>
             <dd className="font-medium text-text-primary">{formatMoney(order.tax, currency)}</dd>
           </div>
+          {parseFloat(order.service_charge) > 0 && (
+            <div className="flex justify-between">
+              <dt className="text-text-secondary">{t("serviceCharge")}</dt>
+              <dd className="font-medium text-text-primary">
+                {formatMoney(order.service_charge, currency)}
+              </dd>
+            </div>
+          )}
           <div className="flex justify-between border-t border-border-default pt-1">
             <dt className="font-semibold text-text-primary">{t("total")}</dt>
             <dd className="font-bold text-accent-primary">{formatMoney(order.total, currency)}</dd>

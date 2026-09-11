@@ -83,6 +83,12 @@ class Order(Base, TimestampMixin):
     subtotal: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal("0.00"), nullable=False)
     discount: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal("0.00"), nullable=False)
     tax: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal("0.00"), nullable=False)
+    # Waiter-table service charge (Section 12A note: kept separate from `tax`
+    # — one is a government levy, the other is kept by the house/staff; never
+    # conflate them on the receipt or in accounting). Currently a flat 10% on
+    # WAITER-sourced orders only (see services/orders.py); 0 for every other
+    # source.
+    service_charge: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal("0.00"), nullable=False)
     total: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal("0.00"), nullable=False)
     currency: Mapped[str] = mapped_column(String(3), default="UZS", nullable=False)
 

@@ -67,6 +67,7 @@ class OrderOut(BaseModel):
     subtotal: Decimal
     discount: Decimal
     tax: Decimal
+    service_charge: Decimal
     total: Decimal
     currency: str
     notes: str | None

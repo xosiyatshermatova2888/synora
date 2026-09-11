@@ -178,6 +178,12 @@ export default function ReceiptPage() {
             <span>{formatMoney(order.tax, order.currency)}</span>
           </div>
         )}
+        {parseFloat(order.service_charge) > 0 && (
+          <div className="flex justify-between">
+            <span>{t("serviceCharge")}</span>
+            <span>{formatMoney(order.service_charge, order.currency)}</span>
+          </div>
+        )}
         <div className="my-2 border-t border-dashed border-black" />
         <div className="flex justify-between text-base font-bold">
           <span>{t("total")}</span>
