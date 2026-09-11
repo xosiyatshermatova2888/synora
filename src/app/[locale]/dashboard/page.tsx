@@ -44,7 +44,8 @@ export default function DashboardOverviewPage() {
           await Promise.all([
             restaurantsApi.getMine(),
             branchesApi.list().catch(() => [] as BranchOut[]),
-            ordersApi.list({ limit: 200 }),
+            // Backend caps this endpoint's limit at 100 (Query(..., le=100)).
+            ordersApi.list({ limit: 100 }),
             tablesApi.list(),
             menuApi.listProducts(1, 0),
           ]);
