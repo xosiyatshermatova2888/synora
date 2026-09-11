@@ -517,6 +517,7 @@
     },
     "confirmDelete": "Bu elementni o‘chirasizmi? Buni ortga qaytarib bo‘lmaydi.",
     "genericError": "Nimadir noto‘g‘ri ketdi. Qayta urinib ko‘ring.",
+    "printReceipt": "Chek chiqarish",
     "orderStatus": {
       "DRAFT": "Qoralama",
       "OPEN": "Ochiq",
@@ -786,5 +787,20 @@
     "empty": "Hozircha xodimlar yo‘q",
     "inactive": "Faol emas",
     "noPermission": "Sizda xodimlar ro‘yxatini ko‘rish huquqi yo‘q."
+  },
+  "receiptPage": {
+    "missingOrder": "Buyurtma ko‘rsatilmagan",
+    "close": "Yopish",
+    "print": "Chop etish",
+    "phone": "Tel",
+    "orderNumber": "Buyurtma",
+    "table": "Stol",
+    "subtotal": "Oraliq summa",
+    "discount": "Chegirma",
+    "tax": "Soliq",
+    "total": "JAMI",
+    "paymentMethod": "To‘lov usuli",
+    "paid": "To‘landi",
+    "thankYou": "Xaridingiz uchun rahmat!"
   }
 }

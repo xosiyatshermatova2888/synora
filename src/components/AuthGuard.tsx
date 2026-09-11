@@ -6,16 +6,12 @@ import { usePathname, useRouter } from "@/i18n/routing";
 import { useAuth } from "@/lib/auth-context";
 
 /**
- * Auth gate for /waiter — same redirect logic as DashboardGuard, but
- * deliberately does NOT render DashboardShell: the waiter flow is a
- * distraction-free, full-screen screen with its own minimal header, not
- * the full dashboard with its sidebar and other modules.
+ * Auth gate for standalone (non-dashboard-shell) routes — /waiter, /receipt.
+ * Same redirect-to-login logic as DashboardGuard, but renders children
+ * directly with no sidebar/header: these are distraction-free, single-purpose
+ * screens, not corners of the admin panel.
  */
-export default function WaiterGuard({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const { status } = useAuth();
   const pathname = usePathname();
   const router = useRouter();

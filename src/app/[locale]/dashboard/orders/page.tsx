@@ -22,6 +22,7 @@ import Modal from "@/components/Modal";
 import Button from "@/components/Button";
 import StateView from "@/components/dashboard/StateView";
 import PageHeader from "@/components/dashboard/PageHeader";
+import ReceiptButton from "@/components/ReceiptButton";
 
 const ORDER_STATUSES = ["DRAFT", "OPEN", "PARTIALLY_PAID", "COMPLETED", "CANCELLED", "REFUNDED"];
 
@@ -762,6 +763,10 @@ function OrderDetailModal({
 
         {(canUpdate || order.status !== "REFUNDED") && (
           <div className="flex flex-wrap justify-end gap-2">
+            <ReceiptButton
+              orderId={order.id}
+              className="flex items-center gap-1.5 rounded-xl border border-border-default px-4 py-2 text-sm font-medium text-text-secondary hover:border-accent-primary/60 hover:text-accent-primary"
+            />
             {canUpdate &&
               kitchenActions.map((action) => (
                 <Button key={action.key} variant="secondary" size="sm"

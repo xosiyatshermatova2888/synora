@@ -517,6 +517,7 @@
     },
     "confirmDelete": "Delete this item? This cannot be undone.",
     "genericError": "Something went wrong. Please try again.",
+    "printReceipt": "Print receipt",
     "orderStatus": {
       "DRAFT": "Draft",
       "OPEN": "Open",
@@ -786,5 +787,20 @@
     "empty": "No staff yet",
     "inactive": "Inactive",
     "noPermission": "You don't have permission to view the staff list."
+  },
+  "receiptPage": {
+    "missingOrder": "No order specified",
+    "close": "Close",
+    "print": "Print",
+    "phone": "Tel",
+    "orderNumber": "Order",
+    "table": "Table",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "tax": "Tax",
+    "total": "TOTAL",
+    "paymentMethod": "Payment method",
+    "paid": "Paid",
+    "thankYou": "Thank you for your purchase!"
   }
 }

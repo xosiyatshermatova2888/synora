@@ -1,7 +1,7 @@
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { AuthProvider } from "@/lib/auth-context";
-import WaiterGuard from "@/components/waiter/WaiterGuard";
+import AuthGuard from "@/components/AuthGuard";
 import { routing } from "@/i18n/routing";
 
 export function generateStaticParams() {
@@ -23,7 +23,7 @@ export default async function WaiterLayout({
 
   return (
     <AuthProvider>
-      <WaiterGuard>{children}</WaiterGuard>
+      <AuthGuard>{children}</AuthGuard>
     </AuthProvider>
   );
 }

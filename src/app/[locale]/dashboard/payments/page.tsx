@@ -21,6 +21,7 @@ import Modal from "@/components/Modal";
 import Button from "@/components/Button";
 import StateView from "@/components/dashboard/StateView";
 import PageHeader from "@/components/dashboard/PageHeader";
+import ReceiptButton from "@/components/ReceiptButton";
 
 const PAYMENT_METHODS = ["CASH", "CARD", "TRANSFER", "QR"];
 
@@ -286,6 +287,7 @@ export default function PaymentsPage() {
                             </span>
                           </span>
                         </div>
+                        <ReceiptButton orderId={entry.order.id} />
                         {canUpdateOrders && (
                           <Button
                             size="sm"
