@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Plus, Minus, Trash2, ChevronDown, ChevronUp, Search } from "lucide-react";
+import { Plus, Minus, Trash2, ChevronDown, ChevronUp, Search, Table2 } from "lucide-react";
 import {
   BranchOut,
   OrderOut,
@@ -32,6 +32,16 @@ const STATUS_STYLES: Record<string, string> = {
   COMPLETED: "bg-success/10 text-success",
   CANCELLED: "bg-error/10 text-error",
   REFUNDED: "bg-background-secondary text-text-secondary",
+};
+
+// Left accent bar per row, so an order's status reads at a glance while scanning the list.
+const STATUS_BAR_STYLES: Record<string, string> = {
+  DRAFT: "border-l-text-secondary/30",
+  OPEN: "border-l-accent-primary",
+  PARTIALLY_PAID: "border-l-warning",
+  COMPLETED: "border-l-success",
+  CANCELLED: "border-l-error",
+  REFUNDED: "border-l-text-secondary/30",
 };
 
 interface CartLine {
@@ -213,7 +223,10 @@ export default function OrdersPage() {
           <div className="overflow-hidden rounded-xl border border-border-default bg-surface">
             <ul className="divide-y divide-border-default">
               {shown.map((order) => (
-                <li key={order.id}>
+                <li
+                  key={order.id}
+                  className={`border-l-4 ${STATUS_BAR_STYLES[order.status] ?? "border-l-transparent"}`}
+                >
                   <button
                     onClick={() => setDetailOrder(order)}
                     className="flex w-full flex-wrap items-center gap-x-6 gap-y-2 px-5 py-4 text-left transition-colors hover:bg-background"
@@ -232,7 +245,7 @@ export default function OrdersPage() {
                       {statusToText(order.status)}
                     </span>
                     <span className="flex items-center gap-2 text-sm text-text-secondary">
-                      <ChevronDown className="h-4 w-4" />
+                      <Table2 className="h-4 w-4" aria-hidden="true" />
                       {order.table_id ? tableMap.get(order.table_id) ?? t("table") : "—"}
                     </span>
                     <span className="text-sm text-text-secondary">

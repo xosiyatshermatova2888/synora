@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Plus, Pencil, Users } from "lucide-react";
+import { Plus, Pencil, Table2, Armchair } from "lucide-react";
 import { BranchOut, TableOut, branchesApi, tablesApi } from "@/lib/api";
 import type { LoadState } from "@/lib/load-state";
 import { loadingState, errorState, dataState } from "@/lib/load-state";
@@ -20,6 +20,16 @@ const STATUS_STYLES: Record<string, string> = {
   RESERVED: "bg-accent-primary/10 text-accent-primary",
   DISABLED: "bg-background-secondary text-text-secondary",
 };
+
+// Card-level wash so a table's status reads at a glance, not just from its badge.
+const STATUS_CARD_STYLES: Record<string, string> = {
+  AVAILABLE: "border-success/25 bg-success/[0.04]",
+  OCCUPIED: "border-warning/25 bg-warning/[0.04]",
+  RESERVED: "border-accent-primary/25 bg-accent-primary/[0.04]",
+  DISABLED: "border-border-default bg-background-secondary/50",
+};
+
+const MAX_SEAT_ICONS = 6;
 
 export default function TablesPage() {
   const t = useTranslations("tablesPage");
@@ -189,21 +199,16 @@ export default function TablesPage() {
             {shown.map((table) => (
               <div
                 key={table.id}
-                className="rounded-xl border border-border-default bg-surface p-4"
+                className={`group relative flex flex-col rounded-xl border p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${
+                  STATUS_CARD_STYLES[table.status] ??
+                  "border-border-default bg-surface"
+                }`}
               >
                 <div className="flex items-start justify-between gap-2">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-primary/10">
-                      <Users className="h-5 w-5 text-accent-primary" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-text-primary">
-                        {table.name}
-                      </p>
-                      <p className="text-xs text-text-secondary">
-                        {t("capacity")}: {table.capacity}
-                      </p>
-                    </div>
+                  <div
+                    className={`flex h-12 w-12 items-center justify-center rounded-xl ${STATUS_STYLES[table.status] ?? "bg-background-secondary text-text-secondary"}`}
+                  >
+                    <Table2 className="h-6 w-6" />
                   </div>
                   <span
                     className={`rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${STATUS_STYLES[table.status] ?? "bg-background-secondary text-text-secondary"}`}
@@ -212,12 +217,31 @@ export default function TablesPage() {
                   </span>
                 </div>
 
+                <p className="mt-3 font-semibold text-text-primary">
+                  {table.name}
+                </p>
+                <div className="mt-1.5 flex items-center gap-1 text-text-secondary">
+                  {Array.from({
+                    length: Math.min(table.capacity, MAX_SEAT_ICONS),
+                  }).map((_, i) => (
+                    <Armchair key={i} className="h-3.5 w-3.5" aria-hidden="true" />
+                  ))}
+                  {table.capacity > MAX_SEAT_ICONS && (
+                    <span className="text-xs font-medium">
+                      +{table.capacity - MAX_SEAT_ICONS}
+                    </span>
+                  )}
+                  <span className="sr-only">
+                    {t("capacity")}: {table.capacity}
+                  </span>
+                </div>
+
                 {(canUpdate || canCreate) && (
                   <div className="mt-3 flex justify-end gap-1">
                     <button
                       onClick={() => setModal({ type: "edit", table })}
                       aria-label={t("editTable")}
-                      className="flex h-7 w-7 items-center justify-center rounded-lg text-text-secondary hover:bg-background-secondary hover:text-accent-primary"
+                      className="flex h-7 w-7 items-center justify-center rounded-lg text-text-secondary hover:bg-surface hover:text-accent-primary"
                     >
                       <Pencil className="h-3.5 w-3.5" />
                     </button>

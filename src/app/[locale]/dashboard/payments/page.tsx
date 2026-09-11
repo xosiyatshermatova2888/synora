@@ -57,7 +57,7 @@ export default function PaymentsPage() {
     if (!branchId) return;
     setOrders(loadingState());
     try {
-      const page = await ordersApi.list({ branch_id: branchId, limit: 200, offset: 0 });
+      const page = await ordersApi.list({ branch_id: branchId, limit: 100, offset: 0 });
       const active = page.items.filter((o) => ACTIVE_STATUSES.includes(o.status));
       const withPayments: OrderWithPayments[] = await Promise.all(
         active.map(async (order) => {
@@ -105,7 +105,7 @@ export default function PaymentsPage() {
     if (branchId === null) return;
     void (async () => {
       try {
-        const page = await ordersApi.list({ branch_id: branchId, limit: 200, offset: 0 });
+        const page = await ordersApi.list({ branch_id: branchId, limit: 100, offset: 0 });
         const active = page.items.filter((o) => ACTIVE_STATUSES.includes(o.status));
         const withPayments: OrderWithPayments[] = await Promise.all(
           active.map(async (order) => {
@@ -242,7 +242,9 @@ export default function PaymentsPage() {
         {/* Orders to collect */}
         <section className="lg:col-span-2">
           <h2 className="mb-3 flex items-center gap-2 text-base font-semibold text-text-primary">
-            <Wallet className="h-5 w-5 text-accent-primary" />
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-primary/10 text-accent-primary">
+              <Wallet className="h-4.5 w-4.5" />
+            </span>
             {t("openOrdersTitle")}
           </h2>
 
@@ -256,7 +258,7 @@ export default function PaymentsPage() {
                   .map((entry) => (
                     <li
                       key={entry.order.id}
-                      className="rounded-xl border border-border-default bg-surface p-4"
+                      className="rounded-xl border border-border-default bg-surface p-4 shadow-sm transition-shadow hover:shadow-md"
                     >
                       <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
                         <div className="min-w-24">
@@ -321,7 +323,9 @@ export default function PaymentsPage() {
         <aside className="space-y-4">
           <section className="rounded-xl border border-border-default bg-surface p-5">
             <h2 className="mb-3 flex items-center gap-2 text-base font-semibold text-text-primary">
-              <Banknote className="h-5 w-5 text-accent-primary" />
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-success/10 text-success">
+                <Banknote className="h-4.5 w-4.5" />
+              </span>
               {t("cashShiftTitle")}
             </h2>
 
@@ -347,7 +351,8 @@ export default function PaymentsPage() {
                     </span>
                   </div>
                 )}
-                <div className="mt-1 rounded-full bg-accent-primary/10 px-2.5 py-1 text-center text-xs font-semibold text-accent-primary">
+                <div className="mt-1 flex items-center justify-center gap-1.5 rounded-full bg-success/10 px-2.5 py-1 text-center text-xs font-semibold text-success">
+                  <span className="h-1.5 w-1.5 rounded-full bg-success" />
                   {t("shiftOpen")}
                 </div>
                 {canFinanceManage && (
@@ -380,7 +385,9 @@ export default function PaymentsPage() {
           {canFinanceRead && (
             <section className="rounded-xl border border-border-default bg-surface p-5">
               <h2 className="mb-3 flex items-center gap-2 text-base font-semibold text-text-primary">
-                <Receipt className="h-5 w-5 text-accent-primary" />
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-ai/10 text-accent-ai">
+                  <Receipt className="h-4.5 w-4.5" />
+                </span>
                 {t("paymentsTitle")}
               </h2>
               {recentPayments.length === 0 ? (

@@ -23,10 +23,34 @@ import PageHeader from "@/components/dashboard/PageHeader";
 
 const ACTIVE_STATUSES: KitchenTicketStatus[] = ["NEW", "PREPARING", "READY"];
 
-const COLUMNS: { key: KitchenTicketStatus; labelKey: string; dot: string }[] = [
-  { key: "NEW", labelKey: "columnNew", dot: "bg-accent-primary" },
-  { key: "PREPARING", labelKey: "columnPreparing", dot: "bg-warning" },
-  { key: "READY", labelKey: "columnReady", dot: "bg-success" },
+const COLUMNS: {
+  key: KitchenTicketStatus;
+  labelKey: string;
+  dot: string;
+  border: string;
+  headerBg: string;
+}[] = [
+  {
+    key: "NEW",
+    labelKey: "columnNew",
+    dot: "bg-accent-primary",
+    border: "border-l-accent-primary",
+    headerBg: "bg-accent-primary/[0.04]",
+  },
+  {
+    key: "PREPARING",
+    labelKey: "columnPreparing",
+    dot: "bg-warning",
+    border: "border-l-warning",
+    headerBg: "bg-warning/[0.04]",
+  },
+  {
+    key: "READY",
+    labelKey: "columnReady",
+    dot: "bg-success",
+    border: "border-l-success",
+    headerBg: "bg-success/[0.04]",
+  },
 ];
 
 function minutesBetween(from: number, iso: string): number {
@@ -329,7 +353,9 @@ export default function KitchenPage() {
                 key={column.key}
                 className="rounded-xl border border-border-default bg-surface"
               >
-                <div className="flex items-center gap-2 border-b border-border-default px-4 py-3">
+                <div
+                  className={`flex items-center gap-2 rounded-t-xl border-b border-border-default px-4 py-3 ${column.headerBg}`}
+                >
                   <span className={`h-2 w-2 rounded-full ${column.dot}`} />
                   <h2 className="text-sm font-semibold text-text-primary">
                     {t(column.labelKey)}
@@ -347,7 +373,7 @@ export default function KitchenPage() {
                   {tickets.map((ticket) => (
                     <li
                       key={ticket.id}
-                      className="rounded-lg border border-border-default bg-background p-3"
+                      className={`rounded-lg border border-l-4 border-border-default bg-background p-3 shadow-sm transition-shadow hover:shadow-md ${column.border}`}
                     >
                       <div className="flex items-center gap-2">
                         <span className="font-semibold text-text-primary">
