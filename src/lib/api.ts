@@ -519,6 +519,33 @@ export const restaurantsApi = {
   },
 };
 
+// --- Staff -------------------------------------------------------------
+export interface StaffOut {
+  id: string;
+  email: string;
+  full_name: string;
+  roles: string[];
+  is_active: boolean;
+}
+
+export type StaffRole = "MANAGER" | "CASHIER" | "WAITER" | "KITCHEN" | "ACCOUNTANT";
+
+export interface StaffCreate {
+  full_name: string;
+  email: string;
+  password: string;
+  role: StaffRole;
+}
+
+export const usersApi = {
+  list(): Promise<StaffOut[]> {
+    return request<StaffOut[]>("/v1/users");
+  },
+  create(payload: StaffCreate): Promise<StaffOut> {
+    return request<StaffOut>("/v1/users", { method: "POST", body: payload });
+  },
+};
+
 // ---------------------------------------------------------------------------
 // Branch endpoints
 // ---------------------------------------------------------------------------

@@ -14,6 +14,8 @@ import {
   CreditCard,
   LogOut,
   ChevronRight,
+  Smartphone,
+  Users,
 } from "lucide-react";
 import { Link, usePathname } from "@/i18n/routing";
 import { useAuth } from "@/lib/auth-context";
@@ -25,9 +27,10 @@ interface SidebarItem {
     | "/dashboard/tables"
     | "/dashboard/orders"
     | "/dashboard/kitchen"
-    | "/dashboard/payments";
+    | "/dashboard/payments"
+    | "/dashboard/staff";
   icon: React.ComponentType<{ className?: string }>;
-  labelKey: "overview" | "menu" | "tables" | "orders" | "kitchen" | "payments";
+  labelKey: "overview" | "menu" | "tables" | "orders" | "kitchen" | "payments" | "staff";
   permission?: string;
 }
 
@@ -62,6 +65,12 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
     icon: CreditCard,
     labelKey: "payments",
     permission: "finance.read",
+  },
+  {
+    href: "/dashboard/staff",
+    icon: Users,
+    labelKey: "staff",
+    permission: "users.read",
   },
 ];
 
@@ -142,6 +151,17 @@ export default function DashboardShell({
           currentPath={pathname}
           onNavigate={() => setMobileOpen(false)}
         />
+        {can("orders.create") && (
+          <div className="px-4">
+            <Link
+              href="/waiter"
+              className="flex items-center gap-3 rounded-lg bg-brand-gradient px-3 py-2.5 text-sm font-medium text-white shadow-sm transition-opacity hover:opacity-90"
+            >
+              <Smartphone className="h-5 w-5 shrink-0" />
+              <span>{t("nav.waiterMode")}</span>
+            </Link>
+          </div>
+        )}
         <div className="mt-auto p-4">
           <button
             onClick={() => logout()}
@@ -195,7 +215,17 @@ export default function DashboardShell({
                 currentPath={pathname}
                 onNavigate={() => setMobileOpen(false)}
               />
-              <div className="absolute bottom-0 left-0 right-0 p-4">
+              <div className="absolute bottom-0 left-0 right-0 space-y-2 p-4">
+                {can("orders.create") && (
+                  <Link
+                    href="/waiter"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-3 rounded-lg bg-brand-gradient px-3 py-2.5 text-sm font-medium text-white shadow-sm"
+                  >
+                    <Smartphone className="h-5 w-5 shrink-0" />
+                    <span>{t("nav.waiterMode")}</span>
+                  </Link>
+                )}
                 <button
                   onClick={() => {
                     logout();

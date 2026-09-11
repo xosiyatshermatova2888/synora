@@ -551,6 +551,15 @@
       "FAILED": "Failed",
       "VOID": "Voided",
       "REFUNDED": "Refunded"
+    },
+    "roles": {
+      "OWNER": "Owner",
+      "ADMIN": "Admin",
+      "MANAGER": "Manager",
+      "CASHIER": "Cashier",
+      "WAITER": "Waiter",
+      "KITCHEN": "Kitchen staff",
+      "ACCOUNTANT": "Accountant"
     }
   },
   "shell": {
@@ -561,9 +570,11 @@
       "orders": "Orders",
       "kitchen": "Kitchen",
       "payments": "Payments",
+      "staff": "Staff",
       "logout": "Log out",
       "open": "Open navigation",
-      "close": "Close navigation"
+      "close": "Close navigation",
+      "waiterMode": "Waiter mode"
     },
     "breadcrumb": {
       "home": "Dashboard"
@@ -738,5 +749,42 @@
     "reconnecting": "Reconnecting…",
     "ticketMoved": "Ticket updated",
     "loadError": "Failed to load the kitchen board"
+  },
+  "waiterPage": {
+    "title": "Waiter",
+    "chooseTable": "Choose a table",
+    "backToDashboard": "Dashboard",
+    "logout": "Log out",
+    "allCategories": "All",
+    "menuEmpty": "No products in the menu yet",
+    "cartTitle": "Cart",
+    "cartEmpty": "Cart is empty",
+    "itemsCount": "{count, plural, one {# item} other {# items}}",
+    "total": "Total",
+    "notesPlaceholder": "Note (optional)",
+    "sendOrder": "Send order",
+    "sending": "Sending…",
+    "orderSentTitle": "Order sent!",
+    "orderSentText": "Order #{number} is on its way to the kitchen and the cashier.",
+    "addMore": "Add more",
+    "otherTable": "Other table",
+    "required": "Required",
+    "addToCart": "Add to cart",
+    "noPermission": "You don't have permission to create orders."
+  },
+  "staffPage": {
+    "title": "Staff",
+    "description": "Manage team members and their roles",
+    "addStaff": "Add staff",
+    "addStaffHint": "The staff member signs in with this email and password, and only gets the selected role's permissions.",
+    "fullName": "Full name",
+    "email": "Email",
+    "password": "Password",
+    "passwordHint": "At least 8 characters. Share it with the staff member.",
+    "role": "Role",
+    "created": "Staff member added",
+    "empty": "No staff yet",
+    "inactive": "Inactive",
+    "noPermission": "You don't have permission to view the staff list."
   }
 }

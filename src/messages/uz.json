@@ -551,6 +551,15 @@
       "FAILED": "Xato",
       "VOID": "Bekor qilingan",
       "REFUNDED": "Qaytarilgan"
+    },
+    "roles": {
+      "OWNER": "Egasi",
+      "ADMIN": "Administrator",
+      "MANAGER": "Menejer",
+      "CASHIER": "Kassir",
+      "WAITER": "Ofitsiant",
+      "KITCHEN": "Oshxona xodimi",
+      "ACCOUNTANT": "Buxgalter"
     }
   },
   "shell": {
@@ -561,9 +570,11 @@
       "orders": "Buyurtmalar",
       "kitchen": "Oshxona",
       "payments": "To‘lovlar",
+      "staff": "Xodimlar",
       "logout": "Chiqish",
       "open": "Navigatsiyani ochish",
-      "close": "Navigatsiyani yopish"
+      "close": "Navigatsiyani yopish",
+      "waiterMode": "Ofitsiant rejimi"
     },
     "breadcrumb": {
       "home": "Boshqaruv paneli"
@@ -738,5 +749,42 @@
     "reconnecting": "Qayta ulanmoqda…",
     "ticketMoved": "Holat yangilandi",
     "loadError": "Oshxona taxtasini yuklab bo‘lmadi"
+  },
+  "waiterPage": {
+    "title": "Ofitsiant",
+    "chooseTable": "Stolni tanlang",
+    "backToDashboard": "Boshqaruv paneli",
+    "logout": "Chiqish",
+    "allCategories": "Barchasi",
+    "menuEmpty": "Menyuda mahsulot yo‘q",
+    "cartTitle": "Savat",
+    "cartEmpty": "Savat bo‘sh",
+    "itemsCount": "{count, plural, one {# ta mahsulot} other {# ta mahsulot}}",
+    "total": "Jami",
+    "notesPlaceholder": "Izoh (ixtiyoriy)",
+    "sendOrder": "Buyurtmani yuborish",
+    "sending": "Yuborilmoqda…",
+    "orderSentTitle": "Buyurtma yuborildi!",
+    "orderSentText": "Buyurtma #{number} oshxona va kassaga yetib bordi.",
+    "addMore": "Yana qo‘shish",
+    "otherTable": "Boshqa stol",
+    "required": "Majburiy",
+    "addToCart": "Savatga qo‘shish",
+    "noPermission": "Sizda buyurtma yaratish huquqi yo‘q."
+  },
+  "staffPage": {
+    "title": "Xodimlar",
+    "description": "Jamoa a'zolarini va ularning rollarini boshqaring",
+    "addStaff": "Xodim qo‘shish",
+    "addStaffHint": "Xodim shu email va parol bilan tizimga kiradi va faqat tanlangan rolga mos huquqlarga ega bo‘ladi.",
+    "fullName": "To‘liq ism",
+    "email": "Elektron pochta",
+    "password": "Parol",
+    "passwordHint": "Kamida 8 ta belgi. Buni xodimga xabar qiling.",
+    "role": "Roli",
+    "created": "Xodim qo‘shildi",
+    "empty": "Hozircha xodimlar yo‘q",
+    "inactive": "Faol emas",
+    "noPermission": "Sizda xodimlar ro‘yxatini ko‘rish huquqi yo‘q."
   }
 }

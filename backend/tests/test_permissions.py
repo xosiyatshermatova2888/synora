@@ -36,9 +36,12 @@ class TestWaiterRole:
         )
         assert res.status_code == 403
 
-    def test_waiter_cannot_read_menu(self, client, world):
+    def test_waiter_can_read_menu(self, client, world):
+        # Waiters need menu.read to browse products while building an order
+        # (waiter ordering flow) — write actions stay OWNER/MANAGER-only,
+        # covered by test_waiter_cannot_create_category below.
         res = client.get("/api/v1/menu/categories", headers=waiter_headers(world))
-        assert res.status_code == 403
+        assert res.status_code == 200
 
     def test_waiter_cannot_create_category(self, client, world):
         res = client.post(

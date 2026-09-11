@@ -73,6 +73,10 @@ ROLE_TEMPLATES: dict[str, list[str]] = {
         Permission.ORDERS_READ.value,
         Permission.ORDERS_CREATE.value,
         Permission.ORDERS_UPDATE.value,
+        # Needed to browse products/categories while building an order — a
+        # waiter could not see the menu at all without this (menu.* write
+        # actions stay OWNER/MANAGER-only).
+        Permission.MENU_READ.value,
     ],
     "KITCHEN": [Permission.ORDERS_READ.value, Permission.ORDERS_UPDATE.value],
     "ACCOUNTANT": [Permission.FINANCE_READ.value, Permission.ANALYTICS_READ.value],
