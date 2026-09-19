@@ -37,6 +37,17 @@ export class ApiError extends Error {
   }
 }
 
+/** Thrown when `fetch()` itself fails (no connectivity) — distinct from
+ * ApiError, which means the server was reached and responded with an error.
+ * Callers (e.g. the offline queue) use this to decide "queue it" vs "show
+ * the error". */
+export class OfflineError extends Error {
+  constructor() {
+    super("Network request failed — you appear to be offline.");
+    this.name = "OfflineError";
+  }
+}
+
 interface RequestOptions {
   method?: "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
   body?: unknown;
@@ -78,6 +89,7 @@ async function refreshSession(): Promise<boolean> {
       accessToken = data.access_token;
       return true;
     })
+    .catch(() => false)
     .finally(() => {
       refreshPromise = null;
     });
@@ -99,7 +111,11 @@ async function request<T>(
       },
     };
     if (body !== undefined) init.body = JSON.stringify(body);
-    return fetch(finalPath, init);
+    try {
+      return await fetch(finalPath, init);
+    } catch {
+      throw new OfflineError();
+    }
   };
 
   let res = await send(accessToken);
@@ -137,7 +153,7 @@ export interface CheckoutResponse {
 
 export interface RegisterPayload {
   full_name: string;
-  email: string;
+  username: string;
   password: string;
   restaurant_name: string;
   currency?: string;
@@ -151,12 +167,24 @@ export interface RoleOut {
 
 export interface UserOut {
   id: string;
-  email: string;
+  username: string;
   full_name: string;
   restaurant_id: string;
   restaurant_name: string;
   roles: RoleOut[];
   permissions: string[];
+}
+
+// --- Waiter kiosk PIN login -------------------------------------------------
+export interface WaiterBranchOut {
+  id: string;
+  name: string;
+  restaurant_name: string;
+}
+
+export interface WaiterDirectoryEntry {
+  id: string;
+  full_name: string;
 }
 
 // --- Restaurant / Branch ---------------------------------------------------
@@ -270,6 +298,8 @@ export interface TableOut {
   restaurant_id: string;
   branch_id: string;
   name: string;
+  /** Optional hall/room grouping ("1-zal", "Terassa"); null = ungrouped. */
+  zone: string | null;
   capacity: number;
   status: string;
   is_active: boolean;
@@ -279,11 +309,13 @@ export interface TableOut {
 export interface TableCreate {
   branch_id: string;
   name: string;
+  zone?: string | null;
   capacity?: number;
 }
 
 export interface TableUpdate {
   name?: string;
+  zone?: string | null;
   capacity?: number;
   status?: string;
   is_active?: boolean;
@@ -453,11 +485,11 @@ export interface KitchenEvent {
 // Auth endpoints
 // ---------------------------------------------------------------------------
 export const authApi = {
-  login(email: string, password: string): Promise<TokenResponse> {
+  login(username: string, password: string): Promise<TokenResponse> {
     return request<TokenResponse>("/v1/auth/login", {
       method: "POST",
       skipRefresh: true,
-      body: { email, password },
+      body: { username, password },
     });
   },
 
@@ -493,20 +525,24 @@ export const authApi = {
     });
   },
 
-  /** Fire-and-forget reset request; 202 for existing AND unknown addresses. */
-  requestPasswordReset(email: string): Promise<void> {
-    return request<void>("/v1/auth/password-reset/request", {
-      method: "POST",
+  waiterBranches(): Promise<WaiterBranchOut[]> {
+    return request<WaiterBranchOut[]>("/v1/auth/waiter-branches", {
       skipRefresh: true,
-      body: { email },
     });
   },
 
-  confirmPasswordReset(token: string, newPassword: string): Promise<void> {
-    return request<void>("/v1/auth/password-reset/confirm", {
+  waiterDirectory(branchId: string): Promise<WaiterDirectoryEntry[]> {
+    return request<WaiterDirectoryEntry[]>(
+      `/v1/auth/waiter-directory?branch_id=${branchId}`,
+      { skipRefresh: true }
+    );
+  },
+
+  pinLogin(branchId: string, userId: string, pin: string): Promise<TokenResponse> {
+    return request<TokenResponse>("/v1/auth/pin-login", {
       method: "POST",
       skipRefresh: true,
-      body: { token, new_password: newPassword },
+      body: { branch_id: branchId, user_id: userId, pin },
     });
   },
 };
@@ -523,17 +559,18 @@ export const restaurantsApi = {
 // --- Staff -------------------------------------------------------------
 export interface StaffOut {
   id: string;
-  email: string;
+  username: string;
   full_name: string;
   roles: string[];
   is_active: boolean;
+  has_pin: boolean;
 }
 
 export type StaffRole = "MANAGER" | "CASHIER" | "WAITER" | "KITCHEN" | "ACCOUNTANT";
 
 export interface StaffCreate {
   full_name: string;
-  email: string;
+  username: string;
   password: string;
   role: StaffRole;
 }
@@ -544,6 +581,20 @@ export const usersApi = {
   },
   create(payload: StaffCreate): Promise<StaffOut> {
     return request<StaffOut>("/v1/users", { method: "POST", body: payload });
+  },
+  /** Set (or, with an empty string, clear) a staff member's waiter-kiosk PIN. */
+  setPin(id: string, pin: string): Promise<StaffOut> {
+    return request<StaffOut>(`/v1/users/${id}/pin`, {
+      method: "PATCH",
+      body: { pin },
+    });
+  },
+  /** Admin resets a staff member's login password — no self-service reset exists. */
+  setPassword(id: string, password: string): Promise<StaffOut> {
+    return request<StaffOut>(`/v1/users/${id}/password`, {
+      method: "PATCH",
+      body: { password },
+    });
   },
 };
 
@@ -655,12 +706,14 @@ export const ordersApi = {
   list(params: {
     branch_id?: string;
     status?: string;
+    waiter_user_id?: string;
     limit?: number;
     offset?: number;
   }): Promise<PageResponse<OrderOut>> {
     const sp = new URLSearchParams();
     if (params.branch_id) sp.set("branch_id", params.branch_id);
     if (params.status) sp.set("status", params.status);
+    if (params.waiter_user_id) sp.set("waiter_user_id", params.waiter_user_id);
     sp.set("limit", String(params.limit ?? 20));
     sp.set("offset", String(params.offset ?? 0));
     return request<PageResponse<OrderOut>>(`/v1/orders?${sp.toString()}`);

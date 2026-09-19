@@ -84,10 +84,10 @@ def require_permission(permission_code: str):
 
 async def require_login_rate_limit(
     request: Request,
-    email: str | None = None,
+    username: str | None = None,
 ) -> None:
     ip = await get_client_ip(request)
-    key = email.lower() if email else "?"
+    key = username.lower() if username else "?"
     if login_blocked(key, ip):
         raise RateLimitedError(detail="Too many login attempts. Try again later.")
 

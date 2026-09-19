@@ -36,6 +36,8 @@ services:
       S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-synoraLocalPass1}
       S3_USE_PATH_STYLE: "true"
       S3_PUBLIC_URL_BASE: http://localhost:9000
+      # WAITER_RESTAURANT_SLUG (waiter kiosk PIN login) is read from
+      # backend/.env via env_file above, not set here — see .env.example.
     ports:
       - "${BACKEND_PORT:-8000}:8000"
     volumes:
@@ -97,6 +99,13 @@ services:
     restart: unless-stopped
     environment:
       API_URL: http://backend:8000
+      # Rebrand the /waiter PWA per client deployment (name/icon shown when a
+      # waiter installs it to their home screen) without touching code — set
+      # these in a root .env file, then `node scripts/gen-waiter-icons.mjs
+      # <logo.svg>` to swap the icon.
+      WAITER_APP_NAME: ${WAITER_APP_NAME:-}
+      WAITER_APP_SHORT_NAME: ${WAITER_APP_SHORT_NAME:-}
+      WAITER_APP_THEME_COLOR: ${WAITER_APP_THEME_COLOR:-}
     ports:
       - "${FRONTEND_PORT:-3000}:3000"
     depends_on:

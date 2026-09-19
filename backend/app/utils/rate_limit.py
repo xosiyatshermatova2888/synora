@@ -52,19 +52,38 @@ class LoginRateLimiter:
 login_limiter = LoginRateLimiter()
 
 
-def login_blocked(email: str, ip: str) -> bool:
-    return login_limiter.is_blocked(f"email:{email}") or login_limiter.is_blocked(
+def login_blocked(username: str, ip: str) -> bool:
+    return login_limiter.is_blocked(f"username:{username}") or login_limiter.is_blocked(
         f"ip:{ip}"
     )
 
 
-def record_login_failure(email: str, ip: str) -> None:
-    login_limiter.record_failure(f"email:{email}")
+def record_login_failure(username: str, ip: str) -> None:
+    login_limiter.record_failure(f"username:{username}")
     login_limiter.record_failure(f"ip:{ip}")
 
 
-def record_login_success(email: str, ip: str) -> None:
-    login_limiter.record_success(f"email:{email}")
+def record_login_success(username: str, ip: str) -> None:
+    login_limiter.record_success(f"username:{username}")
+    login_limiter.record_success(f"ip:{ip}")
+
+
+# Same limiter/budget as username login, keyed by user id instead — the waiter
+# kiosk PIN-login endpoint is unauthenticated, so it gets its own account-side
+# key namespace ("pin:") but shares the per-IP bucket with username login.
+def pin_login_blocked(user_id: str, ip: str) -> bool:
+    return login_limiter.is_blocked(f"pin:{user_id}") or login_limiter.is_blocked(
+        f"ip:{ip}"
+    )
+
+
+def record_pin_login_failure(user_id: str, ip: str) -> None:
+    login_limiter.record_failure(f"pin:{user_id}")
+    login_limiter.record_failure(f"ip:{ip}")
+
+
+def record_pin_login_success(user_id: str, ip: str) -> None:
+    login_limiter.record_success(f"pin:{user_id}")
     login_limiter.record_success(f"ip:{ip}")
 
 

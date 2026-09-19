@@ -36,7 +36,12 @@ from app.models.restaurant import Restaurant
 from app.models.user import User
 from app.schemas.auth import RegisterRequest, UserOut
 from app.services.permissions import ensure_system_permissions_and_roles
-from app.utils.errors import UnauthorizedError, ConflictError, ValidationError
+from app.utils.errors import (
+    ConflictError,
+    NotFoundError,
+    UnauthorizedError,
+    ValidationError,
+)
 
 
 def _utcnow() -> datetime:
@@ -109,9 +114,10 @@ async def register(
     # Idempotent bootstrap of the global permissions/roles (Section 7A).
     roles_by_name = await ensure_system_permissions_and_roles(session)
 
-    existing = await session.scalar(select(User.id).where(User.email == payload.email))
+    username = payload.username.strip().lower()
+    existing = await session.scalar(select(User.id).where(User.username == username))
     if existing:
-        # Generic message — never reveal that an email exists.
+        # Generic message — never reveal that a username is taken.
         raise ConflictError(detail="Registration failed.")
 
     restaurant = Restaurant(
@@ -127,7 +133,7 @@ async def register(
 
     user = User(
         restaurant_id=restaurant.id,
-        email=str(payload.email).lower(),
+        username=username,
         password_hash=hash_password(payload.password),
         full_name=payload.full_name,
     )
@@ -157,7 +163,7 @@ async def register(
 
 async def login(
     session: AsyncSession,
-    email: str,
+    username: str,
     password: str,
     *,
     response: Response,
@@ -165,7 +171,7 @@ async def login(
     ip: str | None,
 ) -> TokenResponsePayload:
     user = await session.scalar(
-        select(User).where(User.email == email.lower(), User.deleted_at.is_(None))
+        select(User).where(User.username == username.lower(), User.deleted_at.is_(None))
     )
     # Verify against a dummy hash when the user doesn't exist to keep timing
     # roughly uniform regardless of account presence.
@@ -175,7 +181,7 @@ async def login(
         else False
     )
     if user is None or not valid or not user.is_active:
-        raise UnauthorizedError(detail="Invalid email or password.")
+        raise UnauthorizedError(detail="Invalid username or password.")
 
     access = create_access_token(
         subject=str(user.id),
@@ -250,11 +256,106 @@ async def logout(session: AsyncSession, refresh_token: str | None, *, response: 
             await session.commit()
 
 
+async def list_waiter_branches(session: AsyncSession) -> list[tuple[Branch, str]]:
+    """Active branches paired with their restaurant's name, for the waiter
+    kiosk's pre-login branch picker. Unauthenticated — see schemas/auth.py.
+
+    Scoped to `settings.waiter_restaurant_slug` (this deployment's own
+    restaurant): the server is multi-tenant, so without that scope this would
+    hand any anonymous caller every restaurant's name. Unset => empty, not
+    "everyone" — fail closed.
+    """
+    if not settings.waiter_restaurant_slug:
+        return []
+    result = await session.execute(
+        select(Branch, Restaurant.name)
+        .join(Restaurant, Restaurant.id == Branch.restaurant_id)
+        .where(
+            Branch.is_active.is_(True),
+            Restaurant.slug == settings.waiter_restaurant_slug,
+        )
+        .order_by(Restaurant.name, Branch.name)
+    )
+    return [(branch, restaurant_name) for branch, restaurant_name in result.all()]
+
+
+async def _is_waiter_scoped_restaurant(session: AsyncSession, restaurant_id: uuid.UUID) -> bool:
+    if not settings.waiter_restaurant_slug:
+        return False
+    slug = await session.scalar(select(Restaurant.slug).where(Restaurant.id == restaurant_id))
+    return slug == settings.waiter_restaurant_slug
+
+
+async def waiter_directory(session: AsyncSession, branch_id: uuid.UUID) -> list[User]:
+    branch = await session.get(Branch, branch_id)
+    if (
+        branch is None
+        or not branch.is_active
+        or not await _is_waiter_scoped_restaurant(session, branch.restaurant_id)
+    ):
+        raise NotFoundError(detail="Branch not found.")
+    result = await session.scalars(
+        select(User)
+        .where(
+            User.restaurant_id == branch.restaurant_id,
+            User.pin_hash.is_not(None),
+            User.is_active.is_(True),
+            User.deleted_at.is_(None),
+        )
+        .order_by(User.full_name)
+    )
+    return list(result.all())
+
+
+async def pin_login(
+    session: AsyncSession,
+    branch_id: uuid.UUID,
+    user_id: uuid.UUID,
+    pin: str,
+    *,
+    response: Response,
+    user_agent: str | None,
+    ip: str | None,
+) -> TokenResponsePayload:
+    branch = await session.get(Branch, branch_id)
+    user = await session.get(User, user_id)
+    # Same dummy-check-avoidance tradeoff as login() above: only verifies
+    # when a pin_hash is actually present.
+    valid = (
+        verify_password(pin, user.pin_hash)
+        if user is not None and user.pin_hash is not None
+        else False
+    )
+    if (
+        branch is None
+        or user is None
+        or not valid
+        or not user.is_active
+        or user.deleted_at is not None
+        or user.restaurant_id != branch.restaurant_id
+        or not await _is_waiter_scoped_restaurant(session, branch.restaurant_id)
+    ):
+        raise UnauthorizedError(detail="Invalid name or PIN.")
+
+    access = create_access_token(
+        subject=str(user.id),
+        restaurant_id=str(user.restaurant_id),
+        permission_codes=await _user_permissions(session, user),
+    )
+    refresh = await _create_refresh_token(session, user.id, user_agent, ip)
+    await session.commit()
+
+    _set_refresh_cookie(response, refresh)
+    return TokenResponsePayload(
+        access_token=access, expires_in=settings.access_token_expire_minutes * 60, user_id=user.id
+    )
+
+
 async def me(session: AsyncSession, user: User) -> UserOut:
     r = await session.get(Restaurant, user.restaurant_id)
     return UserOut(
         id=user.id,
-        email=user.email,
+        username=user.username,
         full_name=user.full_name,
         restaurant_id=user.restaurant_id,
         restaurant_name=r.name if r else "",

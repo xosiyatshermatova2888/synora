@@ -10,7 +10,6 @@ from app.models.kitchen import (
 )
 from app.models.menu import Category, Modifier, ModifierGroup, Product, product_modifier_groups
 from app.models.order import Order, OrderItem, OrderItemModifier, ORDER_STATUSES, ORDER_SOURCES, KITCHEN_STATUSES
-from app.models.password_reset import PasswordResetToken
 from app.models.payment import CashShift, Payment, PAYMENT_METHODS, CASH_SHIFT_STATUSES
 from app.models.refresh_token import RefreshToken
 from app.models.restaurant import Restaurant
@@ -36,7 +35,6 @@ __all__ = [
     "OrderItem",
     "OrderItemModifier",
     "PAYMENT_METHODS",
-    "PasswordResetToken",
     "Payment",
     "Permission",
     "Product",

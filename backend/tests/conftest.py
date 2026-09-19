@@ -122,10 +122,10 @@ async def world(db):
     db.add_all([branch_a, branch_b])
     await db.flush()
 
-    def make_user(restaurant_id, email, full_name, role_names):
+    def make_user(restaurant_id, username, full_name, role_names):
         u = User(
             restaurant_id=restaurant_id,
-            email=email,
+            username=username,
             password_hash=hash_password(TEST_PASSWORD),
             full_name=full_name,
             roles=[roles_by_name[n] for n in role_names],

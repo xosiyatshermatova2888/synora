@@ -53,10 +53,10 @@ async def run() -> None:
             session.add(branch)
             await session.flush()
 
-            def make_user(email: str, full_name: str, role_names: list[str]):
+            def make_user(username: str, full_name: str, role_names: list[str]):
                 u = User(
                     restaurant_id=restaurant.id,
-                    email=email,
+                    username=username,
                     password_hash=hash_password(DEMO_PASSWORD),
                     full_name=full_name,
                     roles=[roles_by_name[r] for r in role_names],
@@ -146,13 +146,13 @@ async def run() -> None:
         await session.commit()
         print("Demo data present: seed is additive and idempotent.")
         print("Logins:")
-        for email in [
+        for username in [
             "owner@demo.synora",
             "admin@demo.synora",
             "cashier@demo.synora",
             "waiter@demo.synora",
         ]:
-            print(f"  {email} / {DEMO_PASSWORD}")
+            print(f"  {username} / {DEMO_PASSWORD}")
 
 
 if __name__ == "__main__":

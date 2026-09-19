@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import {
   Armchair,
   ArrowLeft,
   CheckCircle2,
+  ClipboardList,
+  Clock3,
   ImageOff,
   LogOut,
   Minus,
@@ -13,25 +15,35 @@ import {
   ShoppingCart,
   Table2,
   Trash2,
+  User,
+  Utensils,
 } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import {
   BranchOut,
   CategoryOut,
+  KitchenEvent,
+  OrderCreate,
   OrderOut,
   ProductOut,
   TableOut,
+  OfflineError,
+  authApi,
   branchesApi,
+  getAccessToken,
   menuApi,
   ordersApi,
   tablesApi,
 } from "@/lib/api";
 import type { LoadState } from "@/lib/load-state";
 import { loadingState, errorState, dataState } from "@/lib/load-state";
-import { formatMoney } from "@/lib/format";
+import { formatMoney, formatDateTime } from "@/lib/format";
 import { useAuth } from "@/lib/auth-context";
+import { cacheGet, cacheSet } from "@/lib/offline/db";
+import { enqueueCreateOrder, drainQueue, subscribeQueue } from "@/lib/offline/queue";
 import Modal from "@/components/Modal";
 import Button from "@/components/Button";
+import OfflineBanner from "@/components/OfflineBanner";
 import StateView from "@/components/dashboard/StateView";
 
 const TABLE_STATUS_STYLES: Record<string, string> = {
@@ -46,7 +58,10 @@ const TABLE_BADGE_STYLES: Record<string, string> = {
   RESERVED: "bg-accent-primary/10 text-accent-primary",
   DISABLED: "bg-background-secondary text-text-secondary",
 };
+const TERMINAL_ORDER_STATUSES = new Set(["CANCELLED", "COMPLETED", "REFUNDED"]);
 const MAX_SEAT_ICONS = 6;
+
+type View = "order" | "history" | "profile";
 
 interface CartLine {
   key: string;
@@ -75,15 +90,30 @@ function lineUnitPrice(line: CartLine): number {
   return price;
 }
 
+function startOfToday(): Date {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function orderStatusKey(order: OrderOut): string {
+  return TERMINAL_ORDER_STATUSES.has(order.status)
+    ? `orderStatus.${order.status}`
+    : `kitchenStatus.${order.kitchen_status}`;
+}
+
 export default function WaiterPage() {
   const t = useTranslations("waiterPage");
   const tc = useTranslations("common");
   const { user, can, logout } = useAuth();
   const canOrder = can("orders.create");
 
+  const [view, setView] = useState<View>("order");
+
   const [branches, setBranches] = useState<BranchOut[]>([]);
   const [branchId, setBranchId] = useState<string | null>(null);
   const [tables, setTables] = useState<LoadState<TableOut[]>>(loadingState());
+  const [zoneFilter, setZoneFilter] = useState<string | null>(null);
   const [selectedTable, setSelectedTable] = useState<TableOut | null>(null);
 
   const [categories, setCategories] = useState<CategoryOut[]>([]);
@@ -97,6 +127,14 @@ export default function WaiterPage() {
   const [idempotencyKey, setIdempotencyKey] = useState(() => newIdempotencyKey());
   const [submitting, setSubmitting] = useState(false);
   const [sentOrder, setSentOrder] = useState<OrderOut | null>(null);
+  const [queuedOffline, setQueuedOffline] = useState<{ total: number } | null>(null);
+
+  const [myOrders, setMyOrders] = useState<OrderOut[]>([]);
+  const [myOrdersLoading, setMyOrdersLoading] = useState(false);
+  const [orderDetail, setOrderDetail] = useState<OrderOut | null>(null);
+  const myOrderIdsRef = useRef<Set<string>>(new Set());
+
+  const otherZoneLabel = t("otherZone");
 
   useEffect(() => {
     branchesApi
@@ -106,39 +144,201 @@ export default function WaiterPage() {
         setBranchId((prev) => prev ?? list[0]?.id ?? null);
       })
       .catch(() => {});
-    menuApi.listCategories().then(setCategories).catch(() => {});
+    menuApi
+      .listCategories()
+      .then((list) => {
+        setCategories(list);
+        void cacheSet("menu:categories", list);
+      })
+      .catch(async () => {
+        const cached = await cacheGet<CategoryOut[]>("menu:categories");
+        if (cached) setCategories(cached);
+      });
+    // One-shot: pick up anything left queued from a previous session that
+    // ended offline (e.g. the app was closed before reconnecting).
+    void drainQueue();
   }, []);
 
   useEffect(() => {
     if (!branchId) return;
+    setZoneFilter(null);
     void (async () => {
       setTables(loadingState());
       try {
         const list = await tablesApi.list(branchId);
         setTables(dataState(list));
+        void cacheSet(`tables:${branchId}`, list);
       } catch (err) {
+        if (err instanceof OfflineError) {
+          const cached = await cacheGet<TableOut[]>(`tables:${branchId}`);
+          if (cached) {
+            setTables(dataState(cached));
+            return;
+          }
+        }
         setTables(errorState((err as Error).message));
       }
     })();
   }, [branchId]);
 
   useEffect(() => {
+    const cacheKey = `menu:products:${activeCategory ?? "all"}`;
     void (async () => {
       setProducts(loadingState());
       try {
         const page = await menuApi.listProducts(100, 0, activeCategory ?? undefined);
         setProducts(dataState(page.items));
+        void cacheSet(cacheKey, page.items);
       } catch (err) {
+        if (err instanceof OfflineError) {
+          const cached = await cacheGet<ProductOut[]>(cacheKey);
+          if (cached) {
+            setProducts(dataState(cached));
+            return;
+          }
+        }
         setProducts(errorState((err as Error).message));
       }
     })();
   }, [activeCategory]);
+
+  // ---------------------------------------------------------------------
+  // "Mening buyurtmalarim" — today's orders this waiter created.
+  // ---------------------------------------------------------------------
+  const loadMyOrders = useCallback(async () => {
+    if (!branchId || !user) return;
+    setMyOrdersLoading(true);
+    try {
+      const page = await ordersApi.list({
+        branch_id: branchId,
+        waiter_user_id: user.id,
+        limit: 50,
+      });
+      const todayStart = startOfToday();
+      const todays = page.items.filter((o) => new Date(o.created_at) >= todayStart);
+      todays.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+      setMyOrders(todays);
+    } catch {
+      // History is a convenience view, not the core order-taking flow —
+      // fail quietly and keep whatever was already loaded.
+    } finally {
+      setMyOrdersLoading(false);
+    }
+  }, [branchId, user]);
+
+  useEffect(() => {
+    void loadMyOrders();
+  }, [loadMyOrders]);
+
+  useEffect(() => {
+    myOrderIdsRef.current = new Set(myOrders.map((o) => o.id));
+  }, [myOrders]);
+
+  // Refresh the history list once a background sync finishes (pending → 0),
+  // so an order taken offline appears without the waiter refreshing by hand.
+  useEffect(() => {
+    let prevCount = 0;
+    const unsub = subscribeQueue((pending) => {
+      if (prevCount > 0 && pending.length === 0) void loadMyOrders();
+      prevCount = pending.length;
+    });
+    return unsub;
+  }, [loadMyOrders]);
+
+  // ---------------------------------------------------------------------
+  // Real-time: the same authenticated kitchen WebSocket channel the kitchen
+  // board uses. Ticket events don't carry total/waiter_id/final order.status,
+  // so on a relevant event we just re-fetch that one order.
+  // ---------------------------------------------------------------------
+  useEffect(() => {
+    if (!branchId) return;
+    let mounted = true;
+    let attempt = 0;
+    let retryTimer: ReturnType<typeof setTimeout> | null = null;
+    let ws: WebSocket | null = null;
+
+    const refreshOrder = (orderId: string) => {
+      if (!myOrderIdsRef.current.has(orderId)) return;
+      ordersApi
+        .get(orderId)
+        .then((fresh) => {
+          if (!mounted) return;
+          setMyOrders((cur) => cur.map((o) => (o.id === orderId ? fresh : o)));
+        })
+        .catch(() => {});
+    };
+
+    const applyEvent = (msg: KitchenEvent) => {
+      if (msg.branch_id && msg.branch_id !== branchId) return;
+      const orderId = msg.order_id ?? msg.ticket?.order_id;
+      if (orderId) refreshOrder(orderId);
+    };
+
+    const scheduleRetry = () => {
+      if (!mounted) return;
+      const delay = Math.min(30000, 1000 * 2 ** attempt);
+      attempt += 1;
+      retryTimer = setTimeout(() => {
+        authApi
+          .refresh()
+          .then((ok) => {
+            if (mounted && ok) connect();
+            else if (mounted) scheduleRetry();
+          })
+          .catch(() => {
+            if (mounted) scheduleRetry();
+          });
+      }, delay);
+    };
+
+    const connect = () => {
+      const token = getAccessToken();
+      if (!token) {
+        scheduleRetry();
+        return;
+      }
+      const proto = window.location.protocol === "https:" ? "wss:" : "ws:";
+      const url = `${proto}//${window.location.host}/api/v1/ws/kitchen?token=${encodeURIComponent(token)}&branch_id=${encodeURIComponent(branchId)}`;
+      ws = new WebSocket(url);
+      ws.onopen = () => {
+        attempt = 0;
+      };
+      ws.onmessage = (event) => {
+        try {
+          applyEvent(JSON.parse(String(event.data)) as KitchenEvent);
+        } catch {
+          // Ignore malformed frames.
+        }
+      };
+      ws.onclose = () => scheduleRetry();
+      ws.onerror = () => {
+        try {
+          ws?.close();
+        } catch {
+          // no-op
+        }
+      };
+    };
+
+    connect();
+
+    return () => {
+      mounted = false;
+      if (retryTimer) clearTimeout(retryTimer);
+      try {
+        ws?.close();
+      } catch {
+        // no-op
+      }
+    };
+  }, [branchId]);
 
   const selectTable = (table: TableOut) => {
     setSelectedTable(table);
     setCart([]);
     setNotes("");
     setSentOrder(null);
+    setQueuedOffline(null);
     setIdempotencyKey(newIdempotencyKey());
   };
 
@@ -146,6 +346,7 @@ export default function WaiterPage() {
     setSelectedTable(null);
     setCart([]);
     setSentOrder(null);
+    setQueuedOffline(null);
     if (branchId) {
       tablesApi.list(branchId).then((list) => setTables(dataState(list))).catch(() => {});
     }
@@ -216,30 +417,38 @@ export default function WaiterPage() {
   const submitOrder = async () => {
     if (!branchId || !selectedTable || cart.length === 0 || submitting) return;
     setSubmitting(true);
+    const payload: OrderCreate = {
+      branch_id: branchId,
+      table_id: selectedTable.id,
+      source: "WAITER",
+      notes: notes.trim() || undefined,
+      items: cart.map((line) => ({
+        product_id: line.product.id,
+        quantity: line.quantity,
+        modifiers: Object.values(line.selectedByGroup)
+          .flat()
+          .map((modifierId) => ({ modifier_id: modifierId })),
+      })),
+    };
     try {
-      const order = await ordersApi.create(
-        {
-          branch_id: branchId,
-          table_id: selectedTable.id,
-          source: "WAITER",
-          notes: notes.trim() || undefined,
-          items: cart.map((line) => ({
-            product_id: line.product.id,
-            quantity: line.quantity,
-            modifiers: Object.values(line.selectedByGroup)
-              .flat()
-              .map((modifierId) => ({ modifier_id: modifierId })),
-          })),
-        },
-        idempotencyKey
-      );
-      // Fire straight to the kitchen board — that is the whole point of a
-      // waiter app; nobody should have to re-key this at a cashier screen.
-      await ordersApi.updateKitchenStatus(order.id, "NEW").catch(() => {});
+      // The backend sends WAITER-sourced orders straight to the kitchen board
+      // as part of creating them (see services/orders.py::create_order) — no
+      // separate call needed here.
+      const order = await ordersApi.create(payload, idempotencyKey);
       setSentOrder(order);
+      setMyOrders((prev) => [order, ...prev]);
       setCartOpen(false);
     } catch (err) {
-      alert((err as Error).message);
+      if (err instanceof OfflineError) {
+        // Never lose a taken order to a dropped connection: queue it locally
+        // and replay it once the connection comes back (OfflineBanner drains
+        // the queue automatically on reconnect).
+        await enqueueCreateOrder(payload, idempotencyKey);
+        setQueuedOffline({ total: cartTotal });
+        setCartOpen(false);
+      } else {
+        alert((err as Error).message);
+      }
     } finally {
       setSubmitting(false);
     }
@@ -249,8 +458,28 @@ export default function WaiterPage() {
     setCart([]);
     setNotes("");
     setSentOrder(null);
+    setQueuedOffline(null);
     setIdempotencyKey(newIdempotencyKey());
   };
+
+  const zoneBuckets = useMemo(() => {
+    if (tables.type !== "data") return [];
+    const map = new Map<string, TableOut[]>();
+    for (const tb of tables.data) {
+      const key = tb.zone || otherZoneLabel;
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(tb);
+    }
+    return Array.from(map.entries()).map(([name, list]) => ({ name, tables: list }));
+  }, [tables, otherZoneLabel]);
+  const hasZones = tables.type === "data" && tables.data.some((tb) => !!tb.zone);
+
+  const visibleTables = useMemo(() => {
+    if (tables.type !== "data") return [];
+    if (!hasZones) return tables.data;
+    if (!zoneFilter) return [];
+    return tables.data.filter((tb) => (tb.zone || otherZoneLabel) === zoneFilter);
+  }, [tables, hasZones, zoneFilter, otherZoneLabel]);
 
   if (!canOrder) {
     return (
@@ -266,24 +495,50 @@ export default function WaiterPage() {
     );
   }
 
+  const inMenuFlow = view === "order" && !!selectedTable;
+  const onConfirmationScreen = inMenuFlow && !!(sentOrder || queuedOffline);
+  const showBottomNav = !inMenuFlow || onConfirmationScreen;
+
+  const headerTitle =
+    view === "order"
+      ? selectedTable
+        ? selectedTable.name
+        : hasZones && zoneFilter
+          ? zoneFilter
+          : t("title")
+      : view === "history"
+        ? t("myOrders")
+        : t("profileTitle");
+
+  const headerBack =
+    view === "order"
+      ? selectedTable
+        ? backToTables
+        : hasZones && zoneFilter
+          ? () => setZoneFilter(null)
+          : null
+      : null;
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
+      <OfflineBanner />
+
       {/* Minimal header — no sidebar, no other modules */}
       <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border-default bg-surface px-4">
-        {selectedTable ? (
+        {headerBack ? (
           <button
-            onClick={backToTables}
+            onClick={headerBack}
             className="flex items-center gap-1.5 text-sm font-medium text-text-secondary hover:text-text-primary"
           >
             <ArrowLeft className="h-4 w-4" />
-            {selectedTable.name}
+            {headerTitle}
           </button>
         ) : (
           <span className="flex items-center gap-2 text-sm font-semibold text-text-primary">
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-gradient text-xs font-bold text-white">
               S
             </div>
-            {t("title")}
+            {headerTitle}
           </span>
         )}
         <div className="ml-auto flex items-center gap-3">
@@ -306,11 +561,53 @@ export default function WaiterPage() {
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto pb-24">
-        {!selectedTable ? (
+      <main className={`flex-1 overflow-y-auto ${showBottomNav ? "pb-20" : "pb-24"}`}>
+        {view === "history" && (
+          <HistoryPanel
+            orders={myOrders}
+            tables={tables.type === "data" ? tables.data : []}
+            loading={myOrdersLoading}
+            onSelect={setOrderDetail}
+          />
+        )}
+
+        {view === "profile" && <ProfilePanel />}
+
+        {view === "order" && !selectedTable && hasZones && !zoneFilter ? (
+          <div className="p-4">
+            <h1 className="text-lg font-bold text-text-primary">{t("chooseZone")}</h1>
+            {branches.length > 1 && (
+              <select
+                value={branchId ?? ""}
+                onChange={(e) => setBranchId(e.target.value || null)}
+                className="mt-3 rounded-lg border border-border-default bg-surface px-3 py-2 text-sm text-text-primary outline-none focus:border-accent-primary"
+              >
+                {branches.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.name}
+                  </option>
+                ))}
+              </select>
+            )}
+            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {zoneBuckets.map((z) => (
+                <button
+                  key={z.name}
+                  onClick={() => setZoneFilter(z.name)}
+                  className="flex flex-col items-start rounded-xl border border-border-default bg-surface p-4 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98]"
+                >
+                  <p className="font-semibold text-text-primary">{z.name}</p>
+                  <p className="mt-1 text-xs text-text-secondary">
+                    {t("tablesCount", { count: z.tables.length })}
+                  </p>
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : view === "order" && !selectedTable ? (
           <div className="p-4">
             <h1 className="text-lg font-bold text-text-primary">{t("chooseTable")}</h1>
-            {branches.length > 1 && (
+            {!hasZones && branches.length > 1 && (
               <select
                 value={branchId ?? ""}
                 onChange={(e) => setBranchId(e.target.value || null)}
@@ -326,7 +623,7 @@ export default function WaiterPage() {
 
             {tables.type === "data" ? (
               <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-                {tables.data.map((table) => {
+                {visibleTables.map((table) => {
                   const disabled = table.status === "DISABLED";
                   return (
                     <button
@@ -375,15 +672,24 @@ export default function WaiterPage() {
               </div>
             )}
           </div>
-        ) : sentOrder ? (
+        ) : view === "order" && selectedTable && (sentOrder || queuedOffline) ? (
           <div className="flex flex-col items-center gap-3 px-6 py-16 text-center">
-            <CheckCircle2 className="h-14 w-14 text-success" />
-            <h2 className="text-xl font-bold text-text-primary">{t("orderSentTitle")}</h2>
+            <CheckCircle2
+              className={`h-14 w-14 ${queuedOffline ? "text-warning" : "text-success"}`}
+            />
+            <h2 className="text-xl font-bold text-text-primary">
+              {queuedOffline ? t("queuedOrderTitle") : t("orderSentTitle")}
+            </h2>
             <p className="text-sm text-text-secondary">
-              {t("orderSentText", { number: sentOrder.order_number })}
+              {queuedOffline
+                ? t("queuedOrderText")
+                : t("orderSentText", { number: sentOrder!.order_number })}
             </p>
             <p className="text-lg font-bold text-text-primary">
-              {formatMoney(sentOrder.total, sentOrder.currency)}
+              {formatMoney(
+                queuedOffline ? queuedOffline.total : sentOrder!.total,
+                queuedOffline ? "UZS" : sentOrder!.currency
+              )}
             </p>
             <div className="mt-4 flex flex-col gap-2 sm:flex-row">
               <Button onClick={startAnotherRound}>{t("addMore")}</Button>
@@ -392,7 +698,7 @@ export default function WaiterPage() {
               </Button>
             </div>
           </div>
-        ) : (
+        ) : view === "order" && selectedTable ? (
           <div>
             {/* Category chips */}
             <div className="flex gap-2 overflow-x-auto border-b border-border-default bg-surface px-4 py-3">
@@ -469,11 +775,35 @@ export default function WaiterPage() {
               )}
             </div>
           </div>
-        )}
+        ) : null}
       </main>
 
+      {/* Bottom tab nav */}
+      {showBottomNav && (
+        <nav className="fixed inset-x-0 bottom-0 z-20 flex h-16 items-stretch border-t border-border-default bg-surface">
+          {(
+            [
+              { key: "order", label: t("navOrder"), icon: Utensils },
+              { key: "history", label: t("navHistory"), icon: ClipboardList },
+              { key: "profile", label: t("navProfile"), icon: User },
+            ] as const
+          ).map(({ key, label, icon: Icon }) => (
+            <button
+              key={key}
+              onClick={() => setView(key)}
+              className={`flex flex-1 flex-col items-center justify-center gap-1 text-xs font-medium transition-colors ${
+                view === key ? "text-accent-primary" : "text-text-secondary hover:text-text-primary"
+              }`}
+            >
+              <Icon className="h-5 w-5" />
+              {label}
+            </button>
+          ))}
+        </nav>
+      )}
+
       {/* Floating cart bar */}
-      {selectedTable && !sentOrder && cartCount > 0 && (
+      {inMenuFlow && !sentOrder && !queuedOffline && cartCount > 0 && (
         <button
           onClick={() => setCartOpen(true)}
           className="fixed inset-x-4 bottom-4 z-30 flex items-center justify-between rounded-2xl bg-brand-gradient px-5 py-4 text-white shadow-lg shadow-accent-primary/30 transition-transform active:scale-[0.99]"
@@ -587,6 +917,153 @@ export default function WaiterPage() {
           onConfirm={(selected, qty) => addWithModifiers(modifierProduct, selected, qty)}
         />
       )}
+
+      {/* Order details */}
+      {orderDetail && (
+        <OrderDetailModal
+          order={orderDetail}
+          tableName={
+            tables.type === "data"
+              ? tables.data.find((tb) => tb.id === orderDetail.table_id)?.name ?? null
+              : null
+          }
+          onClose={() => setOrderDetail(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+function HistoryPanel({
+  orders,
+  tables,
+  loading,
+  onSelect,
+}: {
+  orders: OrderOut[];
+  tables: TableOut[];
+  loading: boolean;
+  onSelect: (order: OrderOut) => void;
+}) {
+  const t = useTranslations("waiterPage");
+  const tc = useTranslations("common");
+
+  if (loading && orders.length === 0) {
+    return <div className="p-6 text-center text-sm text-text-secondary">{tc("states.loading")}</div>;
+  }
+  if (orders.length === 0) {
+    return (
+      <div className="p-4">
+        <StateView kind="empty" message={t("myOrdersEmpty")} />
+      </div>
+    );
+  }
+
+  return (
+    <ul className="space-y-2 p-4">
+      {orders.map((order) => {
+        const table = tables.find((tb) => tb.id === order.table_id);
+        return (
+          <li key={order.id}>
+            <button
+              onClick={() => onSelect(order)}
+              className="flex w-full items-center justify-between gap-3 rounded-xl border border-border-default bg-surface p-3.5 text-left shadow-sm transition-colors hover:border-accent-primary"
+            >
+              <div className="min-w-0">
+                <p className="truncate font-medium text-text-primary">
+                  #{order.order_number}
+                  {table ? ` · ${table.name}` : ""}
+                </p>
+                <p className="mt-0.5 flex items-center gap-1 text-xs text-text-secondary">
+                  <Clock3 className="h-3 w-3" aria-hidden="true" />
+                  {formatDateTime(order.created_at)}
+                </p>
+              </div>
+              <div className="shrink-0 text-right">
+                <p className="font-bold text-text-primary">
+                  {formatMoney(order.total, order.currency)}
+                </p>
+                <span className="mt-0.5 inline-block rounded-full bg-accent-primary/10 px-2 py-0.5 text-[11px] font-semibold text-accent-primary">
+                  {tc(orderStatusKey(order))}
+                </span>
+              </div>
+            </button>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+function OrderDetailModal({
+  order,
+  tableName,
+  onClose,
+}: {
+  order: OrderOut;
+  tableName: string | null;
+  onClose: () => void;
+}) {
+  const t = useTranslations("waiterPage");
+  const tc = useTranslations("common");
+
+  return (
+    <Modal open onClose={onClose} title={`#${order.order_number}${tableName ? ` · ${tableName}` : ""}`}>
+      <div className="space-y-3">
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-text-secondary">{formatDateTime(order.created_at)}</span>
+          <span className="rounded-full bg-accent-primary/10 px-2.5 py-1 text-xs font-semibold text-accent-primary">
+            {tc(orderStatusKey(order))}
+          </span>
+        </div>
+        <div className="max-h-64 space-y-2 overflow-y-auto">
+          {order.items.map((item) => (
+            <div key={item.id} className="flex items-center justify-between gap-2 text-sm">
+              <span className="text-text-primary">
+                {item.quantity} × {item.product_name_snapshot}
+              </span>
+              <span className="font-medium text-text-primary">
+                {formatMoney(
+                  (parseFloat(item.unit_price) * item.quantity).toFixed(2),
+                  order.currency
+                )}
+              </span>
+            </div>
+          ))}
+        </div>
+        {order.notes && (
+          <p className="rounded-lg bg-background-secondary p-2.5 text-xs text-text-secondary">
+            {order.notes}
+          </p>
+        )}
+        <div className="flex items-center justify-between border-t border-border-default pt-3">
+          <span className="text-sm font-medium text-text-secondary">{t("total")}</span>
+          <span className="text-lg font-bold text-text-primary">
+            {formatMoney(order.total, order.currency)}
+          </span>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+function ProfilePanel() {
+  const t = useTranslations("waiterPage");
+  const { user, logout } = useAuth();
+
+  return (
+    <div className="flex flex-col items-center gap-4 p-6 text-center">
+      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-brand-gradient text-2xl font-bold text-white">
+        {user?.full_name?.charAt(0).toUpperCase() ?? "?"}
+      </div>
+      <div>
+        <p className="text-lg font-bold text-text-primary">{user?.full_name}</p>
+        <p className="text-sm text-text-secondary">{user?.restaurant_name}</p>
+      </div>
+      <Button variant="secondary" onClick={() => logout()} className="mt-2">
+        <LogOut className="h-4 w-4" />
+        {t("logout")}
+      </Button>
     </div>
   );
 }

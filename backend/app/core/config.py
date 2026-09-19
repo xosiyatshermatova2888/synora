@@ -27,6 +27,15 @@ class Settings(BaseSettings):
     login_rate_limit_window_seconds: int = 900
     login_lockout_seconds: int = 900
 
+    # --- Waiter kiosk PIN login -----------------------------------------------
+    # This deployment's restaurant, by slug (Restaurant.slug — see GET
+    # /v1/restaurant/me while logged in as the owner). The waiter-branches /
+    # waiter-directory endpoints are unauthenticated, so without this set they
+    # return nothing rather than leaking every restaurant on the server (this
+    # DB is multi-tenant: dev alone already has dozens). Required to turn PIN
+    # login on for this client.
+    waiter_restaurant_slug: str = ""
+
     refresh_cookie_name: str = "synora_refresh"
     # httpOnly + SameSite=Strict always. Secure is toggled off in dev so the
     # cookie works over plain http://localhost; production must keep it on.
@@ -37,22 +46,9 @@ class Settings(BaseSettings):
 
     upload_dir: str = "uploads"
 
-    # Public-facing base URL of the app. Used to build absolute links in emails
-    # (password reset) and payment return URLs. In prod: https://<real-domain>.
+    # Public-facing base URL of the app. Used to build payment return URLs.
+    # In prod: https://<real-domain>.
     public_app_url: str = "http://localhost:3000"
-
-    # --- Email (SMTP) --------------------------------------------------------
-    # Leave untested-smoke blank to run in "log-only" mode: the app never sends
-    # mail, it logs the reset link instead (safe, testable local fallback).
-    smtp_host: str = ""
-    smtp_port: int = 587
-    smtp_user: str = ""
-    smtp_password: str = ""
-    smtp_from_email: str = "SYNORA <no-reply@synora.app>"
-    smtp_use_tls: bool = True
-
-    # --- Password reset ------------------------------------------------------
-    password_reset_expire_minutes: int = 45
 
     # --- Object storage (S3-compatible) --------------------------------------
     # When S3_ENDPOINT is set, uploads go to the bucket instead of local disk.
@@ -71,10 +67,6 @@ class Settings(BaseSettings):
     payme_key: str = ""        # Basic-auth password: TEST KEY while testing
     payme_merchant_id: str = ""  # cashier/m-id used in the checkout LINK path
     payme_is_test: bool = True
-
-    @property
-    def email_enabled(self) -> bool:
-        return bool(self.smtp_host)
 
     @property
     def cors_origin_list(self) -> List[str]:

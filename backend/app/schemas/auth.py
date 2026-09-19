@@ -4,14 +4,16 @@ with menu/order schemas (Phases E+)."""
 import uuid
 from typing import Literal
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field
 
 UZ_TIMES = "Asia/Tashkent"
+# A free-form login, not an email address — see models/user.py::User.username.
+Username = Field(min_length=3, max_length=100)
 
 
 class RegisterRequest(BaseModel):
     full_name: str = Field(min_length=2, max_length=150)
-    email: EmailStr
+    username: str = Username
     password: str = Field(min_length=8, max_length=128)
     restaurant_name: str = Field(min_length=2, max_length=150)
     currency: str = Field(default="UZS", pattern=r"^[A-Z]{3}$")
@@ -19,7 +21,7 @@ class RegisterRequest(BaseModel):
 
 
 class LoginRequest(BaseModel):
-    email: EmailStr
+    username: str
     password: str
 
 
@@ -40,7 +42,7 @@ class RoleOut(BaseModel):
 
 class UserOut(BaseModel):
     id: uuid.UUID
-    email: EmailStr
+    username: str
     full_name: str
     restaurant_id: uuid.UUID
     restaurant_name: str
@@ -48,10 +50,24 @@ class UserOut(BaseModel):
     permissions: list[str]
 
 
-class PasswordResetRequest(BaseModel):
-    email: EmailStr
+# --- Waiter kiosk PIN login --------------------------------------------------
+# Unauthenticated by design (see api/v1/auth.py): a waiter device selects a
+# branch, then a name, then enters a PIN. Only names, restaurant names and a
+# branch id are exposed pre-auth — no more than a restaurant's own signage.
 
 
-class PasswordResetConfirm(BaseModel):
-    token: str
-    new_password: str = Field(min_length=8, max_length=128)
+class WaiterBranchOut(BaseModel):
+    id: uuid.UUID
+    name: str
+    restaurant_name: str
+
+
+class WaiterDirectoryEntry(BaseModel):
+    id: uuid.UUID
+    full_name: str
+
+
+class PinLoginRequest(BaseModel):
+    branch_id: uuid.UUID
+    user_id: uuid.UUID
+    pin: str = Field(min_length=4, max_length=6, pattern=r"^\d+$")

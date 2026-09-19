@@ -228,7 +228,31 @@ async def create_order(
         table.status = "OCCUPIED"
         table.version += 1
 
+    # WAITER orders go straight to the kitchen board, in the SAME transaction
+    # as the order itself (Section 21/34) — previously the waiter app made a
+    # second, separate PATCH call for this right after creating the order,
+    # with its failure silently swallowed client-side; a blip on that second
+    # call left an order the kitchen never saw, with no retry. Folding it in
+    # here removes that gap: an order either reaches the kitchen atomically
+    # with its own creation, or the whole creation rolls back.
+    kitchen_payload = None
+    if payload.source == "WAITER":
+        from app.services import kitchen as kitchen_service
+
+        order.kitchen_status = "NEW"
+        ticket = await kitchen_service.create_ticket_for_order(session, restaurant_id, order)
+        event = kitchen_service.event_for_status("NEW")
+        if event is not None:
+            kitchen_payload = kitchen_service.build_event(event, ticket)
+
     await session.commit()
+
+    # Broadcast only AFTER the commit succeeds — never for a change that rolls back.
+    if kitchen_payload is not None:
+        from app.services import kitchen as kitchen_service
+
+        await kitchen_service.broadcast(restaurant_id, order.branch_id, kitchen_payload)
+
     return await get_order(session, restaurant_id, order.id)
 
 

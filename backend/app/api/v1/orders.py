@@ -56,15 +56,23 @@ async def list_orders(
     _: None = Depends(require_permission("orders.read")),
     branch_id: uuid.UUID | None = Query(default=None),
     status: str | None = Query(default=None),
+    waiter_user_id: uuid.UUID | None = Query(default=None),
     limit: int = Query(default=20, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
 ):
     limit, offset = clamp_pagination(limit, offset)
     repo = OrderRepository(db)
     items = await repo.list(
-        current_tenant, branch_id=branch_id, status=status, limit=limit, offset=offset
+        current_tenant,
+        branch_id=branch_id,
+        status=status,
+        waiter_user_id=waiter_user_id,
+        limit=limit,
+        offset=offset,
     )
-    total = await repo.count(current_tenant, branch_id=branch_id, status=status)
+    total = await repo.count(
+        current_tenant, branch_id=branch_id, status=status, waiter_user_id=waiter_user_id
+    )
     return Page(items=items, total=total, limit=limit, offset=offset)
 
 

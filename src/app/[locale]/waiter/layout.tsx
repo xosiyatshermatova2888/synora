@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { AuthProvider } from "@/lib/auth-context";
-import AuthGuard from "@/components/AuthGuard";
+import WaiterAuthGate from "@/components/WaiterAuthGate";
 import { routing } from "@/i18n/routing";
 
 export function generateStaticParams() {
@@ -24,7 +24,7 @@ export async function generateMetadata({
     appleWebApp: {
       capable: true,
       statusBarStyle: "black-translucent",
-      title: "Ofitsiant",
+      title: process.env.WAITER_APP_SHORT_NAME?.trim() || "Ofitsiant",
     },
     icons: {
       apple: "/waiter/apple-touch-icon.png",
@@ -33,7 +33,7 @@ export async function generateMetadata({
 }
 
 export const viewport: Viewport = {
-  themeColor: "#5b46e8",
+  themeColor: process.env.WAITER_APP_THEME_COLOR?.trim() || "#5b46e8",
   colorScheme: "light",
   width: "device-width",
   initialScale: 1,
@@ -56,7 +56,7 @@ export default async function WaiterLayout({
 
   return (
     <AuthProvider>
-      <AuthGuard>{children}</AuthGuard>
+      <WaiterAuthGate>{children}</WaiterAuthGate>
     </AuthProvider>
   );
 }

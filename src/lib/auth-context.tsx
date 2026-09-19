@@ -21,7 +21,8 @@ type AuthStatus = "loading" | "authenticated" | "unauthenticated";
 interface AuthContextValue {
   user: UserOut | null;
   status: AuthStatus;
-  login: (email: string, password: string) => Promise<void>;
+  login: (username: string, password: string) => Promise<void>;
+  pinLogin: (branchId: string, userId: string, pin: string) => Promise<void>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
   can: (permission: string) => boolean;
@@ -87,8 +88,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = useCallback(
-    async (email: string, password: string) => {
-      const res = await authApi.login(email, password);
+    async (username: string, password: string) => {
+      const res = await authApi.login(username, password);
+      setAccessToken(res.access_token);
+      const u = await authApi.me();
+      setUser(u);
+      setStatus("authenticated");
+    },
+    []
+  );
+
+  const pinLogin = useCallback(
+    async (branchId: string, userId: string, pin: string) => {
+      const res = await authApi.pinLogin(branchId, userId, pin);
       setAccessToken(res.access_token);
       const u = await authApi.me();
       setUser(u);
@@ -117,7 +129,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <AuthContext.Provider value={{ user, status, login, logout, refresh, can }}>
+    <AuthContext.Provider
+      value={{ user, status, login, pinLogin, logout, refresh, can }}
+    >
       {children}
     </AuthContext.Provider>
   );

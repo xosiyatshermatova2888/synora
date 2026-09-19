@@ -1,4 +1,4 @@
-﻿"""Authentication tests (Section 8 / 32).
+"""Authentication tests (Section 8 / 32).
 
 Covers register â†’ login â†’ me â†’ refresh rotation â†’ logout, invalid JWTs, and
 the brute-force rate limiter.
@@ -16,7 +16,7 @@ from tests.conftest import TEST_PASSWORD
 
 REGISTER = {
     "full_name": "Demo Founder",
-    "email": "founder@synora.io",
+    "username": "founder_demo",
     "password": TEST_PASSWORD,
     "restaurant_name": "Founder Diner",
     "currency": "UZS",
@@ -51,13 +51,13 @@ class TestRegister:
         )
         assert me.status_code == 200, me.text
         data = me.json()
-        assert data["email"] == REGISTER["email"]
+        assert data["username"] == REGISTER["username"]
         assert data["restaurant_name"] == "Founder Diner"
         assert [r["name"] for r in data["roles"]] == ["OWNER"]
         assert "orders.create" in data["permissions"]
         assert "finance.manage" in data["permissions"]
 
-    def test_register_duplicate_email_is_generic_409(self, client):
+    def test_register_duplicate_username_is_generic_409(self, client):
         first = client.post("/api/v1/auth/register", json=REGISTER)
         assert first.status_code == 201
         second = client.post("/api/v1/auth/register", json=REGISTER)
@@ -66,7 +66,7 @@ class TestRegister:
         assert "exists" not in second.text.lower()
 
     def test_register_weak_password_rejected(self, client):
-        payload = {**REGISTER, "email": "weak@synora.io", "password": "123"}
+        payload = {**REGISTER, "username": "weak_demo", "password": "123"}
         res = client.post("/api/v1/auth/register", json=payload)
         assert res.status_code == 422
 
@@ -75,7 +75,7 @@ class TestLogin:
     def test_login_success_returns_tokens_and_cookie(self, client, world):
         res = client.post(
             "/api/v1/auth/login",
-            json={"email": world.owner_a.email, "password": TEST_PASSWORD},
+            json={"username": world.owner_a.username, "password": TEST_PASSWORD},
         )
         assert res.status_code == 200, res.text
         body = res.json()
@@ -85,15 +85,15 @@ class TestLogin:
     def test_login_wrong_password_401(self, client, world):
         res = client.post(
             "/api/v1/auth/login",
-            json={"email": world.owner_a.email, "password": "wrong-password"},
+            json={"username": world.owner_a.username, "password": "wrong-password"},
         )
         assert res.status_code == 401
         assert _refresh_cookie(client) is None
 
-    def test_login_unknown_email_401(self, client):
+    def test_login_unknown_username_401(self, client):
         res = client.post(
             "/api/v1/auth/login",
-            json={"email": "ghost@synora.io", "password": TEST_PASSWORD},
+            json={"username": "ghost_user", "password": TEST_PASSWORD},
         )
         assert res.status_code == 401
 
@@ -102,7 +102,7 @@ class TestRefreshRotation:
     async def test_refresh_rotates_and_old_token_is_revoked(self, client, db, world):
         login = client.post(
             "/api/v1/auth/login",
-            json={"email": world.owner_a.email, "password": TEST_PASSWORD},
+            json={"username": world.owner_a.username, "password": TEST_PASSWORD},
         )
         old_cookie = _refresh_cookie(client)
         assert old_cookie
@@ -121,7 +121,7 @@ class TestRefreshRotation:
     async def test_stale_refresh_token_rejected(self, client, db, world):
         login = client.post(
             "/api/v1/auth/login",
-            json={"email": world.waiter_a.email, "password": TEST_PASSWORD},
+            json={"username": world.waiter_a.username, "password": TEST_PASSWORD},
         )
         stale_cookie = _refresh_cookie(client)
 
@@ -137,7 +137,7 @@ class TestRefreshRotation:
     async def test_logout_revokes_token(self, client, db, world):
         client.post(
             "/api/v1/auth/login",
-            json={"email": world.owner_a.email, "password": TEST_PASSWORD},
+            json={"username": world.owner_a.username, "password": TEST_PASSWORD},
         )
         cookie = _refresh_cookie(client)
         res = client.post("/api/v1/auth/logout")
@@ -177,7 +177,7 @@ class TestLoginRateLimit:
         from app.utils.rate_limit import login_limiter
 
         monkeypatch.setattr(login_limiter, "max_attempts", 2)
-        payload = {"email": world.owner_a.email, "password": "wrong-password"}
+        payload = {"username": world.owner_a.username, "password": "wrong-password"}
         assert client.post("/api/v1/auth/login", json=payload).status_code == 401
         assert client.post("/api/v1/auth/login", json=payload).status_code == 401
         third = client.post("/api/v1/auth/login", json=payload)
@@ -188,7 +188,7 @@ class TestLoginRateLimit:
 
         # Fail, then succeed: the success must clear the account fail-counter so
         # the next failure doesn't inherit a blocked state.
-        wrong = {"email": world.cashier_a.email, "password": "wrong-password"}
+        wrong = {"username": world.cashier_a.username, "password": "wrong-password"}
         assert login_limiter_wrap.post("/api/v1/auth/login", json=wrong).status_code == 401
-        ok = {"email": world.cashier_a.email, "password": TEST_PASSWORD}
+        ok = {"username": world.cashier_a.username, "password": TEST_PASSWORD}
         assert login_limiter_wrap.post("/api/v1/auth/login", json=ok).status_code == 200

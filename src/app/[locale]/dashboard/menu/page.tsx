@@ -351,7 +351,7 @@ export default function MenuPage() {
                     className="flex flex-col justify-between gap-3 rounded-lg border border-border-default bg-background p-4 shadow-sm transition-shadow hover:shadow-md"
                   >
                     <div>
-                      <div className="mb-3 h-28 w-full overflow-hidden rounded-lg bg-background-secondary">
+                      <div className="mb-3 h-36 w-full overflow-hidden rounded-lg bg-background-secondary">
                         {product.image_url ? (
                           // eslint-disable-next-line @next/next/no-img-element -- see ImageUploadField
                           <img

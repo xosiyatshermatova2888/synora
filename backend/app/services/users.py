@@ -16,7 +16,7 @@ from app.core.security import hash_password
 from app.models.user import User
 from app.schemas.users import StaffCreateRequest
 from app.services.permissions import ensure_system_permissions_and_roles
-from app.utils.errors import ConflictError, ValidationError
+from app.utils.errors import ConflictError, NotFoundError, ValidationError
 
 
 async def list_staff(session: AsyncSession, restaurant_id: uuid.UUID) -> list[User]:
@@ -36,14 +36,14 @@ async def create_staff(
     if role is None:
         raise ValidationError(detail=f"Unknown role '{payload.role}'.")
 
-    email = str(payload.email).lower()
-    existing = await session.scalar(select(User.id).where(User.email == email))
+    username = payload.username.strip().lower()
+    existing = await session.scalar(select(User.id).where(User.username == username))
     if existing:
-        raise ConflictError(detail="A user with this email already exists.")
+        raise ConflictError(detail="A user with this username already exists.")
 
     user = User(
         restaurant_id=restaurant_id,
-        email=email,
+        username=username,
         password_hash=hash_password(payload.password),
         full_name=payload.full_name,
     )
@@ -51,6 +51,44 @@ async def create_staff(
     # lazy-load of an uninitialized collection under the async engine.
     user.roles = [role]
     session.add(user)
+    await session.commit()
+    await session.refresh(user, attribute_names=["roles"])
+    return user
+
+
+async def set_pin(
+    session: AsyncSession, restaurant_id: uuid.UUID, user_id: uuid.UUID, pin: str
+) -> User:
+    user = await session.scalar(
+        select(User).where(
+            User.id == user_id,
+            User.restaurant_id == restaurant_id,
+            User.deleted_at.is_(None),
+        )
+    )
+    if user is None:
+        raise NotFoundError(detail="Staff member not found.")
+
+    user.pin_hash = hash_password(pin) if pin else None
+    await session.commit()
+    await session.refresh(user, attribute_names=["roles"])
+    return user
+
+
+async def set_password(
+    session: AsyncSession, restaurant_id: uuid.UUID, user_id: uuid.UUID, password: str
+) -> User:
+    user = await session.scalar(
+        select(User).where(
+            User.id == user_id,
+            User.restaurant_id == restaurant_id,
+            User.deleted_at.is_(None),
+        )
+    )
+    if user is None:
+        raise NotFoundError(detail="Staff member not found.")
+
+    user.password_hash = hash_password(password)
     await session.commit()
     await session.refresh(user, attribute_names=["roles"])
     return user

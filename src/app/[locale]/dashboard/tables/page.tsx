@@ -86,10 +86,10 @@ export default function TablesPage() {
     setTimeout(() => setNotice(null), 3000);
   };
 
-  const handleCreate = async (name: string, capacity: number) => {
+  const handleCreate = async (name: string, capacity: number, zone: string) => {
     if (!branchId) return;
     try {
-      await tablesApi.create({ branch_id: branchId, name, capacity });
+      await tablesApi.create({ branch_id: branchId, name, capacity, zone: zone || null });
       setModal(null);
       flash(tc("actions.saved"));
       loadTables();
@@ -102,6 +102,7 @@ export default function TablesPage() {
     name?: string;
     capacity?: number;
     status?: string;
+    zone?: string | null;
   }) => {
     try {
       await tablesApi.update(table.id, updates);
@@ -220,6 +221,9 @@ export default function TablesPage() {
                 <p className="mt-3 font-semibold text-text-primary">
                   {table.name}
                 </p>
+                {table.zone && (
+                  <p className="text-xs text-text-secondary">{table.zone}</p>
+                )}
                 <div className="mt-1.5 flex items-center gap-1 text-text-secondary">
                   {Array.from({
                     length: Math.min(table.capacity, MAX_SEAT_ICONS),
@@ -263,7 +267,7 @@ export default function TablesPage() {
         <TableFormModal
           title={t("addTable")}
           onClose={() => setModal(null)}
-          onSubmit={(name, capacity) => handleCreate(name, capacity)}
+          onSubmit={(name, capacity, _status, zone) => handleCreate(name, capacity, zone)}
         />
       )}
 
@@ -272,11 +276,12 @@ export default function TablesPage() {
           title={t("editTable")}
           initial={modal.table}
           onClose={() => setModal(null)}
-          onSubmit={(name, capacity, status) =>
+          onSubmit={(name, capacity, status, zone) =>
             handleUpdate(modal.table, {
               ...(name && name !== modal.table.name ? { name } : {}),
               ...(capacity !== modal.table.capacity ? { capacity } : {}),
               ...(status && status !== modal.table.status ? { status } : {}),
+              ...(zone !== (modal.table.zone ?? "") ? { zone: zone || null } : {}),
             })
           }
         />
@@ -294,11 +299,12 @@ function TableFormModal({
   title: string;
   initial?: TableOut;
   onClose: () => void;
-  onSubmit: (name: string, capacity: number, status: string) => void;
+  onSubmit: (name: string, capacity: number, status: string, zone: string) => void;
 }) {
   const t = useTranslations("tablesPage");
   const tc = useTranslations("common");
   const [name, setName] = useState(initial?.name ?? "");
+  const [zone, setZone] = useState(initial?.zone ?? "");
   const [capacity, setCapacity] = useState(String(initial?.capacity ?? 2));
   const [status, setStatus] = useState(initial?.status ?? "AVAILABLE");
 
@@ -308,7 +314,7 @@ function TableFormModal({
         className="space-y-4"
         onSubmit={(e) => {
           e.preventDefault();
-          onSubmit(name.trim(), parseInt(capacity, 10) || 1, status);
+          onSubmit(name.trim(), parseInt(capacity, 10) || 1, status, zone.trim());
         }}
       >
         <div>
@@ -322,6 +328,18 @@ function TableFormModal({
             required
             className="w-full rounded-lg border border-border-default bg-background px-3 py-2 text-sm text-text-primary outline-none focus:border-accent-primary"
           />
+        </div>
+        <div>
+          <label className="mb-1 block text-sm font-medium text-text-primary">
+            {t("zone")}
+          </label>
+          <input
+            value={zone}
+            onChange={(e) => setZone(e.target.value)}
+            placeholder={t("zonePlaceholder")}
+            className="w-full rounded-lg border border-border-default bg-background px-3 py-2 text-sm text-text-primary outline-none focus:border-accent-primary"
+          />
+          <p className="mt-1 text-xs text-text-secondary">{t("zoneHint")}</p>
         </div>
         <div>
           <label className="mb-1 block text-sm font-medium text-text-primary">

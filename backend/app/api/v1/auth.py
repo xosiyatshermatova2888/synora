@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi import APIRouter, Cookie, Depends, Request, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,15 +12,22 @@ from app.core.config import settings
 from app.database.session import get_db
 from app.schemas.auth import (
     LoginRequest,
-    PasswordResetConfirm,
-    PasswordResetRequest,
+    PinLoginRequest,
     RegisterRequest,
     TokenResponse,
     UserOut,
+    WaiterBranchOut,
+    WaiterDirectoryEntry,
 )
 from app.services import auth as auth_service
-from app.services.password_reset import confirm_reset, request_reset
-from app.utils.rate_limit import record_login_failure, record_login_success
+from app.utils.errors import RateLimitedError
+from app.utils.rate_limit import (
+    pin_login_blocked,
+    record_login_failure,
+    record_login_success,
+    record_pin_login_failure,
+    record_pin_login_success,
+)
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -54,21 +63,21 @@ async def login(
     db: AsyncSession = Depends(get_db),
     _: None = Depends(require_login_rate_limit),
 ):
-    email = payload.email.lower()
+    username = payload.username.lower()
     ip = await get_client_ip(request)
     try:
         result = await auth_service.login(
             db,
-            email,
+            username,
             payload.password,
             response=response,
             user_agent=request.headers.get("user-agent"),
             ip=ip,
         )
     except Exception:
-        record_login_failure(email, ip)
+        record_login_failure(username, ip)
         raise
-    record_login_success(email, ip)
+    record_login_success(username, ip)
     return _payload_to_model(result)
 
 
@@ -108,18 +117,47 @@ async def me(
     return await auth_service.me(db, user)
 
 
-@router.post("/password-reset/request", status_code=202)
-async def password_reset_request(
-    payload: PasswordResetRequest, db: AsyncSession = Depends(get_db)
-):
-    # Uniform 202 for existing and unknown addresses: no account disclosure.
-    await request_reset(db, payload.email)
-    return {"status": "if the account exists, a reset email will be sent"}
+# --- Waiter kiosk PIN login (see schemas/auth.py) ---------------------------
 
 
-@router.post("/password-reset/confirm", status_code=204)
-async def password_reset_confirm(
-    payload: PasswordResetConfirm, db: AsyncSession = Depends(get_db)
+@router.get("/waiter-branches", response_model=list[WaiterBranchOut])
+async def waiter_branches(db: AsyncSession = Depends(get_db)):
+    pairs = await auth_service.list_waiter_branches(db)
+    return [
+        WaiterBranchOut(id=branch.id, name=branch.name, restaurant_name=restaurant_name)
+        for branch, restaurant_name in pairs
+    ]
+
+
+@router.get("/waiter-directory", response_model=list[WaiterDirectoryEntry])
+async def waiter_directory(branch_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
+    users = await auth_service.waiter_directory(db, branch_id)
+    return [WaiterDirectoryEntry(id=u.id, full_name=u.full_name) for u in users]
+
+
+@router.post("/pin-login", response_model=TokenResponse)
+async def pin_login(
+    payload: PinLoginRequest,
+    request: Request,
+    response: Response,
+    db: AsyncSession = Depends(get_db),
 ):
-    await confirm_reset(db, payload.token, payload.new_password)
-    return None
+    ip = await get_client_ip(request)
+    key = str(payload.user_id)
+    if pin_login_blocked(key, ip):
+        raise RateLimitedError(detail="Too many attempts. Try again later.")
+    try:
+        result = await auth_service.pin_login(
+            db,
+            payload.branch_id,
+            payload.user_id,
+            payload.pin,
+            response=response,
+            user_agent=request.headers.get("user-agent"),
+            ip=ip,
+        )
+    except Exception:
+        record_pin_login_failure(key, ip)
+        raise
+    record_pin_login_success(key, ip)
+    return _payload_to_model(result)

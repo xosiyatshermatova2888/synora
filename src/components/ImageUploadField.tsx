@@ -44,7 +44,7 @@ export default function ImageUploadField({
         {label}
       </label>
       <div className="flex items-center gap-3">
-        <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-border-default bg-background-secondary">
+        <div className="relative h-32 w-32 shrink-0 overflow-hidden rounded-xl border border-border-default bg-background-secondary">
           {value ? (
             // eslint-disable-next-line @next/next/no-img-element -- images may come from any S3-compatible endpoint the operator configures; next/image would require listing that domain ahead of time.
             <img src={value} alt="" className="h-full w-full object-cover" />

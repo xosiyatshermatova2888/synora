@@ -34,6 +34,7 @@ class OrderRepository(TenantScopedRepository[Order]):
         *,
         branch_id: uuid.UUID | None = None,
         status: str | None = None,
+        waiter_user_id: uuid.UUID | None = None,
         limit: int = 20,
         offset: int = 0,
     ) -> list[Order]:
@@ -42,6 +43,8 @@ class OrderRepository(TenantScopedRepository[Order]):
             stmt = stmt.where(self.model.branch_id == branch_id)
         if status is not None:
             stmt = stmt.where(self.model.status == status)
+        if waiter_user_id is not None:
+            stmt = stmt.where(self.model.waiter_user_id == waiter_user_id)
         stmt = stmt.order_by(self.model.created_at.desc()).limit(limit).offset(offset)
         return list((await self.session.scalars(stmt)).all())
 
@@ -51,6 +54,7 @@ class OrderRepository(TenantScopedRepository[Order]):
         *,
         branch_id: uuid.UUID | None = None,
         status: str | None = None,
+        waiter_user_id: uuid.UUID | None = None,
     ) -> int:
         stmt = select(func.count()).select_from(self.model).where(
             self.model.restaurant_id == restaurant_id
@@ -59,6 +63,8 @@ class OrderRepository(TenantScopedRepository[Order]):
             stmt = stmt.where(self.model.branch_id == branch_id)
         if status is not None:
             stmt = stmt.where(self.model.status == status)
+        if waiter_user_id is not None:
+            stmt = stmt.where(self.model.waiter_user_id == waiter_user_id)
         return await self.session.scalar(stmt) or 0
 
     async def next_order_number(self, restaurant_id: uuid.UUID) -> int:

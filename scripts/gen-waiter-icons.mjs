@@ -1,14 +1,19 @@
-// One-off script: rasterize the existing brand SVG (src/app/icon.svg) into
-// PNG icons for the /waiter PWA manifest. Run with `node scripts/gen-waiter-icons.mjs`.
+// Rasterize a brand SVG into PNG icons for the /waiter PWA manifest.
+// Run with `node scripts/gen-waiter-icons.mjs` to (re)generate the default
+// SYNORA icons, or `node scripts/gen-waiter-icons.mjs <path-to-logo.svg>` to
+// rebrand /waiter for a client deployment (pair with the WAITER_APP_NAME /
+// WAITER_APP_SHORT_NAME / WAITER_APP_THEME_COLOR env vars — see .env.example).
 import sharp from "sharp";
 import { mkdirSync } from "fs";
 import { fileURLToPath } from "url";
-import { dirname, join } from "path";
+import { dirname, join, resolve } from "path";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..");
-const svgPath = join(root, "src/app/icon.svg");
+const svgPath = process.argv[2] ? resolve(process.argv[2]) : join(root, "src/app/icon.svg");
 const outDir = join(root, "public/waiter");
+
+console.log(`source logo: ${svgPath}`);
 
 mkdirSync(outDir, { recursive: true });
 

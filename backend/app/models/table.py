@@ -26,6 +26,10 @@ class Table(Base, TimestampMixin):
         ForeignKey("branches.id", ondelete="CASCADE"), nullable=False, index=True
     )
     name: Mapped[str] = mapped_column(String(50), nullable=False)  # "Table 1", "A4"
+    # Optional room/hall grouping ("1-zal", "Terassa") for the waiter app's
+    # hall picker. NULL = ungrouped; branches that never set this up keep
+    # today's flat table grid.
+    zone: Mapped[str | None] = mapped_column(String(50))
     capacity: Mapped[int] = mapped_column(Integer, default=4, nullable=False)
     # AVAILABLE | OCCUPIED | RESERVED | DISABLED (Section 10).
     status: Mapped[str] = mapped_column(String(20), default="AVAILABLE", nullable=False)

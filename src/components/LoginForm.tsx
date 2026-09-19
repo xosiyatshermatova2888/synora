@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
 import { Loader2 } from "lucide-react";
 import { authApi, ApiError, setAccessToken } from "@/lib/api";
@@ -10,14 +10,17 @@ import Button from "@/components/Button";
 
 type Mode = "login" | "register";
 
-export default function LoginForm() {
+function LoginFormInner() {
   const t = useTranslations("auth");
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = searchParams.get("next");
+  const redirectTo = next && next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
 
   const [mode, setMode] = useState<Mode>("login");
   const [fullName, setFullName] = useState("");
   const [restaurantName, setRestaurantName] = useState("");
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -29,15 +32,15 @@ export default function LoginForm() {
     try {
       const token =
         mode === "login"
-          ? await authApi.login(email, password)
+          ? await authApi.login(username, password)
           : await authApi.register({
               full_name: fullName,
-              email,
+              username,
               password,
               restaurant_name: restaurantName,
             });
       setAccessToken(token.access_token);
-      router.push("/dashboard");
+      router.push(redirectTo);
     } catch (err) {
       if (err instanceof ApiError) {
         if (err.status === 401) setError(t("invalidCredentials"));
@@ -132,17 +135,18 @@ export default function LoginForm() {
         )}
 
         <div>
-          <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-text-primary">
-            {t("email")}
+          <label htmlFor="username" className="mb-1.5 block text-sm font-medium text-text-primary">
+            {t("username")}
           </label>
           <input
-            id="email"
-            type="email"
-            autoComplete="email"
+            id="username"
+            type="text"
+            autoComplete="username"
             required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder={t("emailPlaceholder")}
+            minLength={3}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder={t("usernamePlaceholder")}
             className={inputClass}
           />
         </div>
@@ -164,14 +168,6 @@ export default function LoginForm() {
           />
           {mode === "register" && (
             <p className="mt-1 text-xs text-text-secondary">{t("passwordHelp")}</p>
-          )}
-          {mode === "login" && (
-            <Link
-              href="/forgot-password"
-              className="mt-1 inline-block text-xs text-accent-primary hover:underline"
-            >
-              {t("forgotPassword")}
-            </Link>
           )}
         </div>
 
@@ -207,5 +203,13 @@ export default function LoginForm() {
         </button>
       </p>
     </div>
+  );
+}
+
+export default function LoginForm() {
+  return (
+    <Suspense fallback={null}>
+      <LoginFormInner />
+    </Suspense>
   );
 }

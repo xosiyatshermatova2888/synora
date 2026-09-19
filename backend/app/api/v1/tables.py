@@ -51,6 +51,7 @@ async def create_table(
         restaurant_id=current_tenant,
         branch_id=payload.branch_id,
         name=payload.name,
+        zone=payload.zone,
         capacity=payload.capacity,
     )
     db.add(table)

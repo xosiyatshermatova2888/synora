@@ -23,10 +23,17 @@ class User(Base, TimestampMixin):
     restaurant_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("restaurants.id", ondelete="CASCADE"), nullable=False, index=True
     )
-    email: Mapped[str] = mapped_column(
+    # Login identifier the user picks — a free-form username, not an email
+    # address (no self-service password reset exists to send a link to;
+    # an admin/owner resets a locked-out staff member's password instead).
+    username: Mapped[str] = mapped_column(
         String(255), unique=True, nullable=False, index=True
     )
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    # Set only for staff who use the waiter kiosk's name+PIN login instead of
+    # email/password (see services/auth.py::pin_login). Non-NULL also gates
+    # whether this user appears in the waiter directory.
+    pin_hash: Mapped[str | None] = mapped_column(String(255))
     full_name: Mapped[str] = mapped_column(String(150), nullable=False)
     phone: Mapped[str | None] = mapped_column(String(30))
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
