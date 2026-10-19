@@ -11,9 +11,10 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_current_tenant, require_permission
+from app.api.deps import get_current_tenant, get_current_user_restaurant, require_permission
 from app.database.session import get_db
 from app.models.menu import Category, Modifier, ModifierGroup, Product
+from app.models.user import User
 from app.repositories.menu import (
     CategoryRepository,
     ModifierGroupRepository,
@@ -178,12 +179,23 @@ async def update_product(
     product_id: uuid.UUID,
     payload: ProductUpdate,
     current_tenant: uuid.UUID = Depends(get_current_tenant),
+    current_user: User = Depends(get_current_user_restaurant),
     db: AsyncSession = Depends(get_db),
     _: None = Depends(require_permission("menu.update")),
 ):
+    price_changed = "price" in payload.model_fields_set
     product = await menu_service.update_product(db, current_tenant, product_id, payload)
     await db.commit()
     await db.refresh(product)
+
+    if price_changed:
+        from app.services import audit as audit_service
+
+        await audit_service.log_action(
+            db, current_tenant, current_user.id, "product.price_update", "product", product.id,
+            f"Changed {product.name}'s price to {product.price}",
+        )
+
     return product
 
 

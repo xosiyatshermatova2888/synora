@@ -20,6 +20,7 @@ class Permission(str, Enum):
     ORDERS_CREATE = "orders.create"
     ORDERS_UPDATE = "orders.update"
     ORDERS_CANCEL = "orders.cancel"
+    ORDERS_DISCOUNT = "orders.discount"
 
     # menu
     MENU_READ = "menu.read"
@@ -34,6 +35,7 @@ class Permission(str, Enum):
     # finance / payments
     FINANCE_READ = "finance.read"
     FINANCE_MANAGE = "finance.manage"
+    PAYMENTS_CREATE = "payments.create"  # record a payment / settle an order
 
     # users
     USERS_READ = "users.read"
@@ -55,6 +57,8 @@ ROLE_TEMPLATES: dict[str, list[str]] = {
         Permission.ORDERS_READ.value,
         Permission.ORDERS_UPDATE.value,
         Permission.ORDERS_CANCEL.value,
+        Permission.ORDERS_DISCOUNT.value,
+        Permission.PAYMENTS_CREATE.value,
         Permission.MENU_READ.value,
         Permission.MENU_UPDATE.value,
         Permission.INVENTORY_READ.value,
@@ -67,6 +71,9 @@ ROLE_TEMPLATES: dict[str, list[str]] = {
         Permission.ORDERS_READ.value,
         Permission.ORDERS_CREATE.value,
         Permission.ORDERS_UPDATE.value,
+        Permission.ORDERS_CANCEL.value,
+        Permission.ORDERS_DISCOUNT.value,
+        Permission.PAYMENTS_CREATE.value,
         Permission.FINANCE_READ.value,
     ],
     "WAITER": [

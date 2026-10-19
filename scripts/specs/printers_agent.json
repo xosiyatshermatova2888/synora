@@ -1,0 +1,75 @@
+{
+  "path": "printersSettings",
+  "uz": {
+    "mode": "Ulanish usuli",
+    "modeDirect": "To‘g‘ridan-to‘g‘ri (server printer bilan bir tarmoqda)",
+    "modeAgent": "Print agent orqali (server internetda bo‘lsa)",
+    "modeHint": "Agar SYNORA internetdagi serverda ishlasa, «Print agent» ni tanlang va restoran kompyuteriga agentni o‘rnating.",
+    "agentTag": "agent",
+    "queued": "Chek navbatga qo‘yildi — print agent uni chiqaradi",
+    "agent": {
+      "title": "Print agent",
+      "description": "Restoran kompyuterida ishlaydigan kichik dastur: chekni internetdagi serverdan olib, lokal printerga yuboradi.",
+      "online": "Agent ulangan",
+      "offline": "Agent ulanmagan",
+      "notSet": "Agent sozlanmagan",
+      "create": "Token yaratish",
+      "rotate": "Yangi token",
+      "tokenTitle": "Print agent tokeni",
+      "tokenWarning": "Bu token faqat hozir ko‘rsatiladi. Saqlab qo‘ying. Yangi token yaratsangiz, eskisi ishlamay qoladi.",
+      "command": "Restoran kompyuterida ishga tushiring:",
+      "copy": "Nusxa olish",
+      "copied": "Nusxa olindi",
+      "close": "Yopish",
+      "lastSeen": "Oxirgi aloqa"
+    }
+  },
+  "ru": {
+    "mode": "Способ подключения",
+    "modeDirect": "Напрямую (сервер в одной сети с принтером)",
+    "modeAgent": "Через print-agent (если сервер в интернете)",
+    "modeHint": "Если SYNORA работает на сервере в интернете, выберите «Print-agent» и установите агент на компьютер ресторана.",
+    "agentTag": "агент",
+    "queued": "Чек поставлен в очередь — его напечатает print-agent",
+    "agent": {
+      "title": "Print-agent",
+      "description": "Небольшая программа на компьютере ресторана: забирает чеки с сервера в интернете и отправляет на локальный принтер.",
+      "online": "Агент на связи",
+      "offline": "Агент не на связи",
+      "notSet": "Агент не настроен",
+      "create": "Создать токен",
+      "rotate": "Новый токен",
+      "tokenTitle": "Токен print-agent",
+      "tokenWarning": "Токен показывается только сейчас. Сохраните его. Новый токен отключит старый.",
+      "command": "Запустите на компьютере ресторана:",
+      "copy": "Копировать",
+      "copied": "Скопировано",
+      "close": "Закрыть",
+      "lastSeen": "Последняя связь"
+    }
+  },
+  "en": {
+    "mode": "Connection",
+    "modeDirect": "Direct (server on the same network as the printer)",
+    "modeAgent": "Via print agent (when the server is on the internet)",
+    "modeHint": "If SYNORA runs on an internet server, choose “Print agent” and install the agent on a PC in the restaurant.",
+    "agentTag": "agent",
+    "queued": "Receipt queued — the print agent will print it",
+    "agent": {
+      "title": "Print agent",
+      "description": "A small program on a restaurant PC: it fetches receipts from the internet server and sends them to the local printer.",
+      "online": "Agent connected",
+      "offline": "Agent not connected",
+      "notSet": "Agent not set up",
+      "create": "Create token",
+      "rotate": "New token",
+      "tokenTitle": "Print agent token",
+      "tokenWarning": "This token is shown only now. Save it. Creating a new token disables the old one.",
+      "command": "Run this on the restaurant PC:",
+      "copy": "Copy",
+      "copied": "Copied",
+      "close": "Close",
+      "lastSeen": "Last seen"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "path": "kitchenTicketPage",
+  "uz": { "delivery": "YETKAZISH", "pickup": "OLIB KETISH", "customer": "MIJOZ", "phone": "Tel", "address": "Manzil" },
+  "ru": { "delivery": "ДОСТАВКА", "pickup": "САМОВЫВОЗ", "customer": "КЛИЕНТ", "phone": "Тел", "address": "Адрес" },
+  "en": { "delivery": "DELIVERY", "pickup": "PICKUP", "customer": "CUSTOMER", "phone": "Tel", "address": "Address" }
+}

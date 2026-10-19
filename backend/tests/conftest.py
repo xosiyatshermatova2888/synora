@@ -22,9 +22,14 @@ _TEST_DB = str(Path(__file__).parent / "test_runtime.db")
 os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///" + _TEST_DB.replace("\\", "/")
 os.environ["DEBUG"] = "true"
 os.environ["REFRESH_COOKIE_SECURE"] = "false"
+# Background print jobs finish inside the request so tests can assert on them.
+os.environ["PRINT_DISPATCH_INLINE"] = "true"
+os.environ["SUBSCRIPTION_CACHE_SECONDS"] = "0"
 # Keep the login rate limiter from tripping legitimate test logins; the
 # limiter itself has dedicated tests in test_auth.py.
 os.environ.setdefault("LOGIN_RATE_LIMIT_MAX_ATTEMPTS", "1000")
+os.environ.setdefault("LOGIN_RATE_LIMIT_IP_MAX_ATTEMPTS", "1000")
+os.environ.setdefault("REGISTER_RATE_LIMIT_MAX_ATTEMPTS", "1000")
 
 import pytest
 import pytest_asyncio
@@ -91,9 +96,11 @@ async def db():
 async def _reset_in_process_state():
     """Stateful in-process guards (login/api rate limiters) must not leak
     between tests."""
-    from app.utils.rate_limit import login_limiter
+    from app.utils.rate_limit import login_limiter, _public_order_limiter, _register_limiter
 
     login_limiter._failed.clear()
+    _public_order_limiter._failed.clear()
+    _register_limiter._failed.clear()
     yield
 
 
@@ -112,8 +119,8 @@ async def world(db):
     ).all():
         roles_by_name[role.name] = role
 
-    alpha = Restaurant(name="Alpha Grill", slug="alpha-grill", currency="UZS", timezone="Asia/Tashkent")
-    beta = Restaurant(name="Beta Cafe", slug="beta-cafe", currency="UZS", timezone="Asia/Tashkent")
+    alpha = Restaurant(name="Alpha Grill", slug="alpha-grill", currency="UZS", timezone="Asia/Tashkent", plan="ENTERPRISE")
+    beta = Restaurant(name="Beta Cafe", slug="beta-cafe", currency="UZS", timezone="Asia/Tashkent", plan="ENTERPRISE")
     db.add_all([alpha, beta])
     await db.flush()
 

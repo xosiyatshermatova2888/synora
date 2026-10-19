@@ -37,6 +37,11 @@ class User(Base, TimestampMixin):
     full_name: Mapped[str] = mapped_column(String(150), nullable=False)
     phone: Mapped[str | None] = mapped_column(String(30))
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    # SYNORA staff who approve subscription payments. Never settable through the
+    # API — only `python -m app.cli make-platform-admin`.
+    is_platform_admin: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default="false", nullable=False
+    )
     # Audit: who created this user (Section 6.3).
     created_by_user_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("users.id", ondelete="SET NULL"), nullable=True

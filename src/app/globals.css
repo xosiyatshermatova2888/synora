@@ -1,19 +1,65 @@
 @import "tailwindcss";
 
 :root {
-  /* SYNORA brand tokens — single source of truth.
-     Mirrored in tailwind.config.ts under theme.extend.colors. */
-  --background: #f6f7fa;
-  --background-secondary: #eceff4;
+  /* SYNORA brand tokens — single source of truth. Token NAMES are stable
+     (every page uses them); only values change when the brand is refined. */
+  --background: #f5f6f8;
+  --background-secondary: #eceef2;
   --surface: #ffffff;
-  --border-default: #e2e6ee;
-  --accent-primary: #5b46e8;
+  --border-default: #e3e6ec;
+  --accent-primary: #088a7d;
+  --accent-primary-hover: #076f65;
   --accent-ai: #0c9ec7;
   --success: #16a34a;
   --warning: #d97706;
   --error: #dc2626;
+  --info: #2563eb;
   --text-primary: #101828;
   --text-secondary: #566170;
+
+  /* Navigation area (sidebar) */
+  --nav-bg: #0b1f22;
+  --nav-surface: #123236;
+  --nav-border: #1c4046;
+  --nav-text: #a8c3c6;
+  --nav-text-active: #ffffff;
+
+  /* Radii + elevation (3-step scale) */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --shadow-1: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --shadow-2: 0 2px 8px rgba(16, 24, 40, 0.08);
+  --shadow-3: 0 12px 32px rgba(16, 24, 40, 0.14);
+}
+
+/* Dashboard dark theme (set via data-theme on <html> while the dashboard is
+   mounted). Same token names, so every component follows automatically. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #071719;
+  --background-secondary: #11292c;
+  --surface: #0d2225;
+  --border-default: #1b3a3e;
+  --accent-primary: #0e9f90;
+  --accent-primary-hover: #0c8a7d;
+  --success: #34d399;
+  --warning: #fbbf24;
+  --error: #f87171;
+  --info: #60a5fa;
+  --text-primary: #e6f2f2;
+  --text-secondary: #8fb3b6;
+  --nav-bg: #051315;
+  --nav-surface: #0f2a2e;
+  --nav-border: #17383c;
+  --nav-text: #94b5b8;
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-2: 0 2px 8px rgba(0, 0, 0, 0.45);
+  --shadow-3: 0 12px 32px rgba(0, 0, 0, 0.6);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
 }
 
 @theme inline {
@@ -22,18 +68,31 @@
   --color-surface: var(--surface);
   --color-border-default: var(--border-default);
   --color-accent-primary: var(--accent-primary);
+  --color-accent-hover: var(--accent-primary-hover);
   --color-accent-ai: var(--accent-ai);
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-error: var(--error);
+  --color-info: var(--info);
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
+  --color-nav-bg: var(--nav-bg);
+  --color-nav-surface: var(--nav-surface);
+  --color-nav-border: var(--nav-border);
+  --color-nav-text: var(--nav-text);
+  --color-nav-text-active: var(--nav-text-active);
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --shadow-card: var(--shadow-1);
+  --shadow-pop: var(--shadow-3);
 }
 
 html {
   scroll-behavior: smooth;
   scrollbar-color: var(--border-default) transparent;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
 }
 
 body {
@@ -45,21 +104,21 @@ body {
 
 /* Brand gradient utilities */
 .text-brand-gradient {
-  background: linear-gradient(120deg, var(--accent-primary), var(--accent-ai));
+  background: linear-gradient(120deg, #19b3a6, #b4d33f);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .bg-brand-gradient {
-  background: linear-gradient(120deg, var(--accent-primary), var(--accent-ai));
+  background: linear-gradient(120deg, #12a89b, #a9cf3a);
 }
 
 /* AI radial glow (subtle, ~12% opacity) */
 .ai-glow {
   background: radial-gradient(
     ellipse at center,
-    rgba(91, 70, 232, 0.12),
+    rgba(8, 138, 125, 0.12),
     rgba(12, 158, 199, 0.06),
     transparent 70%
   );
@@ -104,6 +163,14 @@ body {
   background-image:
     linear-gradient(to right, rgba(16, 24, 40, 0.07) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(16, 24, 40, 0.07) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+/* Grid backdrop for dark hero sections */
+.grid-backdrop-dark {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
   background-size: 44px 44px;
 }
 

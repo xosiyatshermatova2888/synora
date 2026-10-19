@@ -1,0 +1,6 @@
+{
+  "path": "shell.nav",
+  "uz": { "subscription": "Obuna", "platform": "Platforma" },
+  "ru": { "subscription": "Подписка", "platform": "Платформа" },
+  "en": { "subscription": "Subscription", "platform": "Platform" }
+}

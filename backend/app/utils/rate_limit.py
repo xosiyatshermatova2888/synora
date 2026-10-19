@@ -24,6 +24,7 @@ class LoginRateLimiter:
         window_seconds: int = settings.login_rate_limit_window_seconds,
     ) -> None:
         self.max_attempts = max_attempts
+        self.ip_max_attempts = settings.login_rate_limit_ip_max_attempts
         self.window_seconds = window_seconds
         self._failed: defaultdict[str, deque[float]] = defaultdict(deque)
         self._lock = threading.Lock()
@@ -37,7 +38,8 @@ class LoginRateLimiter:
     def is_blocked(self, key: str) -> bool:
         with self._lock:
             self._prune(key)
-            return len(self._failed[key]) >= self.max_attempts
+            limit = self.ip_max_attempts if key.startswith("ip:") else self.max_attempts
+            return len(self._failed[key]) >= limit
 
     def record_failure(self, key: str) -> None:
         with self._lock:
@@ -110,3 +112,44 @@ def record_api_call(ip: str) -> None:
     q = _general_limiter._failed[ip]
     if len(q) < GENERAL_LIMIT_MAX:
         q.append(time.monotonic())
+
+
+# ---------------------------------------------------------------------------
+# Public order-channel limiter (Section 22/QR menu) — the one place the API
+# accepts unauthenticated writes, so it's a much more attractive abuse target
+# than the general read-mostly traffic above. Counts every attempt (success
+# or failure) per IP, not just failures — a flood of successful orders is
+# exactly what this guards against.
+# ---------------------------------------------------------------------------
+PUBLIC_ORDER_LIMIT_MAX: int = 20
+PUBLIC_ORDER_LIMIT_WINDOW_SECONDS: int = 60
+
+_public_order_limiter = LoginRateLimiter(
+    max_attempts=PUBLIC_ORDER_LIMIT_MAX, window_seconds=PUBLIC_ORDER_LIMIT_WINDOW_SECONDS
+)
+
+
+def public_order_limit_hit(ip: str) -> bool:
+    return _public_order_limiter.is_blocked(ip)
+
+
+def record_public_order_attempt(ip: str) -> None:
+    _public_order_limiter.record_failure(ip)
+
+
+# ---------------------------------------------------------------------------
+# Registration limiter — every attempt counts (successful sign-ups included):
+# each one creates a restaurant with a free trial, so volume is the abuse.
+# ---------------------------------------------------------------------------
+_register_limiter = LoginRateLimiter(
+    max_attempts=settings.register_rate_limit_max_attempts,
+    window_seconds=settings.register_rate_limit_window_seconds,
+)
+
+
+def register_limit_hit(ip: str) -> bool:
+    return _register_limiter.is_blocked(ip)
+
+
+def record_register_attempt(ip: str) -> None:
+    _register_limiter.record_failure(ip)

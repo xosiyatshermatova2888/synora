@@ -1,0 +1,57 @@
+{
+  "path": "",
+  "uz": {
+    "soonPage": {
+      "badge": "Tez orada",
+      "needsBackend": "Buning uchun backend qo‘llab-quvvatlashi kerak",
+      "delivery": {
+        "title": "Yetkazib berish",
+        "description": "Telegram, Instagram, sayt va QR menyudan kelgan buyurtmalar uchun yagona kirish qutisi.",
+        "needs": "Kerak: barcha kanallardagi buyurtmalarni bitta ro‘yxatda jamlaydigan endpoint va kuryer/manzil modeli. Hozircha QR va Telegram buyurtmalari “Buyurtmalar” sahifasida “Manba” filtri orqali ko‘rinadi.",
+        "cta": "Buyurtmalarga o‘tish"
+      },
+      "ai": {
+        "title": "AI yordamchi",
+        "description": "Savdo xulosalari, anomaliyalarni aniqlash, ombor va mahsulotlar tahlili, talab prognozi.",
+        "needs": "Kerak: sozlangan AI xizmati (API kaliti) va uni chaqiruvchi backend endpoint. Soxta tahlillar ko‘rsatilmaydi.",
+        "cta": "Hisobotlarga o‘tish"
+      }
+    }
+  },
+  "ru": {
+    "soonPage": {
+      "badge": "Скоро",
+      "needsBackend": "Для этого нужна поддержка на стороне бэкенда",
+      "delivery": {
+        "title": "Доставка",
+        "description": "Единый входящий ящик заказов из Telegram, Instagram, сайта и QR-меню.",
+        "needs": "Нужно: endpoint, объединяющий заказы всех каналов, и модель курьера/адреса. Пока заказы из QR и Telegram видны на странице «Заказы» через фильтр «Источник».",
+        "cta": "Перейти к заказам"
+      },
+      "ai": {
+        "title": "AI-ассистент",
+        "description": "Сводки продаж, поиск аномалий, анализ склада и товаров, прогноз спроса.",
+        "needs": "Нужно: настроенный AI-сервис (API-ключ) и бэкенд-endpoint для вызова. Выдуманная аналитика не показывается.",
+        "cta": "Перейти к отчётам"
+      }
+    }
+  },
+  "en": {
+    "soonPage": {
+      "badge": "Coming soon",
+      "needsBackend": "This needs backend support first",
+      "delivery": {
+        "title": "Delivery",
+        "description": "One inbox for orders coming from Telegram, Instagram, the website and the QR menu.",
+        "needs": "Needs: an endpoint that merges orders from every channel, plus a courier/address model. For now QR and Telegram orders appear on the Orders page via the Source filter.",
+        "cta": "Go to Orders"
+      },
+      "ai": {
+        "title": "AI assistant",
+        "description": "Sales summaries, anomaly detection, inventory and product insights, demand forecasts.",
+        "needs": "Needs: a configured AI service (API key) and a backend endpoint that calls it. No fabricated insights are shown.",
+        "cta": "Go to Reports"
+      }
+    }
+  }
+}

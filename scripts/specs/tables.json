@@ -1,0 +1,6 @@
+{
+  "path": "tablesPage",
+  "uz": { "allZones": "Barcha zallar", "awaitingPayment": "To‘lov kutilmoqda" },
+  "ru": { "allZones": "Все залы", "awaitingPayment": "Ждёт оплаты" },
+  "en": { "allZones": "All halls", "awaitingPayment": "Awaiting payment" }
+}

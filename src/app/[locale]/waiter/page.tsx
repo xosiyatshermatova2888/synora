@@ -27,6 +27,7 @@ import {
   OrderOut,
   ProductOut,
   TableOut,
+  WaiterStatsOut,
   OfflineError,
   authApi,
   branchesApi,
@@ -928,6 +929,10 @@ export default function WaiterPage() {
               : null
           }
           onClose={() => setOrderDetail(null)}
+          onUpdated={(fresh) => {
+            setOrderDetail(fresh);
+            setMyOrders((cur) => cur.map((o) => (o.id === fresh.id ? fresh : o)));
+          }}
         />
       )}
     </div>
@@ -999,13 +1004,30 @@ function OrderDetailModal({
   order,
   tableName,
   onClose,
+  onUpdated,
 }: {
   order: OrderOut;
   tableName: string | null;
   onClose: () => void;
+  onUpdated: (order: OrderOut) => void;
 }) {
   const t = useTranslations("waiterPage");
   const tc = useTranslations("common");
+  const [requesting, setRequesting] = useState(false);
+  const [billError, setBillError] = useState<string | null>(null);
+  const canRequestBill = order.status === "OPEN" || order.status === "PARTIALLY_PAID";
+
+  const requestBill = async () => {
+    setRequesting(true);
+    setBillError(null);
+    try {
+      onUpdated(await ordersApi.requestBill(order.id));
+    } catch (err) {
+      setBillError((err as Error).message);
+    } finally {
+      setRequesting(false);
+    }
+  };
 
   return (
     <Modal open onClose={onClose} title={`#${order.order_number}${tableName ? ` · ${tableName}` : ""}`}>
@@ -1042,6 +1064,20 @@ function OrderDetailModal({
             {formatMoney(order.total, order.currency)}
           </span>
         </div>
+        {canRequestBill && (
+          <div>
+            <Button
+              className="w-full justify-center"
+              variant={order.bill_requested_at ? "secondary" : "primary"}
+              loading={requesting}
+              disabled={!!order.bill_requested_at}
+              onClick={() => void requestBill()}
+            >
+              {order.bill_requested_at ? t("billRequested") : t("requestBill")}
+            </Button>
+            {billError && <p className="mt-2 text-center text-xs text-error">{billError}</p>}
+          </div>
+        )}
       </div>
     </Modal>
   );
@@ -1050,6 +1086,11 @@ function OrderDetailModal({
 function ProfilePanel() {
   const t = useTranslations("waiterPage");
   const { user, logout } = useAuth();
+  const [stats, setStats] = useState<WaiterStatsOut | null>(null);
+
+  useEffect(() => {
+    ordersApi.myStats().then(setStats).catch(() => {});
+  }, []);
 
   return (
     <div className="flex flex-col items-center gap-4 p-6 text-center">
@@ -1060,10 +1101,30 @@ function ProfilePanel() {
         <p className="text-lg font-bold text-text-primary">{user?.full_name}</p>
         <p className="text-sm text-text-secondary">{user?.restaurant_name}</p>
       </div>
+
+      {stats && (
+        <div className="grid w-full grid-cols-2 gap-2.5">
+          <StatTile label={t("statsSalesToday")} value={formatMoney(stats.total_sales, "UZS")} />
+          <StatTile label={t("statsOrdersToday")} value={String(stats.order_count)} />
+          <StatTile label={t("statsTablesServed")} value={String(stats.tables_served)} />
+          <StatTile label={t("statsAverageCheck")} value={formatMoney(stats.average_check, "UZS")} />
+          <StatTile label={t("statsCancelled")} value={String(stats.cancelled_count)} />
+        </div>
+      )}
+
       <Button variant="secondary" onClick={() => logout()} className="mt-2">
         <LogOut className="h-4 w-4" />
         {t("logout")}
       </Button>
+    </div>
+  );
+}
+
+function StatTile({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-border-default bg-surface p-3 text-left">
+      <p className="text-xs text-text-secondary">{label}</p>
+      <p className="mt-0.5 text-base font-bold text-text-primary">{value}</p>
     </div>
   );
 }

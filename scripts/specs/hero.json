@@ -1,0 +1,21 @@
+{
+  "path": "hero",
+  "uz": {
+    "mockCaption": "Namuna ko‘rinish — raqamlar illyustrativ",
+    "pointOffline": "Ofitsiant ilovasi oflayn ham ishlaydi",
+    "pointQr": "QR menyu va Telegram bot orqali buyurtma",
+    "pointLangs": "O‘zbek, rus va ingliz tillari"
+  },
+  "ru": {
+    "mockCaption": "Пример интерфейса — цифры условные",
+    "pointOffline": "Приложение официанта работает и офлайн",
+    "pointQr": "Заказы через QR-меню и Telegram-бота",
+    "pointLangs": "Узбекский, русский и английский языки"
+  },
+  "en": {
+    "mockCaption": "Sample view — figures are illustrative",
+    "pointOffline": "Waiter app keeps working offline",
+    "pointQr": "Orders via QR menu and Telegram bot",
+    "pointLangs": "Uzbek, Russian and English"
+  }
+}

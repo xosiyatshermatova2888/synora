@@ -1,0 +1,27 @@
+{
+  "path": "paymentsPage",
+  "uz": {
+    "billRequested": "Hisob so‘raldi",
+    "printPrecheck": "Hisobni chiqarish",
+    "printReceipt": "Chek chiqarish",
+    "printed": "Chop etildi",
+    "printFailed": "Chop etib bo‘lmadi",
+    "paidInFull": "#{n} buyurtma to‘liq to‘landi"
+  },
+  "ru": {
+    "billRequested": "Запрошен счёт",
+    "printPrecheck": "Распечатать счёт",
+    "printReceipt": "Печать чека",
+    "printed": "Напечатано",
+    "printFailed": "Не удалось распечатать",
+    "paidInFull": "Заказ #{n} полностью оплачен"
+  },
+  "en": {
+    "billRequested": "Bill requested",
+    "printPrecheck": "Print bill",
+    "printReceipt": "Print receipt",
+    "printed": "Printed",
+    "printFailed": "Could not print",
+    "paidInFull": "Order #{n} fully paid"
+  }
+}

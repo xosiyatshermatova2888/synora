@@ -1,0 +1,22 @@
+# Build context for the FRONTEND image (docker-compose: context "."). Keep
+# secrets, host-OS build output and unrelated code out of it:
+#  - node_modules / .next from Windows would overwrite the Linux ones installed
+#    in the image (native binaries like @parcel/watcher then fail to load);
+#  - .env* files hold live secrets and must never enter an image layer;
+#  - the backend has its own image and its own build context.
+node_modules
+.next
+out
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+backend
+deploy
+docs
+uploads
+.venv
+*.log
+*.tsbuildinfo
+SMOKE_TEST_*.md

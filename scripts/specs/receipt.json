@@ -1,0 +1,6 @@
+{
+  "path": "receiptPage",
+  "uz": { "precheckTitle": "HISOB" },
+  "ru": { "precheckTitle": "СЧЁТ" },
+  "en": { "precheckTitle": "BILL" }
+}

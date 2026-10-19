@@ -15,7 +15,10 @@ function LoginFormInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get("next");
-  const redirectTo = next && next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
+  // Same-site paths only. Browsers treat a backslash after the first slash like
+  // a second slash ("//evil.com"), so anything that isn't a plain path falls
+  // back to the dashboard.
+  const redirectTo = next && /^\/(?![/\\])[^\\\s]*$/.test(next) ? next : "/dashboard";
 
   const [mode, setMode] = useState<Mode>("login");
   const [fullName, setFullName] = useState("");

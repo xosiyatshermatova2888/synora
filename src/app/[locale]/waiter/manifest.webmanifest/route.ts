@@ -49,7 +49,7 @@ export async function GET(
 
   const name = process.env.WAITER_APP_NAME?.trim() || copy.name;
   const shortName = process.env.WAITER_APP_SHORT_NAME?.trim() || copy.short_name;
-  const themeColor = process.env.WAITER_APP_THEME_COLOR?.trim() || "#5b46e8";
+  const themeColor = process.env.WAITER_APP_THEME_COLOR?.trim() || "#088a7d";
 
   return NextResponse.json(
     {

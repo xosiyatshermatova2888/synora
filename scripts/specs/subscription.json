@@ -1,0 +1,378 @@
+{
+  "path": "",
+  "uz": {
+    "subscription": {
+      "title": "Obuna va tarif",
+      "description": "Joriy tarifingiz, imkoniyatlar va to'lov",
+      "banner": {
+        "trial": "Bepul sinov (Pro): {days} kun qoldi",
+        "trialLast": "Bepul sinov bugun tugaydi",
+        "grace": "Obuna muddati tugadi. {days} kun ichida to'lang, aks holda tizim faqat ko'rish rejimiga o'tadi.",
+        "readOnly": "Obuna muddati tugagan: tizim faqat ko'rish rejimida. To'lovdan so'ng ish darhol tiklanadi.",
+        "pay": "Tarifni tanlash",
+        "askOwner": "Restoran egasiga murojaat qiling"
+      },
+      "current": {
+        "title": "Joriy holat",
+        "plan": "Tarif",
+        "status": "Holat",
+        "TRIAL": "Sinov",
+        "ACTIVE": "Faol",
+        "validUntil": "Amal qilish muddati",
+        "noExpiry": "Muddatsiz",
+        "daysLeft": "{days} kun qoldi",
+        "branches": "Filiallar",
+        "unlimited": "cheksiz",
+        "access": { "FULL": "To'liq ishlaydi", "GRACE": "Imtiyoz muddati", "READ_ONLY": "Faqat ko'rish" }
+      },
+      "plans": {
+        "title": "Tariflar",
+        "monthly": "Oylik",
+        "annual": "Yillik",
+        "annualHint": "2 oy bepul",
+        "perMonth": "so'm / oy",
+        "perYear": "so'm / yil",
+        "choose": "Tanlash",
+        "currentPlan": "Joriy tarif",
+        "contactSales": "Bog'lanish",
+        "custom": "Kelishuv asosida",
+        "name": { "BUSINESS": "Business", "PRO": "Pro", "AI_PREMIUM": "AI Premium", "ENTERPRISE": "Enterprise" },
+        "base": "POS, ofitsiant ilovasi, oshxona ekrani, QR menyu, Telegram buyurtma, asosiy hisobotlar",
+        "branchesUpTo": "{n} tagacha filial",
+        "branchesOne": "1 ta filial",
+        "branchesUnlimited": "Cheksiz filial",
+        "feature": {
+          "inventory": "Ombor (inventar)",
+          "crm": "Mijozlar bazasi (CRM)",
+          "advanced_reports": "Kengaytirilgan hisobotlar",
+          "multi_branch": "Ko'p filial",
+          "ai_assistant": "AI yordamchi"
+        }
+      },
+      "checkout": {
+        "title": "Tarifni to'lash",
+        "amount": "To'lov summasi",
+        "cardTitle": "Quyidagi kartaga o'tkazing",
+        "cardMissing": "SYNORA to'lov kartasi hali kiritilmagan. Iltimos, biz bilan bog'laning.",
+        "holder": "Karta egasi",
+        "copy": "Nusxa olish",
+        "copied": "Nusxa olindi",
+        "receiptStep": "To'lov chekini (skrinshot) yuklang",
+        "receiptLabel": "Chek rasmi",
+        "submit": "Chekni yuborish",
+        "needReceipt": "Avval chek rasmini yuklang",
+        "sent": "Chek yuborildi. SYNORA tasdiqlagach tarif faollashadi.",
+        "pending": "Chek tekshirilmoqda — tasdiqlangach tarif avtomatik faollashadi.",
+        "uploadFirst": "To'lovdan keyin chekni shu yerga yuklang.",
+        "cancel": "Yopish"
+      },
+      "history": {
+        "title": "To'lovlar tarixi",
+        "empty": "Hali to'lovlar yo'q",
+        "status": { "PENDING": "Kutilmoqda", "APPROVED": "Tasdiqlandi", "REJECTED": "Rad etildi" },
+        "reason": "Sabab",
+        "until": "{date} gacha",
+        "receipt": "Chek",
+        "cycle": { "MONTHLY": "oylik", "ANNUAL": "yillik" }
+      },
+      "gate": {
+        "title": "Bu bo'lim {plan} tarifida mavjud",
+        "description": "«{feature}» imkoniyatidan foydalanish uchun tarifni {plan} yoki undan yuqoriga o'tkazing.",
+        "upgrade": "Tarifni yangilash",
+        "askOwner": "Tarifni yangilash uchun restoran egasiga murojaat qiling."
+      },
+      "toast": {
+        "planRequired": "Bu imkoniyat joriy tarifingizga kirmaydi.",
+        "expired": "Obuna muddati tugagan: tizim faqat ko'rish rejimida."
+      }
+    },
+    "platformPage": {
+      "title": "Platforma boshqaruvi",
+      "description": "Barcha restoranlar obunalari va to'lovlarni tasdiqlash",
+      "tabs": { "payments": "To'lovlar", "restaurants": "Restoranlar" },
+      "payments": {
+        "pending": "Kutilayotgan to'lovlar",
+        "none": "Kutilayotgan to'lov yo'q",
+        "restaurant": "Restoran",
+        "plan": "Tarif",
+        "amount": "Summa",
+        "date": "Sana",
+        "receipt": "Chekni ko'rish",
+        "noReceipt": "Chek yuklanmagan",
+        "approve": "Tasdiqlash",
+        "reject": "Rad etish",
+        "rejectTitle": "To'lovni rad etish",
+        "rejectReason": "Sabab (ixtiyoriy)",
+        "approved": "To'lov tasdiqlandi",
+        "rejected": "To'lov rad etildi",
+        "confirmApprove": "{restaurant}: {amount} so'm qabul qilinganini tasdiqlaysizmi?",
+        "history": "Oxirgi qarorlar"
+      },
+      "restaurants": {
+        "name": "Restoran",
+        "plan": "Tarif",
+        "status": "Holat",
+        "until": "Muddat",
+        "access": "Kirish",
+        "edit": "O'zgartirish",
+        "editTitle": "Obunani qo'lda o'zgartirish",
+        "noExpiry": "Muddatsiz",
+        "extend30": "+30 kun",
+        "save": "Saqlash",
+        "saved": "Saqlandi",
+        "date": "Tugash sanasi",
+        "empty": "Restoranlar yo'q"
+      }
+    }
+  },
+  "ru": {
+    "subscription": {
+      "title": "Подписка и тариф",
+      "description": "Ваш тариф, возможности и оплата",
+      "banner": {
+        "trial": "Бесплатный пробный период (Pro): осталось {days} дн.",
+        "trialLast": "Пробный период заканчивается сегодня",
+        "grace": "Срок подписки истёк. Оплатите в течение {days} дн., иначе система перейдёт в режим только просмотра.",
+        "readOnly": "Подписка истекла: система в режиме только просмотра. После оплаты работа восстановится сразу.",
+        "pay": "Выбрать тариф",
+        "askOwner": "Обратитесь к владельцу ресторана"
+      },
+      "current": {
+        "title": "Текущее состояние",
+        "plan": "Тариф",
+        "status": "Статус",
+        "TRIAL": "Пробный",
+        "ACTIVE": "Активна",
+        "validUntil": "Действует до",
+        "noExpiry": "Бессрочно",
+        "daysLeft": "осталось {days} дн.",
+        "branches": "Филиалы",
+        "unlimited": "без ограничений",
+        "access": { "FULL": "Работает полностью", "GRACE": "Льготный период", "READ_ONLY": "Только просмотр" }
+      },
+      "plans": {
+        "title": "Тарифы",
+        "monthly": "Месяц",
+        "annual": "Год",
+        "annualHint": "2 месяца в подарок",
+        "perMonth": "сум / мес",
+        "perYear": "сум / год",
+        "choose": "Выбрать",
+        "currentPlan": "Текущий тариф",
+        "contactSales": "Связаться",
+        "custom": "По договорённости",
+        "name": { "BUSINESS": "Business", "PRO": "Pro", "AI_PREMIUM": "AI Premium", "ENTERPRISE": "Enterprise" },
+        "base": "POS, приложение официанта, экран кухни, QR-меню, заказы из Telegram, базовые отчёты",
+        "branchesUpTo": "До {n} филиалов",
+        "branchesOne": "1 филиал",
+        "branchesUnlimited": "Без ограничений по филиалам",
+        "feature": {
+          "inventory": "Склад (инвентарь)",
+          "crm": "База клиентов (CRM)",
+          "advanced_reports": "Расширенные отчёты",
+          "multi_branch": "Несколько филиалов",
+          "ai_assistant": "AI-помощник"
+        }
+      },
+      "checkout": {
+        "title": "Оплата тарифа",
+        "amount": "Сумма к оплате",
+        "cardTitle": "Переведите на карту",
+        "cardMissing": "Карта для оплаты SYNORA ещё не указана. Пожалуйста, свяжитесь с нами.",
+        "holder": "Владелец карты",
+        "copy": "Копировать",
+        "copied": "Скопировано",
+        "receiptStep": "Загрузите чек оплаты (скриншот)",
+        "receiptLabel": "Фото чека",
+        "submit": "Отправить чек",
+        "needReceipt": "Сначала загрузите фото чека",
+        "sent": "Чек отправлен. Тариф активируется после подтверждения SYNORA.",
+        "pending": "Чек на проверке — после подтверждения тариф активируется автоматически.",
+        "uploadFirst": "После оплаты загрузите чек здесь.",
+        "cancel": "Закрыть"
+      },
+      "history": {
+        "title": "История платежей",
+        "empty": "Платежей пока нет",
+        "status": { "PENDING": "Ожидает", "APPROVED": "Подтверждён", "REJECTED": "Отклонён" },
+        "reason": "Причина",
+        "until": "до {date}",
+        "receipt": "Чек",
+        "cycle": { "MONTHLY": "месяц", "ANNUAL": "год" }
+      },
+      "gate": {
+        "title": "Этот раздел доступен на тарифе {plan}",
+        "description": "Чтобы пользоваться «{feature}», перейдите на тариф {plan} или выше.",
+        "upgrade": "Сменить тариф",
+        "askOwner": "Чтобы сменить тариф, обратитесь к владельцу ресторана."
+      },
+      "toast": {
+        "planRequired": "Эта возможность не входит в ваш тариф.",
+        "expired": "Подписка истекла: система в режиме только просмотра."
+      }
+    },
+    "platformPage": {
+      "title": "Управление платформой",
+      "description": "Подписки всех ресторанов и подтверждение платежей",
+      "tabs": { "payments": "Платежи", "restaurants": "Рестораны" },
+      "payments": {
+        "pending": "Ожидающие платежи",
+        "none": "Нет ожидающих платежей",
+        "restaurant": "Ресторан",
+        "plan": "Тариф",
+        "amount": "Сумма",
+        "date": "Дата",
+        "receipt": "Открыть чек",
+        "noReceipt": "Чек не загружен",
+        "approve": "Подтвердить",
+        "reject": "Отклонить",
+        "rejectTitle": "Отклонить платёж",
+        "rejectReason": "Причина (необязательно)",
+        "approved": "Платёж подтверждён",
+        "rejected": "Платёж отклонён",
+        "confirmApprove": "{restaurant}: подтвердить получение {amount} сум?",
+        "history": "Последние решения"
+      },
+      "restaurants": {
+        "name": "Ресторан",
+        "plan": "Тариф",
+        "status": "Статус",
+        "until": "Срок",
+        "access": "Доступ",
+        "edit": "Изменить",
+        "editTitle": "Изменить подписку вручную",
+        "noExpiry": "Бессрочно",
+        "extend30": "+30 дней",
+        "save": "Сохранить",
+        "saved": "Сохранено",
+        "date": "Дата окончания",
+        "empty": "Ресторанов нет"
+      }
+    }
+  },
+  "en": {
+    "subscription": {
+      "title": "Subscription & plan",
+      "description": "Your plan, features and billing",
+      "banner": {
+        "trial": "Free Pro trial: {days} days left",
+        "trialLast": "Your free trial ends today",
+        "grace": "Your subscription has expired. Pay within {days} days or the system becomes read-only.",
+        "readOnly": "Subscription expired: the system is read-only. Work resumes right after payment.",
+        "pay": "Choose a plan",
+        "askOwner": "Contact the restaurant owner"
+      },
+      "current": {
+        "title": "Current status",
+        "plan": "Plan",
+        "status": "Status",
+        "TRIAL": "Trial",
+        "ACTIVE": "Active",
+        "validUntil": "Valid until",
+        "noExpiry": "No expiry",
+        "daysLeft": "{days} days left",
+        "branches": "Branches",
+        "unlimited": "unlimited",
+        "access": { "FULL": "Fully working", "GRACE": "Grace period", "READ_ONLY": "Read-only" }
+      },
+      "plans": {
+        "title": "Plans",
+        "monthly": "Monthly",
+        "annual": "Annual",
+        "annualHint": "2 months free",
+        "perMonth": "UZS / month",
+        "perYear": "UZS / year",
+        "choose": "Choose",
+        "currentPlan": "Current plan",
+        "contactSales": "Contact us",
+        "custom": "Custom pricing",
+        "name": { "BUSINESS": "Business", "PRO": "Pro", "AI_PREMIUM": "AI Premium", "ENTERPRISE": "Enterprise" },
+        "base": "POS, waiter app, kitchen display, QR menu, Telegram ordering, basic reports",
+        "branchesUpTo": "Up to {n} branches",
+        "branchesOne": "1 branch",
+        "branchesUnlimited": "Unlimited branches",
+        "feature": {
+          "inventory": "Inventory",
+          "crm": "Customer database (CRM)",
+          "advanced_reports": "Advanced reports",
+          "multi_branch": "Multiple branches",
+          "ai_assistant": "AI assistant"
+        }
+      },
+      "checkout": {
+        "title": "Pay for your plan",
+        "amount": "Amount due",
+        "cardTitle": "Transfer to this card",
+        "cardMissing": "The SYNORA payment card hasn't been set yet. Please contact us.",
+        "holder": "Card holder",
+        "copy": "Copy",
+        "copied": "Copied",
+        "receiptStep": "Upload your payment receipt (screenshot)",
+        "receiptLabel": "Receipt photo",
+        "submit": "Send receipt",
+        "needReceipt": "Upload the receipt photo first",
+        "sent": "Receipt sent. Your plan activates once SYNORA confirms it.",
+        "pending": "Receipt under review — your plan activates automatically once approved.",
+        "uploadFirst": "After paying, upload the receipt here.",
+        "cancel": "Close"
+      },
+      "history": {
+        "title": "Payment history",
+        "empty": "No payments yet",
+        "status": { "PENDING": "Pending", "APPROVED": "Approved", "REJECTED": "Rejected" },
+        "reason": "Reason",
+        "until": "until {date}",
+        "receipt": "Receipt",
+        "cycle": { "MONTHLY": "monthly", "ANNUAL": "annual" }
+      },
+      "gate": {
+        "title": "This section is part of the {plan} plan",
+        "description": "To use “{feature}”, upgrade to the {plan} plan or higher.",
+        "upgrade": "Upgrade plan",
+        "askOwner": "Ask the restaurant owner to upgrade the plan."
+      },
+      "toast": {
+        "planRequired": "This feature isn't included in your plan.",
+        "expired": "Subscription expired: the system is read-only."
+      }
+    },
+    "platformPage": {
+      "title": "Platform console",
+      "description": "Every restaurant's subscription and payment approvals",
+      "tabs": { "payments": "Payments", "restaurants": "Restaurants" },
+      "payments": {
+        "pending": "Pending payments",
+        "none": "No pending payments",
+        "restaurant": "Restaurant",
+        "plan": "Plan",
+        "amount": "Amount",
+        "date": "Date",
+        "receipt": "View receipt",
+        "noReceipt": "No receipt uploaded",
+        "approve": "Approve",
+        "reject": "Reject",
+        "rejectTitle": "Reject payment",
+        "rejectReason": "Reason (optional)",
+        "approved": "Payment approved",
+        "rejected": "Payment rejected",
+        "confirmApprove": "{restaurant}: confirm you received {amount} UZS?",
+        "history": "Recent decisions"
+      },
+      "restaurants": {
+        "name": "Restaurant",
+        "plan": "Plan",
+        "status": "Status",
+        "until": "Until",
+        "access": "Access",
+        "edit": "Edit",
+        "editTitle": "Edit subscription manually",
+        "noExpiry": "No expiry",
+        "extend30": "+30 days",
+        "save": "Save",
+        "saved": "Saved",
+        "date": "End date",
+        "empty": "No restaurants"
+      }
+    }
+  }
+}

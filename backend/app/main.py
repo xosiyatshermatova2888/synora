@@ -39,7 +39,32 @@ async def log_startup() -> None:
     async with SessionLocal() as session:
         await ensure_system_permissions_and_roles(session)
         await session.commit()
+    if settings.telegram_polling:
+        import asyncio
+
+        from app.services import telegram_poller
+
+        app.state.telegram_poller_task = asyncio.create_task(telegram_poller.run_forever())
+        logger.info("telegram long-polling enabled")
+    else:
+        import asyncio
+
+        from app.services import telegram_bot
+
+        # Webhook mode: (re)point every connected bot at this server. Needed
+        # after moving to a new host or restoring a database from another one.
+        app.state.telegram_webhooks_task = asyncio.create_task(telegram_bot.register_all_webhooks())
     logger.info("startup complete", extra={"env": settings.app_env, "debug": settings.debug})
+
+
+@app.on_event("shutdown")
+async def stop_telegram_poller() -> None:
+    task = getattr(app.state, "telegram_poller_task", None)
+    if task is not None:
+        from app.services import telegram_poller
+
+        task.cancel()
+        await telegram_poller.stop_all()
 
 
 @app.middleware("http")
@@ -64,7 +89,11 @@ async def general_rate_limit_middleware(request: Request, call_next):
     has its own stricter limit in the route)."""
     path = request.url.path
     if path.startswith("/api/v1") and not (
-        path.endswith("/health") or path.endswith("/health/ready")
+        path.endswith("/health")
+        or path.endswith("/health/ready")
+        # The print agent polls every ~2 s from the restaurant's shared IP and
+        # authenticates with its own token.
+        or path.startswith("/api/v1/print-agent/")
     ):
         from fastapi.responses import JSONResponse
 

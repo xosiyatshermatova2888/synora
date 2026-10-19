@@ -1,29 +1,27 @@
 # SYNORA production reverse proxy (Caddy).
 #
-# Public -> { /api/* , /files/* } -> backend:8000 (FastAPI)
-#        -> { /images/* }          -> minio:9000 (public-read bucket)
-#        -> everything else        -> frontend:3000 (Next.js)
+# Public -> { /api/* , /files/* } -> backend:8000 (FastAPI, incl. WebSocket)
+#        -> { /uploads/* }        -> minio:9000 (public-read image bucket)
+#        -> everything else       -> frontend:3000 (Next.js)
 #
-# TLS is free and automatic (Let's Encrypt, via the caddy_data volume).
-# Placeholders are substituted from ${DOMAIN}/${PUBLIC_APP_URL} at startup.
+# TLS is free and automatic (Let's Encrypt, kept in the caddy_data volume).
+# $DOMAIN comes from .env.prod. The domain's A record must already point at
+# this server, and ports 80 + 443 must be open, or certificate issuance fails.
 
 {$DOMAIN} {
     encode gzip
 
-    @api     path /api/*
-    @files   path /files/*
-    handle @api {
+    handle /api/* {
         reverse_proxy backend:8000
     }
-    handle @files {
+    handle /files/* {
         reverse_proxy backend:8000
     }
 
-    @images path /images/*
-    handle @images {
-        # Serve the public-read MinIO bucket stripped of the /images prefix.
-        uri strip_prefix /images
-        reverse_proxy minio:9000 minio:9000
+    handle /uploads/* {
+        # /uploads/<bucket>/<key> -> MinIO /<bucket>/<key>
+        uri strip_prefix /uploads
+        reverse_proxy minio:9000
     }
 
     # Everything else is the Next.js frontend.
@@ -34,5 +32,8 @@
     header {
         -Server
         X-Content-Type-Options nosniff
+        X-Frame-Options SAMEORIGIN
+        Referrer-Policy strict-origin-when-cross-origin
+        Strict-Transport-Security "max-age=31536000"
     }
 }

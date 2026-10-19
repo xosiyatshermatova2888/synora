@@ -36,7 +36,7 @@ async def add_payment(
     current_tenant: uuid.UUID = Depends(get_current_tenant),
     current_user: User = Depends(get_current_user_restaurant),
     db: AsyncSession = Depends(get_db),
-    _: None = Depends(require_permission("orders.update")),
+    _: None = Depends(require_permission("payments.create")),
 ):
     payment = await payment_service.add_payment(
         db,

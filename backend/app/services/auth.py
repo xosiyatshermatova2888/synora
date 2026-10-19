@@ -11,6 +11,7 @@ Refresh token lifecycle (master spec Section 8):
 
 from __future__ import annotations
 
+import secrets
 import uuid
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
@@ -36,6 +37,7 @@ from app.models.restaurant import Restaurant
 from app.models.user import User
 from app.schemas.auth import RegisterRequest, UserOut
 from app.services.permissions import ensure_system_permissions_and_roles
+from app.services.subscription import start_trial
 from app.utils.errors import (
     ConflictError,
     NotFoundError,
@@ -126,6 +128,7 @@ async def register(
         timezone=payload.timezone,
         currency=payload.currency,
     )
+    start_trial(restaurant)  # new sign-ups get the 14-day Pro trial
     session.add(restaurant)
     await session.flush()
 
@@ -161,6 +164,17 @@ async def register(
     )
 
 
+_DUMMY_HASH: str | None = None
+
+
+def _dummy_hash() -> str:
+    """A real Argon2 hash nobody knows the password of, built once."""
+    global _DUMMY_HASH
+    if _DUMMY_HASH is None:
+        _DUMMY_HASH = hash_password(secrets.token_urlsafe(24))
+    return _DUMMY_HASH
+
+
 async def login(
     session: AsyncSession,
     username: str,
@@ -173,13 +187,11 @@ async def login(
     user = await session.scalar(
         select(User).where(User.username == username.lower(), User.deleted_at.is_(None))
     )
-    # Verify against a dummy hash when the user doesn't exist to keep timing
-    # roughly uniform regardless of account presence.
-    valid = (
-        verify_password(password, user.password_hash)
-        if user is not None
-        else False
-    )
+    # Verify against a dummy hash when the user doesn't exist, so the response
+    # takes as long as for a real account (no user enumeration by timing).
+    valid = verify_password(password, user.password_hash if user is not None else _dummy_hash())
+    if user is None:
+        valid = False
     if user is None or not valid or not user.is_active:
         raise UnauthorizedError(detail="Invalid username or password.")
 
@@ -307,6 +319,10 @@ async def waiter_directory(session: AsyncSession, branch_id: uuid.UUID) -> list[
     return list(result.all())
 
 
+# Permissions that disqualify an account from kiosk PIN login.
+PIN_FORBIDDEN_PERMISSIONS = frozenset({"users.manage", "finance.manage", "analytics.read"})
+
+
 async def pin_login(
     session: AsyncSession,
     branch_id: uuid.UUID,
@@ -321,15 +337,23 @@ async def pin_login(
     user = await session.get(User, user_id)
     # Same dummy-check-avoidance tradeoff as login() above: only verifies
     # when a pin_hash is actually present.
-    valid = (
-        verify_password(pin, user.pin_hash)
-        if user is not None and user.pin_hash is not None
-        else False
+    has_pin = user is not None and user.pin_hash is not None
+    valid = verify_password(pin, user.pin_hash if has_pin else _dummy_hash())
+    if not has_pin:
+        valid = False
+    # The kiosk endpoint is unauthenticated and a PIN is only 4-6 digits, so it
+    # must never open a manager/owner session: those accounts use the full
+    # username + password login.
+    elevated = (
+        user is not None
+        and valid
+        and bool(PIN_FORBIDDEN_PERMISSIONS & set(await _user_permissions(session, user)))
     )
     if (
         branch is None
         or user is None
         or not valid
+        or elevated
         or not user.is_active
         or user.deleted_at is not None
         or user.restaurant_id != branch.restaurant_id
@@ -361,6 +385,7 @@ async def me(session: AsyncSession, user: User) -> UserOut:
         restaurant_name=r.name if r else "",
         roles=[{"id": role.id, "name": role.name} for role in user.roles],
         permissions=await _user_permissions(session, user),
+        is_platform_admin=user.is_platform_admin,
     )
 
 

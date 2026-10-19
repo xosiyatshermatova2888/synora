@@ -48,6 +48,7 @@ class UserOut(BaseModel):
     restaurant_name: str
     roles: list[RoleOut]
     permissions: list[str]
+    is_platform_admin: bool = False
 
 
 # --- Waiter kiosk PIN login --------------------------------------------------

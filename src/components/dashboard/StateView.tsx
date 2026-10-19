@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Loader2, AlertTriangle, Inbox } from "lucide-react";
 
 interface StateViewProps {
@@ -8,33 +9,33 @@ interface StateViewProps {
   onRetry?: () => void;
 }
 
-export default function StateView({
-  kind,
-  message,
-  onRetry,
-}: StateViewProps) {
+export default function StateView({ kind, message, onRetry }: StateViewProps) {
+  const t = useTranslations("common");
+
   if (kind === "loading") {
     return (
-      <div className="flex flex-col items-center justify-center gap-3 py-24 text-text-secondary">
-        <Loader2 className="h-8 w-8 animate-spin text-accent-primary" />
-        <p className="text-sm">{message ?? "Loading…"}</p>
+      <div className="flex flex-col items-center justify-center gap-3 py-20 text-text-secondary">
+        <Loader2 className="h-7 w-7 animate-spin text-accent-primary" />
+        <p className="text-sm">{message ?? t("states.loading")}</p>
       </div>
     );
   }
 
   if (kind === "error") {
     return (
-      <div className="flex flex-col items-center justify-center gap-3 py-24 text-center">
-        <AlertTriangle className="h-8 w-8 text-error" />
-        <p className="text-sm font-medium text-text-primary">
-          {message ?? "Something went wrong."}
+      <div role="alert" className="flex flex-col items-center justify-center gap-3 py-20 text-center">
+        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-error/10">
+          <AlertTriangle className="h-6 w-6 text-error" />
+        </span>
+        <p className="max-w-sm text-sm font-medium text-text-primary">
+          {message ?? t("states.error")}
         </p>
         {onRetry && (
           <button
             onClick={onRetry}
-            className="mt-1 inline-flex items-center gap-2 rounded-lg border border-border-default px-3 py-1.5 text-sm font-medium text-text-secondary hover:bg-background-secondary hover:text-text-primary"
+            className="mt-1 inline-flex h-9 items-center gap-2 rounded-lg border border-border-default px-4 text-sm font-medium text-text-secondary hover:bg-background-secondary hover:text-text-primary"
           >
-            Retry
+            {t("actions.retry")}
           </button>
         )}
       </div>
@@ -42,10 +43,12 @@ export default function StateView({
   }
 
   return (
-    <div className="flex flex-col items-center justify-center gap-3 py-24 text-center">
-      <Inbox className="h-8 w-8 text-text-secondary" />
-      <p className="text-sm font-medium text-text-primary">
-        {message ?? "Nothing here yet."}
+    <div className="flex flex-col items-center justify-center gap-3 py-20 text-center">
+      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-background-secondary">
+        <Inbox className="h-6 w-6 text-text-secondary" />
+      </span>
+      <p className="max-w-sm text-sm font-medium text-text-primary">
+        {message ?? t("states.empty")}
       </p>
     </div>
   );

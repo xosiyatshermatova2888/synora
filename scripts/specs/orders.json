@@ -1,0 +1,45 @@
+{
+  "path": "ordersPage",
+  "uz": {
+    "colStatus": "Holat",
+    "colWaiter": "Ofitsiant",
+    "filterSource": "Manba",
+    "allSources": "Barcha manbalar",
+    "sources": {
+      "POS": "Kassa",
+      "WAITER": "Ofitsiant",
+      "QR": "QR menyu",
+      "TELEGRAM": "Telegram",
+      "DELIVERY": "Yetkazib berish",
+      "ONLINE": "Onlayn"
+    }
+  },
+  "ru": {
+    "colStatus": "Статус",
+    "colWaiter": "Официант",
+    "filterSource": "Источник",
+    "allSources": "Все источники",
+    "sources": {
+      "POS": "Касса",
+      "WAITER": "Официант",
+      "QR": "QR-меню",
+      "TELEGRAM": "Telegram",
+      "DELIVERY": "Доставка",
+      "ONLINE": "Онлайн"
+    }
+  },
+  "en": {
+    "colStatus": "Status",
+    "colWaiter": "Waiter",
+    "filterSource": "Source",
+    "allSources": "All sources",
+    "sources": {
+      "POS": "POS",
+      "WAITER": "Waiter",
+      "QR": "QR menu",
+      "TELEGRAM": "Telegram",
+      "DELIVERY": "Delivery",
+      "ONLINE": "Online"
+    }
+  }
+}

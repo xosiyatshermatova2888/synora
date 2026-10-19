@@ -7,10 +7,18 @@ import uuid
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_current_tenant, require_permission
+from app.api.deps import get_current_tenant, get_current_user_restaurant, require_permission
 from app.database.session import get_db
 from app.models.user import User
-from app.schemas.users import SetPasswordRequest, SetPinRequest, StaffCreateRequest, StaffOut
+from app.schemas.users import (
+    SetPasswordRequest,
+    SetPinRequest,
+    StaffActiveUpdate,
+    StaffCreateRequest,
+    StaffOut,
+    StaffRoleUpdate,
+    StaffUpdateRequest,
+)
 from app.services import users as users_service
 
 router = APIRouter(prefix="/users", tags=["users"])
@@ -65,8 +73,55 @@ async def set_password(
     user_id: uuid.UUID,
     payload: SetPasswordRequest,
     current_tenant: uuid.UUID = Depends(get_current_tenant),
+    current_user: User = Depends(get_current_user_restaurant),
     db: AsyncSession = Depends(get_db),
     _: None = Depends(require_permission("users.manage")),
 ):
-    user = await users_service.set_password(db, current_tenant, user_id, payload.password)
+    user = await users_service.set_password(
+        db, current_tenant, user_id, payload.password, actor_user_id=current_user.id
+    )
+    return _to_out(user)
+
+
+@router.patch("/{user_id}", response_model=StaffOut)
+async def update_user(
+    user_id: uuid.UUID,
+    payload: StaffUpdateRequest,
+    current_tenant: uuid.UUID = Depends(get_current_tenant),
+    db: AsyncSession = Depends(get_db),
+    _: None = Depends(require_permission("users.manage")),
+):
+    user = await users_service.update_staff(
+        db, current_tenant, user_id, payload.full_name, payload.phone
+    )
+    return _to_out(user)
+
+
+@router.patch("/{user_id}/role", response_model=StaffOut)
+async def update_user_role(
+    user_id: uuid.UUID,
+    payload: StaffRoleUpdate,
+    current_tenant: uuid.UUID = Depends(get_current_tenant),
+    current_user: User = Depends(get_current_user_restaurant),
+    db: AsyncSession = Depends(get_db),
+    _: None = Depends(require_permission("users.manage")),
+):
+    user = await users_service.change_role(
+        db, current_tenant, user_id, payload.role, actor_user_id=current_user.id
+    )
+    return _to_out(user)
+
+
+@router.patch("/{user_id}/active", response_model=StaffOut)
+async def update_user_active(
+    user_id: uuid.UUID,
+    payload: StaffActiveUpdate,
+    current_tenant: uuid.UUID = Depends(get_current_tenant),
+    current_user: User = Depends(get_current_user_restaurant),
+    db: AsyncSession = Depends(get_db),
+    _: None = Depends(require_permission("users.manage")),
+):
+    user = await users_service.set_active(
+        db, current_tenant, user_id, payload.is_active, actor_user_id=current_user.id
+    )
     return _to_out(user)

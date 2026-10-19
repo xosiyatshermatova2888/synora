@@ -40,6 +40,13 @@ export function formatMoney(value: string | number, currency?: string): string {
   }).format(num);
 }
 
+/** Only same-site paths and http(s) URLs may become a link/image source; a
+ * `javascript:` or `data:` value stored by someone else must never run. */
+export function safeUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  return /^(\/(?!\/)|https?:\/\/)/i.test(url) ? url : null;
+}
+
 /**
  * Format an ISO date string to a short human-readable date + time.
  */

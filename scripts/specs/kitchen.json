@@ -1,0 +1,6 @@
+{
+  "path": "kitchenPage",
+  "uz": { "activeTickets": "{n} ta faol buyurtma", "overdueCount": "{n} ta kechikdi", "overdue": "kechikdi", "retry": "Qayta urinish" },
+  "ru": { "activeTickets": "Активных заказов: {n}", "overdueCount": "Просрочено: {n}", "overdue": "просрочен", "retry": "Повторить" },
+  "en": { "activeTickets": "{n} active orders", "overdueCount": "{n} overdue", "overdue": "overdue", "retry": "Retry" }
+}

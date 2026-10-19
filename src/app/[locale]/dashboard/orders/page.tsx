@@ -1,48 +1,46 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useLiveReload } from "@/lib/use-live-reload";
 import { useTranslations } from "next-intl";
-import { Plus, Minus, Trash2, ChevronDown, ChevronUp, Search, Table2 } from "lucide-react";
+import { Plus, Minus, Trash2, ChevronDown, ChevronUp, MapPin, Phone } from "lucide-react";
 import {
   BranchOut,
   OrderOut,
   ProductOut,
   TableOut,
-  branchesApi,
   menuApi,
   ordersApi,
   restaurantsApi,
   tablesApi,
 } from "@/lib/api";
-import type { LoadState } from "@/lib/load-state";
-import { loadingState, errorState, dataState } from "@/lib/load-state";
 import { formatMoney, formatDateTime } from "@/lib/format";
 import { useAuth } from "@/lib/auth-context";
+import { useBranch } from "@/lib/branch-context";
 import Modal from "@/components/Modal";
 import Button from "@/components/Button";
-import StateView from "@/components/dashboard/StateView";
 import PageHeader from "@/components/dashboard/PageHeader";
 import ReceiptButton from "@/components/ReceiptButton";
+import DataTable, { Column } from "@/components/ui/DataTable";
+import Pagination from "@/components/ui/Pagination";
+import SearchField from "@/components/ui/SearchField";
+import Tabs from "@/components/ui/Tabs";
+import StatusBadge, { kitchenStatusTone, orderStatusTone } from "@/components/ui/StatusBadge";
+import { useToast } from "@/components/ui/Toast";
+import SafeImage from "@/components/ui/SafeImage";
 
 const ORDER_STATUSES = ["DRAFT", "OPEN", "PARTIALLY_PAID", "COMPLETED", "CANCELLED", "REFUNDED"];
+const ORDER_SOURCES = ["POS", "WAITER", "QR", "TELEGRAM", "DELIVERY", "ONLINE"];
+const PAGE_SIZE = 25;
 
+// Used by the order-detail modal below.
 const STATUS_STYLES: Record<string, string> = {
   DRAFT: "bg-background-secondary text-text-secondary",
-  OPEN: "bg-accent-primary/10 text-accent-primary",
+  OPEN: "bg-info/10 text-info",
   PARTIALLY_PAID: "bg-warning/10 text-warning",
   COMPLETED: "bg-success/10 text-success",
   CANCELLED: "bg-error/10 text-error",
-  REFUNDED: "bg-background-secondary text-text-secondary",
-};
-
-// Left accent bar per row, so an order's status reads at a glance while scanning the list.
-const STATUS_BAR_STYLES: Record<string, string> = {
-  DRAFT: "border-l-text-secondary/30",
-  OPEN: "border-l-accent-primary",
-  PARTIALLY_PAID: "border-l-warning",
-  COMPLETED: "border-l-success",
-  CANCELLED: "border-l-error",
-  REFUNDED: "border-l-text-secondary/30",
+  REFUNDED: "bg-error/10 text-error",
 };
 
 interface CartLine {
@@ -56,85 +54,79 @@ interface CartLine {
 export default function OrdersPage() {
   const t = useTranslations("ordersPage");
   const tc = useTranslations("common");
+  const toast = useToast();
   const { can } = useAuth();
+  const { branches, selectedBranchId } = useBranch();
 
-  const [branches, setBranches] = useState<BranchOut[]>([]);
-  const [branchId, setBranchId] = useState<string | null>(null);
-  const [orders, setOrders] = useState<LoadState<OrderOut[]>>(loadingState());
+  const [rows, setRows] = useState<OrderOut[]>([]);
+  const [total, setTotal] = useState(0);
+  const [offset, setOffset] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [tableMap, setTableMap] = useState<Map<string, string>>(new Map());
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [sourceFilter, setSourceFilter] = useState<string>("");
   const [search, setSearch] = useState("");
   const [createOpen, setCreateOpen] = useState(false);
   const [detailOrder, setDetailOrder] = useState<OrderOut | null>(null);
   const [currency, setCurrency] = useState("UZS");
-  const [notice, setNotice] = useState<string | null>(null);
 
   const canCreate = can("orders.create");
   const canUpdate = can("orders.update");
+  const searching = search.trim() !== "";
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (silent = false) => {
+    if (!silent) setLoading(true); // live refreshes keep the list on screen
+    setError(null);
     try {
+      // While searching by number, scan the latest 100 orders (the API has no
+      // number filter); otherwise page through the server-side list.
       const page = await ordersApi.list({
-        branch_id: branchId ?? undefined,
+        branch_id: selectedBranchId ?? undefined,
         status: statusFilter ?? undefined,
-        limit: 100,
-        offset: 0,
+        limit: searching ? 100 : PAGE_SIZE,
+        offset: searching ? 0 : offset,
       });
-      setOrders(dataState(page.items));
+      setRows(page.items);
+      setTotal(page.total);
     } catch (err) {
-      setOrders(errorState((err as Error).message));
+      setError((err as Error).message);
+    } finally {
+      setLoading(false);
     }
-  }, [branchId, statusFilter]);
+  }, [selectedBranchId, statusFilter, offset, searching]);
 
   useEffect(() => {
-    branchesApi.list().then((list) => {
-      setBranches(list);
-      setBranchId((prev) => prev ?? list[0]?.id ?? null);
-    }).catch(() => {});
-    tablesApi.list().then((list) => {
-      setTableMap(new Map(list.map((tb) => [tb.id, tb.name])));
-    }).catch(() => {});
-    ordersApi.list({ limit: 1 }).then(() => {}).catch(() => {});
+    void load();
+  }, [load]);
+
+  // New / changed orders appear by themselves (waiter, Telegram, QR, kitchen, cashier).
+  useLiveReload(() => void load(true));
+
+  useEffect(() => {
+    tablesApi
+      .list()
+      .then((list) => setTableMap(new Map(list.map((tb) => [tb.id, tb.name]))))
+      .catch(() => {});
     restaurantsApi.getMine().then((r) => setCurrency(r.currency)).catch(() => {});
   }, []);
 
-  useEffect(() => {
-    if (branchId === null) return;
-    void (async () => {
-      try {
-        const page = await ordersApi.list({
-          branch_id: branchId ?? undefined,
-          status: statusFilter ?? undefined,
-          limit: 100,
-          offset: 0,
-        });
-        setOrders(dataState(page.items));
-      } catch (err) {
-        setOrders(errorState((err as Error).message));
-      }
-    })();
-  }, [branchId, statusFilter]);
-
-  const flash = (message: string) => {
-    setNotice(message);
-    setTimeout(() => setNotice(null), 3000);
-  };
-
-  const shown = (orders.type === "data" ? orders.data : []).filter((order) => {
-    if (!search) return true;
-    return String(order.order_number).includes(search.trim());
+  const shown = rows.filter((order) => {
+    if (sourceFilter && order.source !== sourceFilter) return false;
+    if (searching && !String(order.order_number).includes(search.trim())) return false;
+    return true;
   });
 
-  const statusToText = (status: string) => tc(`orderStatus.${status}`) ?? status;
+  const statusToText = (status: string) => tc(`orderStatus.${status}` as "orderStatus.OPEN");
 
   const handleStatus = async (order: OrderOut, status: string) => {
     try {
       await ordersApi.updateStatus(order.id, status);
       setDetailOrder(null);
-      flash(t("statusChanged"));
-      load();
+      toast.success(t("statusChanged"));
+      void load();
     } catch (err) {
-      alert((err as Error).message);
+      toast.error((err as Error).message);
     }
   };
 
@@ -142,12 +134,82 @@ export default function OrdersPage() {
     try {
       await ordersApi.updateKitchenStatus(order.id, kitchenStatus);
       setDetailOrder(null);
-      flash(t("statusChanged"));
-      load();
+      toast.success(t("statusChanged"));
+      void load();
     } catch (err) {
-      alert((err as Error).message);
+      toast.error((err as Error).message);
     }
   };
+
+  const columns: Column<OrderOut>[] = [
+    {
+      key: "number",
+      header: t("orderNumber"),
+      sortValue: (o) => o.order_number,
+      render: (o) => (
+        <div>
+          <p className="font-semibold text-text-primary">#{o.order_number}</p>
+          <p className="text-xs text-text-secondary">{formatDateTime(o.created_at)}</p>
+        </div>
+      ),
+    },
+    {
+      key: "source",
+      header: t("source"),
+      hideOnMobile: true,
+      render: (o) => (
+        <StatusBadge tone={o.source === "TELEGRAM" || o.source === "QR" ? "accent" : "neutral"}>
+          {t(`sources.${o.source}` as "sources.POS")}
+        </StatusBadge>
+      ),
+    },
+    {
+      key: "table",
+      header: t("table"),
+      render: (o) => (o.table_id ? (tableMap.get(o.table_id) ?? "—") : "—"),
+    },
+    {
+      key: "waiter",
+      header: t("colWaiter"),
+      hideOnMobile: true,
+      render: (o) => <span className="text-text-secondary">{o.waiter_name ?? "—"}</span>,
+    },
+    {
+      key: "items",
+      header: t("items"),
+      hideOnMobile: true,
+      sortValue: (o) => o.items.length,
+      render: (o) => (
+        <span className="text-text-secondary">
+          {o.items.length} {t("itemsCount")}
+        </span>
+      ),
+    },
+    {
+      key: "status",
+      header: t("colStatus"),
+      render: (o) => (
+        <StatusBadge tone={orderStatusTone[o.status] ?? "neutral"}>{statusToText(o.status)}</StatusBadge>
+      ),
+    },
+    {
+      key: "kitchen",
+      header: t("kitchen"),
+      hideOnMobile: true,
+      render: (o) => (
+        <StatusBadge tone={kitchenStatusTone[o.kitchen_status] ?? "neutral"}>
+          {tc(`kitchenStatus.${o.kitchen_status}` as "kitchenStatus.NEW")}
+        </StatusBadge>
+      ),
+    },
+    {
+      key: "total",
+      header: t("total"),
+      align: "right",
+      sortValue: (o) => parseFloat(o.total),
+      render: (o) => <span className="font-semibold">{formatMoney(o.total, currency)}</span>,
+    },
+  ];
 
   return (
     <div>
@@ -164,127 +226,76 @@ export default function OrdersPage() {
         }
       />
 
-      {notice && (
-        <div className="mb-4 rounded-lg border border-success/30 bg-success/10 px-4 py-2 text-sm text-success">
-          {notice}
-        </div>
-      )}
-
-      {/* Filters */}
-      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center">
-        <select
-          value={branchId ?? ""}
-          onChange={(e) => {
-            setOrders(loadingState());
-            setStatusFilter(null);
-            setBranchId(e.target.value || null);
+      <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <Tabs
+          value={statusFilter ?? "all"}
+          onChange={(k) => {
+            setOffset(0);
+            setStatusFilter(k === "all" ? null : k);
           }}
-          className="rounded-lg border border-border-default bg-surface px-3 py-2 text-sm text-text-primary outline-none focus:border-accent-primary"
-        >
-          {branches.length === 0 && <option value="">—</option>}
-          {branches.map((b) => (
-            <option key={b.id} value={b.id}>
-              {b.name}
-            </option>
-          ))}
-        </select>
-
-        <select
-          value={statusFilter ?? ""}
-          onChange={(e) => {
-            setOrders(loadingState());
-            setStatusFilter(e.target.value || null);
-          }}
-          className="rounded-lg border border-border-default bg-surface px-3 py-2 text-sm text-text-primary outline-none focus:border-accent-primary"
-        >
-          <option value="">{t("filterAll")}</option>
-          {ORDER_STATUSES.map((s) => (
-            <option key={s} value={s}>
-              {statusToText(s)}
-            </option>
-          ))}
-        </select>
-
-        <div className="relative flex-1 sm:max-w-xs">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-secondary" />
-          <input
+          items={[
+            { key: "all", label: t("filterAll") },
+            ...ORDER_STATUSES.map((s) => ({ key: s, label: statusToText(s) })),
+          ]}
+        />
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <select
+            value={sourceFilter}
+            onChange={(e) => setSourceFilter(e.target.value)}
+            aria-label={t("filterSource")}
+            className="h-10 rounded-lg border border-border-default bg-surface px-3 text-sm text-text-primary outline-none focus:border-accent-primary"
+          >
+            <option value="">{t("allSources")}</option>
+            {ORDER_SOURCES.map((s) => (
+              <option key={s} value={s}>
+                {t(`sources.${s}` as "sources.POS")}
+              </option>
+            ))}
+          </select>
+          <SearchField
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(v) => {
+              setOffset(0);
+              setSearch(v);
+            }}
             placeholder={t("searchPlaceholder")}
-            className="w-full rounded-lg border border-border-default bg-surface py-2 pl-9 pr-3 text-sm text-text-primary outline-none focus:border-accent-primary"
+            clearLabel={tc("ui.clear")}
+            className="sm:w-56"
           />
         </div>
       </div>
 
-      {/* Orders list */}
-      {orders.type === "data" ? (
-        shown.length === 0 ? (
-          <StateView kind="empty" message={t("empty")} />
-        ) : (
-          <div className="overflow-hidden rounded-xl border border-border-default bg-surface">
-            <ul className="divide-y divide-border-default">
-              {shown.map((order) => (
-                <li
-                  key={order.id}
-                  className={`border-l-4 ${STATUS_BAR_STYLES[order.status] ?? "border-l-transparent"}`}
-                >
-                  <button
-                    onClick={() => setDetailOrder(order)}
-                    className="flex w-full flex-wrap items-center gap-x-6 gap-y-2 px-5 py-4 text-left transition-colors hover:bg-background"
-                  >
-                    <div className="min-w-24">
-                      <p className="font-semibold text-text-primary">
-                        #{order.order_number}
-                      </p>
-                      <p className="text-xs text-text-secondary">
-                        {formatDateTime(order.created_at)}
-                      </p>
-                    </div>
-                    <span
-                      className={`rounded-full px-2.5 py-1 text-xs font-semibold ${STATUS_STYLES[order.status] ?? "bg-background-secondary text-text-secondary"}`}
-                    >
-                      {statusToText(order.status)}
-                    </span>
-                    <span className="flex items-center gap-2 text-sm text-text-secondary">
-                      <Table2 className="h-4 w-4" aria-hidden="true" />
-                      {order.table_id ? tableMap.get(order.table_id) ?? t("table") : "—"}
-                    </span>
-                    <span className="text-sm text-text-secondary">
-                      {order.items.length} {t("itemsCount")}
-                    </span>
-                    <span className="ml-auto text-sm font-bold text-text-primary">
-                      {formatMoney(order.total, currency)}
-                    </span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )
-      ) : (
-        <StateView
-          kind={orders.type}
-          message={orders.type === "error" ? orders.message : undefined}
-          onRetry={orders.type === "error" ? () => load() : undefined}
-        />
-      )}
+      <DataTable
+        columns={columns}
+        rows={shown}
+        rowKey={(o) => o.id}
+        loading={loading}
+        error={error}
+        onRetry={() => void load()}
+        emptyMessage={t("empty")}
+        onRowClick={setDetailOrder}
+        footer={
+          !searching && (
+            <Pagination total={total} limit={PAGE_SIZE} offset={offset} onChange={setOffset} />
+          )
+        }
+      />
 
-      {/* Create order */}
       {createOpen && (
         <OrderCreateModal
           branches={branches}
-          branchId={branchId}
+          branchId={selectedBranchId}
           currency={currency}
           onClose={() => setCreateOpen(false)}
           onCreated={() => {
             setCreateOpen(false);
-            flash(t("orderCreated"));
-            load();
+            toast.success(t("orderCreated"));
+            setOffset(0);
+            void load();
           }}
         />
       )}
 
-      {/* Order detail */}
       {detailOrder && (
         <OrderDetailModal
           order={detailOrder}
@@ -683,6 +694,54 @@ function OrderDetailModal({
             {formatDateTime(order.created_at)}
           </dd>
         </dl>
+
+        {(order.customer_name || order.customer_phone || order.delivery_type) && (
+          <div className="space-y-2 rounded-lg border border-border-default p-3 text-sm">
+            <p className="text-xs font-semibold uppercase tracking-wide text-text-secondary">
+              {order.delivery_type ? t(`deliveryType.${order.delivery_type}`) : t("customer")}
+            </p>
+            {order.customer_name && <p className="font-medium text-text-primary">{order.customer_name}</p>}
+            {order.customer_phone && (
+              <a href={`tel:${order.customer_phone}`} className="flex items-center gap-1.5 text-accent-primary hover:underline">
+                <Phone className="h-3.5 w-3.5" />
+                {order.customer_phone}
+              </a>
+            )}
+            {order.delivery_type === "DELIVERY" && order.delivery_address && (
+              <p className="flex items-start gap-1.5 text-text-primary">
+                <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-text-secondary" />
+                <span>{order.delivery_address}</span>
+              </p>
+            )}
+            {order.delivery_note && <p className="text-xs text-text-secondary">{order.delivery_note}</p>}
+            {order.delivery_lat && order.delivery_lng && (
+              <a
+                href={`https://www.google.com/maps?q=${order.delivery_lat},${order.delivery_lng}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs font-medium text-accent-primary hover:underline"
+              >
+                <MapPin className="h-3.5 w-3.5" />
+                {t("openMap")}
+              </a>
+            )}
+          </div>
+        )}
+
+        {order.payment_method && (
+          <div className="space-y-2 rounded-lg border border-border-default p-3 text-sm">
+            <div className="flex items-center justify-between">
+              <span className="text-text-secondary">{t("paymentMethod")}</span>
+              <span className="font-semibold text-text-primary">{t(`paymentMethods.${order.payment_method}`)}</span>
+            </div>
+            {order.payment_proof_url && (
+              <a href={order.payment_proof_url} target="_blank" rel="noopener noreferrer" className="block">
+                <p className="mb-1 text-xs font-medium text-text-secondary">{t("paymentProof")}</p>
+                <SafeImage src={order.payment_proof_url} alt={t("paymentProof")} className="h-40 w-full rounded-lg" />
+              </a>
+            )}
+          </div>
+        )}
 
         {/* Items */}
         <div className="rounded-lg border border-border-default">

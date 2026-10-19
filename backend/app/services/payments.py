@@ -19,6 +19,7 @@ from app.models.payment import CashShift, Payment
 from app.services import orders as order_service
 from app.services.pricing import round_money
 from app.utils.errors import BusinessRuleError, ConflictError, NotFoundError
+from app.utils.tenant_refs import require_branch
 
 
 def _utcnow() -> datetime:
@@ -71,6 +72,24 @@ async def add_payment(
         await order_service.transition_order(session, restaurant_id, order.id, "PARTIALLY_PAID")
 
     await session.commit()
+
+    if new_paid >= order.total:
+        from app.services import printing as printing_service
+
+        await printing_service.auto_print_receipt_if_enabled(restaurant_id, order.branch_id, order.id)
+
+    from app.services import notifications as notifications_service
+
+    await notifications_service.create_notification(
+        session,
+        restaurant_id,
+        order.branch_id,
+        "PAYMENT",
+        title=f"To'lov qabul qilindi — #{order.order_number}",
+        body=f"{amount} {order.currency} ({method})",
+        link="/dashboard/payments",
+    )
+
     return payment
 
 
@@ -81,6 +100,7 @@ async def open_shift(
     cashier_user_id: uuid.UUID,
     opening_balance: Decimal,
 ) -> CashShift:
+    await require_branch(session, restaurant_id, branch_id)
     existing = await session.scalar(
         select(CashShift).where(
             CashShift.restaurant_id == restaurant_id,

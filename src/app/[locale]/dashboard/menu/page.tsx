@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Plus, Pencil, Trash2, ImageOff } from "lucide-react";
+import { Plus, Pencil, Trash2 } from "lucide-react";
 import {
   CategoryOut,
   ProductOut,
@@ -17,6 +17,8 @@ import Modal from "@/components/Modal";
 import Button from "@/components/Button";
 import StateView from "@/components/dashboard/StateView";
 import PageHeader from "@/components/dashboard/PageHeader";
+import SafeImage from "@/components/ui/SafeImage";
+import SearchField from "@/components/ui/SearchField";
 import ImageUploadField from "@/components/ImageUploadField";
 
 type ModalState =
@@ -48,6 +50,7 @@ export default function MenuPage() {
   const [modal, setModal] = useState<ModalState>(null);
   const [confirm, setConfirm] = useState<ConfirmState>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
 
   const canCreate = can("menu.create");
   const canUpdate = can("menu.update");
@@ -336,35 +339,36 @@ export default function MenuPage() {
 
         {/* Products pane */}
         <section className="rounded-xl border border-border-default bg-surface p-5">
-          <h2 className="text-sm font-semibold text-text-primary">
-            {t("products")}
-          </h2>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-sm font-semibold text-text-primary">{t("products")}</h2>
+            <SearchField
+              value={query}
+              onChange={setQuery}
+              placeholder={tc("ui.search")}
+              clearLabel={tc("ui.clear")}
+              className="w-full sm:w-64"
+            />
+          </div>
 
           {products.type === "data" ? (
-            products.data.length === 0 ? (
+            products.data.filter((p) => !query.trim() || p.name.toLowerCase().includes(query.trim().toLowerCase())).length === 0 ? (
               <StateView kind="empty" message={t("noProducts")} />
             ) : (
               <ul className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                {products.data.map((product) => (
+                {products.data
+                  .filter((p) => !query.trim() || p.name.toLowerCase().includes(query.trim().toLowerCase()))
+                  .map((product) => (
                   <li
                     key={product.id}
                     className="flex flex-col justify-between gap-3 rounded-lg border border-border-default bg-background p-4 shadow-sm transition-shadow hover:shadow-md"
                   >
                     <div>
-                      <div className="mb-3 h-36 w-full overflow-hidden rounded-lg bg-background-secondary">
-                        {product.image_url ? (
-                          // eslint-disable-next-line @next/next/no-img-element -- see ImageUploadField
-                          <img
-                            src={product.image_url}
-                            alt={product.name}
-                            className="h-full w-full object-cover"
-                          />
-                        ) : (
-                          <div className="flex h-full w-full items-center justify-center text-text-secondary/40">
-                            <ImageOff className="h-6 w-6" aria-hidden="true" />
-                          </div>
-                        )}
-                      </div>
+                      <SafeImage
+                        src={product.image_url}
+                        alt={product.name}
+                        className="mb-3 h-36 w-full rounded-lg"
+                        iconClassName="h-7 w-7"
+                      />
                       <div className="flex items-start justify-between gap-2">
                         <p className="font-medium text-text-primary">
                           {product.name}

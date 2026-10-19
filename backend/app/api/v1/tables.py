@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_tenant, require_permission
 from app.database.session import get_db
+from app.utils.tenant_refs import require_branch
 from app.models.table import Table
 from app.repositories.tables import TableRepository
 from app.schemas.tables import TableCreate, TableOut, TableUpdate
@@ -47,6 +48,7 @@ async def create_table(
     db: AsyncSession = Depends(get_db),
     _: None = Depends(require_permission("users.manage")),
 ):
+    await require_branch(db, current_tenant, payload.branch_id)
     table = Table(
         restaurant_id=current_tenant,
         branch_id=payload.branch_id,

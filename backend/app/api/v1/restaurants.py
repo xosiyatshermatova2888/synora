@@ -13,6 +13,7 @@ from app.api.deps import (
     require_permission,
 )
 from app.database.session import get_db
+from app.integrations.telegram import TelegramError
 from app.models.branch import Branch
 from app.models.restaurant import Restaurant
 from app.models.user import User
@@ -22,8 +23,12 @@ from app.schemas.restaurants import (
     BranchUpdate,
     RestaurantOut,
     RestaurantUpdate,
+    TelegramConnectRequest,
+    TelegramStatusOut,
 )
-from app.utils.errors import NotFoundError
+from app.services import telegram_bot as telegram_bot_service
+from app.services.subscription import ensure_branch_capacity
+from app.utils.errors import NotFoundError, ValidationError
 
 router = APIRouter(tags=["restaurants"])
 
@@ -44,6 +49,7 @@ async def update_my_restaurant(
     payload: RestaurantUpdate,
     current_user: User = Depends(get_current_user_restaurant),
     db: AsyncSession = Depends(get_db),
+    _: None = Depends(require_permission("users.manage")),
 ):
     restaurant = await db.get(Restaurant, current_user.restaurant_id)
     if restaurant is None:
@@ -79,6 +85,7 @@ async def create_branch(
     db: AsyncSession = Depends(get_db),
     _: None = Depends(require_permission("users.manage")),
 ):
+    await ensure_branch_capacity(db, current_tenant)
     branch = Branch(
         restaurant_id=current_tenant,
         name=payload.name,
@@ -124,3 +131,33 @@ async def update_branch(
     await db.commit()
     await db.refresh(branch)
     return branch
+
+
+@router.post("/restaurant/telegram", response_model=TelegramStatusOut)
+async def connect_telegram_bot(
+    payload: TelegramConnectRequest,
+    current_tenant: uuid.UUID = Depends(get_current_tenant),
+    db: AsyncSession = Depends(get_db),
+    _: None = Depends(require_permission("users.manage")),
+):
+    try:
+        restaurant = await telegram_bot_service.connect_bot(db, current_tenant, payload.bot_token)
+    except TelegramError as err:
+        raise ValidationError(detail=f"Telegram rejected this token: {err.description}")
+    return TelegramStatusOut(
+        telegram_connected=restaurant.telegram_connected,
+        telegram_bot_username=restaurant.telegram_bot_username,
+    )
+
+
+@router.delete("/restaurant/telegram", response_model=TelegramStatusOut)
+async def disconnect_telegram_bot(
+    current_tenant: uuid.UUID = Depends(get_current_tenant),
+    db: AsyncSession = Depends(get_db),
+    _: None = Depends(require_permission("users.manage")),
+):
+    restaurant = await telegram_bot_service.disconnect_bot(db, current_tenant)
+    return TelegramStatusOut(
+        telegram_connected=restaurant.telegram_connected,
+        telegram_bot_username=restaurant.telegram_bot_username,
+    )

@@ -1,0 +1,36 @@
+{
+  "path": "paymentsPage",
+  "uz": {
+    "shiftHistory": "Yopilgan smenalar",
+    "shiftHistoryEmpty": "Hali yopilgan smena yo‘q",
+    "closedAt": "Yopilgan",
+    "actualBalance": "Haqiqiy qoldiq",
+    "difference": "Farq",
+    "diffMatch": "Mos keldi",
+    "diffShortage": "Kamomad",
+    "diffSurplus": "Ortiqcha",
+    "shiftClosedResult": "Smena yopildi. Kutilgan: {expected}, haqiqiy: {actual}, farq: {diff}"
+  },
+  "ru": {
+    "shiftHistory": "Закрытые смены",
+    "shiftHistoryEmpty": "Закрытых смен пока нет",
+    "closedAt": "Закрыта",
+    "actualBalance": "Фактический остаток",
+    "difference": "Разница",
+    "diffMatch": "Совпало",
+    "diffShortage": "Недостача",
+    "diffSurplus": "Излишек",
+    "shiftClosedResult": "Смена закрыта. Ожидалось: {expected}, фактически: {actual}, разница: {diff}"
+  },
+  "en": {
+    "shiftHistory": "Closed shifts",
+    "shiftHistoryEmpty": "No closed shifts yet",
+    "closedAt": "Closed",
+    "actualBalance": "Counted cash",
+    "difference": "Difference",
+    "diffMatch": "Matches",
+    "diffShortage": "Shortage",
+    "diffSurplus": "Surplus",
+    "shiftClosedResult": "Shift closed. Expected: {expected}, counted: {actual}, difference: {diff}"
+  }
+}

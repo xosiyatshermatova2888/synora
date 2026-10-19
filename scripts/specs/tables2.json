@@ -1,0 +1,6 @@
+{
+  "path": "tablesPage",
+  "uz": { "stateOrdered": "Buyurtma berilgan" },
+  "ru": { "stateOrdered": "Заказ принят" },
+  "en": { "stateOrdered": "Ordered" }
+}

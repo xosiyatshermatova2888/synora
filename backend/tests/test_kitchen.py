@@ -232,6 +232,15 @@ class TestKitchenStations:
         assert res.status_code == 403
 
 
+def _recv(ws):
+    """Next kitchen event; the generic `order_changed` hint the dashboards use for
+    live refresh rides the same socket and is not what these tests are about."""
+    while True:
+        msg = ws.receive_json()
+        if msg.get("event") != "order_changed":
+            return msg
+
+
 class TestKitchenWebSocket:
     def _ws_url(self, world, token, branch=None):
         url = f"/api/v1/ws/kitchen?token={token}"
@@ -250,7 +259,7 @@ class TestKitchenWebSocket:
 
             res = _send_to_kitchen(client, world, order_id, headers=owner_headers(world))
             assert res.status_code == 200, res.text
-            msg = ws.receive_json()
+            msg = _recv(ws)
             assert msg["event"] == "order_sent_to_kitchen"
             assert msg["ticket"]["order_id"] == order_id
             assert msg["ticket"]["status"] == "NEW"
@@ -260,7 +269,7 @@ class TestKitchenWebSocket:
                 headers=owner_headers(world),
                 json={"kitchen_status": "PREPARING"},
             )
-            msg = ws.receive_json()
+            msg = _recv(ws)
             assert msg["event"] == "order_preparing"
             assert msg["ticket"]["status"] == "PREPARING"
 
@@ -269,7 +278,7 @@ class TestKitchenWebSocket:
                 headers=owner_headers(world),
                 json={"kitchen_status": "READY"},
             )
-            msg = ws.receive_json()
+            msg = _recv(ws)
             assert msg["event"] == "order_ready"
 
     def test_advance_via_ticket_endpoint_broadcasts(self, client, world):
@@ -281,7 +290,7 @@ class TestKitchenWebSocket:
         with client.websocket_connect(self._ws_url(world, token, world.branch_a.id)) as ws:
             order_id = _create(client, world).json()["id"]
             _send_to_kitchen(client, world, order_id)
-            assert ws.receive_json()["event"] == "order_sent_to_kitchen"
+            assert _recv(ws)["event"] == "order_sent_to_kitchen"
 
             ticket_id = _first_ticket(client, world)["id"]
             client.patch(
@@ -289,7 +298,7 @@ class TestKitchenWebSocket:
                 headers=owner_headers(world),
                 json={"status": "PREPARING"},
             )
-            msg = ws.receive_json()
+            msg = _recv(ws)
             assert msg["event"] == "order_preparing"
             assert msg["ticket"]["id"] == ticket_id
 

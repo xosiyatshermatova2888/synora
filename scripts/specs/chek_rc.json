@@ -1,0 +1,6 @@
+{
+  "path": "receiptPage",
+  "uz": { "delivery": "YETKAZISH", "pickup": "OLIB KETISH", "customer": "MIJOZ", "address": "Manzil" },
+  "ru": { "delivery": "ДОСТАВКА", "pickup": "САМОВЫВОЗ", "customer": "КЛИЕНТ", "address": "Адрес" },
+  "en": { "delivery": "DELIVERY", "pickup": "PICKUP", "customer": "CUSTOMER", "address": "Address" }
+}

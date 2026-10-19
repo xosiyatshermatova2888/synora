@@ -9,7 +9,8 @@ import Container from "@/components/Container";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useCTA } from "@/components/CTAProvider";
 
-export default function Navbar() {
+export default function Navbar({ variant = "light" }: { variant?: "light" | "dark" }) {
+  const dark = variant === "dark";
   const t = useTranslations("nav");
   const { openTrial } = useCTA();
   const [scrolled, setScrolled] = useState(false);
@@ -55,9 +56,13 @@ export default function Navbar() {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-40 transition-all duration-300 ${
-        scrolled || mobileOpen
-          ? "border-b border-border-default bg-background/80 backdrop-blur-md"
-          : "border-b border-transparent bg-transparent"
+        dark
+          ? scrolled || mobileOpen
+            ? "border-b border-white/10 bg-[#071a1c]/90 text-white backdrop-blur-md"
+            : "border-b border-transparent bg-transparent text-white"
+          : scrolled || mobileOpen
+            ? "border-b border-border-default bg-background/80 backdrop-blur-md"
+            : "border-b border-transparent bg-transparent"
       }`}
     >
       <Container>
@@ -81,7 +86,9 @@ export default function Navbar() {
               <button
                 key={item.label}
                 onClick={item.action}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-text-secondary transition-colors hover:text-text-primary focus-visible:outline-2 focus-visible:outline-accent-primary"
+                className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-accent-primary ${
+                  dark ? "text-teal-100/75 hover:text-white" : "text-text-secondary hover:text-text-primary"
+                }`}
               >
                 {item.label}
               </button>
@@ -92,7 +99,9 @@ export default function Navbar() {
               onMouseLeave={() => setResourcesOpen(false)}
             >
               <button
-                className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-text-secondary transition-colors hover:text-text-primary focus-visible:outline-2 focus-visible:outline-accent-primary"
+                className={`flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-accent-primary ${
+                  dark ? "text-teal-100/75 hover:text-white" : "text-text-secondary hover:text-text-primary"
+                }`}
                 aria-expanded={resourcesOpen}
               >
                 {t("resources")}
@@ -126,7 +135,7 @@ export default function Navbar() {
             <LanguageSwitcher />
             <Link
               href="/login"
-              className="text-sm font-medium text-text-secondary transition-colors hover:text-text-primary"
+              className={`text-sm font-medium transition-colors ${dark ? "text-teal-100/75 hover:text-white" : "text-text-secondary hover:text-text-primary"}`}
             >
               {t("login")}
             </Link>
@@ -139,7 +148,7 @@ export default function Navbar() {
           </div>
 
           <button
-            className="rounded-lg p-2 text-text-primary lg:hidden"
+            className={`rounded-lg p-2 lg:hidden ${dark ? "text-white" : "text-text-primary"}`}
             onClick={() => setMobileOpen((v) => !v)}
             aria-label="Toggle menu"
             aria-expanded={mobileOpen}

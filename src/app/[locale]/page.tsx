@@ -7,6 +7,7 @@ import Hero from "@/components/Hero";
 import TrustSection from "@/components/TrustSection";
 import ProblemsSection from "@/components/ProblemsSection";
 import SolutionFlow from "@/components/SolutionFlow";
+import FloorShowcase from "@/components/FloorShowcase";
 import FeaturesSection from "@/components/FeaturesSection";
 import HowItWorks from "@/components/HowItWorks";
 import AISection from "@/components/AISection";
@@ -50,12 +51,13 @@ export default async function HomePage({
 
   return (
     <CTAProvider>
-      <Navbar />
+      <Navbar variant="dark" />
       <main>
         <Hero />
         <TrustSection />
         <ProblemsSection />
         <SolutionFlow />
+        <FloorShowcase />
         <FeaturesSection />
         <HowItWorks />
         <AISection />

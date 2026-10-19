@@ -1,0 +1,27 @@
+{
+  "path": "ordersPage",
+  "uz": {
+    "customer": "Mijoz",
+    "deliveryType": { "DELIVERY": "Yetkazib berish", "PICKUP": "Olib ketish" },
+    "openMap": "Xaritada ochish",
+    "paymentMethod": "To‘lov usuli",
+    "paymentMethods": { "CASH": "Naqd pul", "CARD_TRANSFER": "Karta orqali o‘tkazma", "PAYME": "Payme" },
+    "paymentProof": "To‘lov cheki"
+  },
+  "ru": {
+    "customer": "Клиент",
+    "deliveryType": { "DELIVERY": "Доставка", "PICKUP": "Самовывоз" },
+    "openMap": "Открыть на карте",
+    "paymentMethod": "Способ оплаты",
+    "paymentMethods": { "CASH": "Наличные", "CARD_TRANSFER": "Перевод на карту", "PAYME": "Payme" },
+    "paymentProof": "Чек об оплате"
+  },
+  "en": {
+    "customer": "Customer",
+    "deliveryType": { "DELIVERY": "Delivery", "PICKUP": "Pickup" },
+    "openMap": "Open in maps",
+    "paymentMethod": "Payment method",
+    "paymentMethods": { "CASH": "Cash", "CARD_TRANSFER": "Card transfer", "PAYME": "Payme" },
+    "paymentProof": "Payment receipt"
+  }
+}

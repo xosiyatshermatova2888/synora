@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { KeyRound, Lock, Plus, UserRound } from "lucide-react";
-import { StaffOut, StaffRole, usersApi } from "@/lib/api";
+import { BarChart3, KeyRound, Lock, Pencil, Plus, ShieldCheck, UserRound, UserX } from "lucide-react";
+import { StaffOut, StaffRole, WaiterStatsOut, ordersApi, usersApi } from "@/lib/api";
+import { formatMoney } from "@/lib/format";
 import type { LoadState } from "@/lib/load-state";
 import { loadingState, errorState, dataState } from "@/lib/load-state";
 import { useAuth } from "@/lib/auth-context";
@@ -33,6 +34,9 @@ export default function StaffPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [pinTarget, setPinTarget] = useState<StaffOut | null>(null);
   const [passwordTarget, setPasswordTarget] = useState<StaffOut | null>(null);
+  const [statsTarget, setStatsTarget] = useState<StaffOut | null>(null);
+  const [editTarget, setEditTarget] = useState<StaffOut | null>(null);
+  const [roleTarget, setRoleTarget] = useState<StaffOut | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
   const canManage = can("users.manage");
@@ -115,6 +119,43 @@ export default function StaffPage() {
     }
   };
 
+  const handleUpdateProfile = async (payload: { fullName: string; phone: string }) => {
+    if (!editTarget) return;
+    try {
+      await usersApi.update(editTarget.id, { full_name: payload.fullName, phone: payload.phone });
+      setEditTarget(null);
+      flash(tc("actions.saved"));
+      load();
+    } catch (err) {
+      alert((err as Error).message);
+    }
+  };
+
+  const handleChangeRole = async (role: StaffRole) => {
+    if (!roleTarget) return;
+    try {
+      await usersApi.changeRole(roleTarget.id, role);
+      setRoleTarget(null);
+      flash(tc("actions.saved"));
+      load();
+    } catch (err) {
+      alert((err as Error).message);
+    }
+  };
+
+  const handleToggleActive = async (member: StaffOut) => {
+    if (member.is_active && !window.confirm(t("confirmDeactivate", { name: member.full_name }))) {
+      return;
+    }
+    try {
+      await usersApi.setActive(member.id, !member.is_active);
+      flash(tc("actions.saved"));
+      load();
+    } catch (err) {
+      alert((err as Error).message);
+    }
+  };
+
   return (
     <div>
       <PageHeader
@@ -180,8 +221,32 @@ export default function StaffPage() {
                       {t("inactive")}
                     </span>
                   )}
-                  {canManage && (
-                    <div className="flex gap-1.5">
+                  {member.roles.includes("WAITER") && (
+                    <button
+                      onClick={() => setStatsTarget(member)}
+                      className="flex items-center gap-1.5 rounded-lg border border-border-default px-2.5 py-1.5 text-xs font-medium text-text-primary hover:border-accent-primary hover:text-accent-primary"
+                    >
+                      <BarChart3 className="h-3.5 w-3.5" />
+                      {t("viewStats")}
+                    </button>
+                  )}
+                  {canManage && !member.roles.includes("OWNER") && !member.roles.includes("ADMIN") && (
+                    <div className="flex flex-wrap gap-1.5">
+                      <button
+                        onClick={() => setEditTarget(member)}
+                        aria-label={t("editProfile")}
+                        title={t("editProfile")}
+                        className="flex h-8 w-8 items-center justify-center rounded-lg border border-border-default text-text-primary hover:border-accent-primary hover:text-accent-primary"
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        onClick={() => setRoleTarget(member)}
+                        className="flex items-center gap-1.5 rounded-lg border border-border-default px-2.5 py-1.5 text-xs font-medium text-text-primary hover:border-accent-primary hover:text-accent-primary"
+                      >
+                        <ShieldCheck className="h-3.5 w-3.5" />
+                        {t("changeRole")}
+                      </button>
                       <button
                         onClick={() => setPinTarget(member)}
                         className="flex items-center gap-1.5 rounded-lg border border-border-default px-2.5 py-1.5 text-xs font-medium text-text-primary hover:border-accent-primary hover:text-accent-primary"
@@ -195,6 +260,17 @@ export default function StaffPage() {
                       >
                         <Lock className="h-3.5 w-3.5" />
                         {t("resetPassword")}
+                      </button>
+                      <button
+                        onClick={() => handleToggleActive(member)}
+                        className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium ${
+                          member.is_active
+                            ? "border-border-default text-error hover:border-error"
+                            : "border-border-default text-success hover:border-success"
+                        }`}
+                      >
+                        <UserX className="h-3.5 w-3.5" />
+                        {member.is_active ? t("deactivate") : t("activate")}
                       </button>
                     </div>
                   )}
@@ -228,6 +304,59 @@ export default function StaffPage() {
           onSubmit={handleSetPassword}
         />
       )}
+      {statsTarget && (
+        <StatsModal member={statsTarget} onClose={() => setStatsTarget(null)} />
+      )}
+      {editTarget && (
+        <EditProfileModal
+          member={editTarget}
+          onClose={() => setEditTarget(null)}
+          onSubmit={handleUpdateProfile}
+        />
+      )}
+      {roleTarget && (
+        <RoleModal member={roleTarget} onClose={() => setRoleTarget(null)} onSubmit={handleChangeRole} />
+      )}
+    </div>
+  );
+}
+
+function StatsModal({ member, onClose }: { member: StaffOut; onClose: () => void }) {
+  const t = useTranslations("staffPage");
+  const [stats, setStats] = useState<WaiterStatsOut | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    ordersApi
+      .statsFor(member.id)
+      .then(setStats)
+      .catch((err) => setError((err as Error).message));
+  }, [member.id]);
+
+  return (
+    <Modal open onClose={onClose} title={`${t("statsTitle")} — ${member.full_name}`}>
+      {error ? (
+        <p className="text-sm text-error">{error}</p>
+      ) : !stats ? (
+        <p className="text-sm text-text-secondary">{t("statsLoading")}</p>
+      ) : (
+        <div className="grid grid-cols-2 gap-3">
+          <StatTile label={t("statsSalesToday")} value={formatMoney(stats.total_sales, "UZS")} />
+          <StatTile label={t("statsOrdersToday")} value={String(stats.order_count)} />
+          <StatTile label={t("statsTablesServed")} value={String(stats.tables_served)} />
+          <StatTile label={t("statsAverageCheck")} value={formatMoney(stats.average_check, "UZS")} />
+          <StatTile label={t("statsCancelled")} value={String(stats.cancelled_count)} />
+        </div>
+      )}
+    </Modal>
+  );
+}
+
+function StatTile({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-border-default bg-background p-3">
+      <p className="text-xs text-text-secondary">{label}</p>
+      <p className="mt-0.5 text-base font-bold text-text-primary">{value}</p>
     </div>
   );
 }
@@ -317,6 +446,107 @@ function PasswordModal({
             className="w-full rounded-lg border border-border-default bg-background px-3 py-2 text-sm text-text-primary outline-none focus:border-accent-primary"
           />
         </div>
+        <div className="flex justify-end gap-2">
+          <Button variant="secondary" size="sm" onClick={onClose}>
+            {tc("actions.cancel")}
+          </Button>
+          <Button type="submit" size="sm">
+            {tc("actions.save")}
+          </Button>
+        </div>
+      </form>
+    </Modal>
+  );
+}
+
+function EditProfileModal({
+  member,
+  onClose,
+  onSubmit,
+}: {
+  member: StaffOut;
+  onClose: () => void;
+  onSubmit: (payload: { fullName: string; phone: string }) => void;
+}) {
+  const t = useTranslations("staffPage");
+  const tc = useTranslations("common");
+  const [fullName, setFullName] = useState(member.full_name);
+  const [phone, setPhone] = useState("");
+
+  return (
+    <Modal open onClose={onClose} title={`${t("editProfile")} — ${member.full_name}`}>
+      <form
+        className="space-y-4"
+        onSubmit={(e) => {
+          e.preventDefault();
+          onSubmit({ fullName: fullName.trim(), phone: phone.trim() });
+        }}
+      >
+        <div>
+          <label className="mb-1 block text-sm font-medium text-text-primary">{t("fullName")}</label>
+          <input
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            required
+            minLength={2}
+            className="w-full rounded-lg border border-border-default bg-background px-3 py-2 text-sm text-text-primary outline-none focus:border-accent-primary"
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-sm font-medium text-text-primary">{t("phone")}</label>
+          <input
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className="w-full rounded-lg border border-border-default bg-background px-3 py-2 text-sm text-text-primary outline-none focus:border-accent-primary"
+          />
+        </div>
+        <div className="flex justify-end gap-2">
+          <Button variant="secondary" size="sm" onClick={onClose}>
+            {tc("actions.cancel")}
+          </Button>
+          <Button type="submit" size="sm">
+            {tc("actions.save")}
+          </Button>
+        </div>
+      </form>
+    </Modal>
+  );
+}
+
+function RoleModal({
+  member,
+  onClose,
+  onSubmit,
+}: {
+  member: StaffOut;
+  onClose: () => void;
+  onSubmit: (role: StaffRole) => void;
+}) {
+  const t = useTranslations("staffPage");
+  const tc = useTranslations("common");
+  const currentRole = ROLES.find((r) => member.roles.includes(r)) ?? "WAITER";
+  const [role, setRole] = useState<StaffRole>(currentRole);
+
+  return (
+    <Modal open onClose={onClose} title={`${t("changeRole")} — ${member.full_name}`}>
+      <form
+        className="space-y-4"
+        onSubmit={(e) => {
+          e.preventDefault();
+          onSubmit(role);
+        }}
+      >
+        <select
+          value={role}
+          onChange={(e) => setRole(e.target.value as StaffRole)}
+          className="w-full rounded-lg border border-border-default bg-background px-3 py-2 text-sm text-text-primary outline-none focus:border-accent-primary"
+        >
+          {ROLES.map((r) => (
+            <option key={r} value={r}>
+              {tc(`roles.${r}`)}
+            </option>
+          ))}
+        </select>
         <div className="flex justify-end gap-2">
           <Button variant="secondary" size="sm" onClick={onClose}>
             {tc("actions.cancel")}

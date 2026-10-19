@@ -16,7 +16,11 @@ export default function WaiterAuthGate({ children }: { children: React.ReactNode
 
   useEffect(() => {
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/waiter-sw.js").catch(() => {});
+      // Without an explicit scope, a worker served from the site root
+      // defaults to controlling the ENTIRE origin — including /dashboard —
+      // not just /waiter. Pin it down so it only ever intercepts the
+      // waiter kiosk's own pages.
+      navigator.serviceWorker.register("/waiter-sw.js", { scope: "/waiter/" }).catch(() => {});
     }
   }, []);
 

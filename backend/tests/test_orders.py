@@ -14,7 +14,7 @@ import pytest
 from sqlalchemy import func, select
 
 from app.models.order import Order
-from tests.conftest import owner_headers, waiter_headers
+from tests.conftest import cashier_headers, kitchen_headers, owner_headers, waiter_headers
 
 
 def _order_payload(world, *, product_id=None, table_id=None, modifiers=None, discount="0.00", quantity=1, source="POS"):
@@ -303,3 +303,157 @@ class TestOrderListing:
         )
         active = client.get("/api/v1/orders/active", headers=owner_headers(world)).json()
         assert all(o["id"] != done for o in active)
+
+
+class TestDiscount:
+    def test_percent_discount_recomputes_total(self, client, world):
+        order_id = _create(client, world).json()["id"]
+        res = client.patch(
+            f"/api/v1/orders/{order_id}/discount",
+            headers=owner_headers(world),
+            json={"discount_type": "PERCENT", "discount": "10"},
+        )
+        assert res.status_code == 200, res.text
+        body = res.json()
+        assert body["discount_type"] == "PERCENT"
+        assert body["discount"] == "4500.00"  # 10% of 45000
+        assert body["total"] == "40500.00"
+
+    def test_fixed_discount_recomputes_total(self, client, world):
+        order_id = _create(client, world).json()["id"]
+        res = client.patch(
+            f"/api/v1/orders/{order_id}/discount",
+            headers=owner_headers(world),
+            json={"discount_type": "FIXED", "discount": "5000"},
+        )
+        assert res.status_code == 200, res.text
+        body = res.json()
+        assert body["discount"] == "5000.00"
+        assert body["total"] == "40000.00"
+
+    def test_discount_denied_for_waiter(self, client, world):
+        order_id = _create(client, world, headers=waiter_headers(world), source="WAITER").json()["id"]
+        res = client.patch(
+            f"/api/v1/orders/{order_id}/discount",
+            headers=waiter_headers(world),
+            json={"discount_type": "PERCENT", "discount": "10"},
+        )
+        assert res.status_code == 403
+
+    def test_discount_denied_for_kitchen(self, client, world):
+        order_id = _create(client, world).json()["id"]
+        res = client.patch(
+            f"/api/v1/orders/{order_id}/discount",
+            headers=kitchen_headers(world),
+            json={"discount_type": "PERCENT", "discount": "10"},
+        )
+        assert res.status_code == 403
+
+    def test_discount_rejected_on_completed_order(self, client, world):
+        order_id = _create(client, world).json()["id"]
+        client.patch(f"/api/v1/orders/{order_id}/status", headers=owner_headers(world), json={"status": "OPEN"})
+        client.patch(f"/api/v1/orders/{order_id}/status", headers=owner_headers(world), json={"status": "COMPLETED"})
+        res = client.patch(
+            f"/api/v1/orders/{order_id}/discount",
+            headers=owner_headers(world),
+            json={"discount_type": "FIXED", "discount": "1000"},
+        )
+        assert res.status_code == 422
+
+    def test_cashier_can_discount(self, client, world):
+        order_id = _create(client, world, headers=cashier_headers(world)).json()["id"]
+        res = client.patch(
+            f"/api/v1/orders/{order_id}/discount",
+            headers=cashier_headers(world),
+            json={"discount_type": "PERCENT", "discount": "50"},
+        )
+        assert res.status_code == 200, res.text
+
+
+class TestTableTransfer:
+    def test_transfer_moves_order_and_frees_old_table(self, client, world):
+        order_id = _create(client, world, table_id=world.table_a.id).json()["id"]
+
+        res = client.patch(
+            f"/api/v1/orders/{order_id}/table",
+            headers=owner_headers(world),
+            json={"table_id": str(world.table_a2.id)},
+        )
+        assert res.status_code == 200, res.text
+        assert res.json()["table_id"] == str(world.table_a2.id)
+
+        old_table = client.get(f"/api/v1/tables/{world.table_a.id}", headers=owner_headers(world)).json()
+        new_table = client.get(f"/api/v1/tables/{world.table_a2.id}", headers=owner_headers(world)).json()
+        assert old_table["status"] == "AVAILABLE"
+        assert new_table["status"] == "OCCUPIED"
+
+    def test_transfer_rejects_already_occupied_table(self, client, world):
+        _create(client, world, table_id=world.table_a.id)
+        order_b_id = _create(client, world, table_id=world.table_a2.id).json()["id"]
+
+        res = client.patch(
+            f"/api/v1/orders/{order_b_id}/table",
+            headers=owner_headers(world),
+            json={"table_id": str(world.table_a.id)},
+        )
+        assert res.status_code == 422
+
+
+class TestMergeOrders:
+    def test_merge_combines_items_and_cancels_source(self, client, world):
+        source_id = _create(client, world, table_id=world.table_a.id, quantity=1).json()["id"]
+        target_id = _create(client, world, table_id=world.table_a2.id, quantity=2).json()["id"]
+
+        res = client.post(
+            f"/api/v1/orders/{source_id}/merge-into/{target_id}",
+            headers=owner_headers(world),
+        )
+        assert res.status_code == 200, res.text
+        target = res.json()
+        assert len(target["items"]) == 2
+        assert target["total"] == "135000.00"  # 45000*1 + 45000*2
+
+        source = client.get(f"/api/v1/orders/{source_id}", headers=owner_headers(world)).json()
+        assert source["status"] == "CANCELLED"
+        assert source["items"] == []
+
+        freed_table = client.get(f"/api/v1/tables/{world.table_a.id}", headers=owner_headers(world)).json()
+        assert freed_table["status"] == "AVAILABLE"
+
+    def test_merge_rejects_partially_paid_source(self, client, world):
+        source_id = _create(client, world, table_id=world.table_a.id).json()["id"]
+        target_id = _create(client, world, table_id=world.table_a2.id).json()["id"]
+        client.patch(f"/api/v1/orders/{source_id}/status", headers=owner_headers(world), json={"status": "OPEN"})
+        client.post(
+            "/api/v1/payments",
+            headers=owner_headers(world),
+            json={"order_id": source_id, "amount": "1000.00", "method": "CASH"},
+        )
+        res = client.post(
+            f"/api/v1/orders/{source_id}/merge-into/{target_id}",
+            headers=owner_headers(world),
+        )
+        assert res.status_code == 422
+
+
+class TestSplitPreview:
+    def test_split_by_person_sums_to_total(self, client, world):
+        order_id = _create(client, world).json()["id"]
+        res = client.post(
+            f"/api/v1/orders/{order_id}/split-preview",
+            headers=owner_headers(world),
+            json={"mode": "person", "parts": 3},
+        )
+        assert res.status_code == 200, res.text
+        shares = res.json()["shares"]
+        assert len(shares) == 3
+        assert sum(Decimal(s["amount"]) for s in shares) == Decimal("45000.00")
+
+    def test_split_by_amount_rejects_mismatched_sum(self, client, world):
+        order_id = _create(client, world).json()["id"]
+        res = client.post(
+            f"/api/v1/orders/{order_id}/split-preview",
+            headers=owner_headers(world),
+            json={"mode": "amount", "amounts": ["20000.00", "20000.00"]},
+        )
+        assert res.status_code == 422

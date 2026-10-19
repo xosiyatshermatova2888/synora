@@ -39,3 +39,20 @@ class SetPasswordRequest(BaseModel):
     self-service "forgot password" (no email to send a reset link to)."""
 
     password: str = Field(min_length=8, max_length=128)
+
+
+class StaffUpdateRequest(BaseModel):
+    full_name: str | None = Field(default=None, min_length=2, max_length=150)
+    phone: str | None = None
+
+
+class StaffRoleUpdate(BaseModel):
+    role: StaffRole
+
+
+class StaffActiveUpdate(BaseModel):
+    """Reversible access toggle — `get_current_user` already rejects login
+    when `is_active` is false, so this alone blocks/restores access without
+    touching the separate `deleted_at` soft-delete column (full removal)."""
+
+    is_active: bool

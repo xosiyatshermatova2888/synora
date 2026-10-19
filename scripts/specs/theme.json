@@ -1,0 +1,6 @@
+{
+  "path": "common.ui",
+  "uz": { "themeLight": "Yorug‘ rejim", "themeDark": "Qorong‘i rejim" },
+  "ru": { "themeLight": "Светлая тема", "themeDark": "Тёмная тема" },
+  "en": { "themeLight": "Light mode", "themeDark": "Dark mode" }
+}

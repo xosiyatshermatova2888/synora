@@ -25,6 +25,12 @@ class Settings(BaseSettings):
 
     login_rate_limit_max_attempts: int = 5
     login_rate_limit_window_seconds: int = 900
+    # Per ADDRESS limit. Much higher than the per-account one: a restaurant's
+    # staff share one public IP, so 5 typos by anyone must not lock everyone out.
+    login_rate_limit_ip_max_attempts: int = 30
+    # New restaurants per IP per window: stops trial farming / account spam.
+    register_rate_limit_max_attempts: int = 5
+    register_rate_limit_window_seconds: int = 3600
     login_lockout_seconds: int = 900
 
     # --- Waiter kiosk PIN login -----------------------------------------------
@@ -49,6 +55,27 @@ class Settings(BaseSettings):
     # Public-facing base URL of the app. Used to build payment return URLs.
     # In prod: https://<real-domain>.
     public_app_url: str = "http://localhost:3000"
+
+    # --- Telegram ------------------------------------------------------------
+    # Receive bot updates by long-polling instead of a webhook. Needed when this
+    # backend has no public HTTPS address (a PC on a local network); keep it off
+    # in production where webhooks work.
+    telegram_polling: bool = False
+
+    # --- Subscription ----------------------------------------------------------
+    # Per-restaurant access state is cached briefly so the read-only gate does
+    # not cost a DB read on every request; writes invalidate it. Tests use 0.
+    subscription_cache_seconds: int = 30
+    # Where restaurants send their SYNORA subscription payment (shown on the
+    # Subscription page). Empty until the platform owner sets them.
+    synora_payment_card: str = ""
+    synora_payment_holder: str = ""
+
+    # --- Receipt printing ------------------------------------------------------
+    # Tests set this so background print jobs finish inside the request; in
+    # production jobs run as fire-and-forget tasks so a slow/dead printer never
+    # delays an order.
+    print_dispatch_inline: bool = False
 
     # --- Object storage (S3-compatible) --------------------------------------
     # When S3_ENDPOINT is set, uploads go to the bucket instead of local disk.

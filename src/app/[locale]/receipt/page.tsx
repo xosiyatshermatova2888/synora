@@ -25,7 +25,10 @@ import { formatMoney, formatDateTime } from "@/lib/format";
 export default function ReceiptPage() {
   const t = useTranslations("receiptPage");
   const tc = useTranslations("common");
-  const orderId = useSearchParams().get("order");
+  const searchParams = useSearchParams();
+  const orderId = searchParams.get("order");
+  const printWidth = searchParams.get("width") === "58" ? 58 : 80;
+  const isPrecheck = searchParams.get("kind") === "precheck";
 
   const [order, setOrder] = useState<OrderOut | null>(null);
   const [restaurant, setRestaurant] = useState<RestaurantOut | null>(null);
@@ -77,22 +80,24 @@ export default function ReceiptPage() {
     );
   }
 
-  const paidTotal = payments
-    .filter((p) => p.status === "PAID")
-    .reduce((sum, p) => sum + parseFloat(p.amount), 0);
-  const lastMethod = payments.length > 0 ? payments[payments.length - 1].method : null;
+  const paidPayments = payments.filter((p) => p.status === "PAID");
+  const paidTotal = paidPayments.reduce((sum, p) => sum + parseFloat(p.amount), 0);
+  const containerWidth = printWidth === 58 ? 240 : 320;
 
   return (
     <div className="min-h-screen bg-background-secondary py-8">
       <style>{`
         @media print {
-          @page { size: 80mm auto; margin: 3mm; }
+          @page { size: ${printWidth}mm auto; margin: 3mm; }
           .no-print { display: none !important; }
           body { background: #fff !important; }
         }
       `}</style>
 
-      <div className="no-print mx-auto mb-4 flex max-w-[320px] items-center justify-between px-1">
+      <div
+        className="no-print mx-auto mb-4 flex items-center justify-between px-1"
+        style={{ maxWidth: containerWidth }}
+      >
         <button
           onClick={() => window.close()}
           className="flex items-center gap-1.5 text-sm text-text-secondary hover:text-text-primary"
@@ -100,18 +105,30 @@ export default function ReceiptPage() {
           <X className="h-4 w-4" />
           {t("close")}
         </button>
-        <button
-          onClick={() => window.print()}
-          className="flex items-center gap-1.5 rounded-lg bg-accent-primary px-3 py-1.5 text-sm font-medium text-white hover:brightness-110"
-        >
-          <Printer className="h-4 w-4" />
-          {t("print")}
-        </button>
+        <div className="flex items-center gap-2">
+          <a
+            href={`?order=${orderId}${isPrecheck ? "&kind=precheck" : ""}&width=${printWidth === 58 ? "80" : "58"}`}
+            className="rounded-lg border border-border-default px-2.5 py-1.5 text-xs font-medium text-text-secondary hover:border-accent-primary/60 hover:text-accent-primary"
+          >
+            {printWidth === 58 ? "80mm" : "58mm"}
+          </a>
+          <button
+            onClick={() => window.print()}
+            className="flex items-center gap-1.5 rounded-lg bg-accent-primary px-3 py-1.5 text-sm font-medium text-white hover:brightness-110"
+          >
+            <Printer className="h-4 w-4" />
+            {t("print")}
+          </button>
+        </div>
       </div>
 
-      <div className="mx-auto w-full max-w-[320px] bg-white p-4 font-mono text-[13px] leading-relaxed text-black shadow-lg">
+      <div
+        className="mx-auto w-full bg-white p-4 font-mono leading-relaxed text-black shadow-lg"
+        style={{ maxWidth: containerWidth, fontSize: printWidth === 58 ? 12 : 13 }}
+      >
         <div className="text-center">
           <p className="text-base font-bold">{restaurant.name}</p>
+          {isPrecheck && <p className="mt-1 font-bold">{t("precheckTitle")}</p>}
           {restaurant.address && <p>{restaurant.address}</p>}
           {restaurant.phone && <p>{t("phone")}: {restaurant.phone}</p>}
         </div>
@@ -126,6 +143,27 @@ export default function ReceiptPage() {
           <p>
             {t("table")}: {table.name}
           </p>
+        )}
+
+        {(order.delivery_type || order.customer_phone) && (
+          <>
+            <div className="my-2 border-t border-dashed border-black" />
+            <p className="font-bold">
+              {order.delivery_type === "PICKUP" ? t("pickup") : order.delivery_type === "DELIVERY" ? t("delivery") : t("customer")}
+            </p>
+            {order.customer_name && <p>{order.customer_name}</p>}
+            {order.customer_phone && (
+              <p>
+                {t("phone")}: {order.customer_phone}
+              </p>
+            )}
+            {order.delivery_type === "DELIVERY" && order.delivery_address && (
+              <p>
+                {t("address")}: {order.delivery_address}
+              </p>
+            )}
+            {order.delivery_note && <p>{order.delivery_note}</p>}
+          </>
         )}
 
         <div className="my-2 border-t border-dashed border-black" />
@@ -190,15 +228,15 @@ export default function ReceiptPage() {
           <span>{formatMoney(order.total, order.currency)}</span>
         </div>
 
-        {payments.length > 0 && (
+        {!isPrecheck && paidPayments.length > 0 && (
           <>
             <div className="my-2 border-t border-dashed border-black" />
-            {lastMethod && (
-              <div className="flex justify-between">
-                <span>{t("paymentMethod")}</span>
-                <span>{tc(`paymentMethod.${lastMethod}`)}</span>
+            {paidPayments.map((p) => (
+              <div key={p.id} className="flex justify-between">
+                <span>{tc(`paymentMethod.${p.method}`)}</span>
+                <span>{formatMoney(p.amount, order.currency)}</span>
               </div>
-            )}
+            ))}
             <div className="flex justify-between">
               <span>{t("paid")}</span>
               <span>{formatMoney(paidTotal.toFixed(2), order.currency)}</span>
@@ -207,7 +245,7 @@ export default function ReceiptPage() {
         )}
 
         <div className="my-3 border-t border-dashed border-black" />
-        <p className="text-center">{t("thankYou")}</p>
+        {!isPrecheck && <p className="text-center">{t("thankYou")}</p>}
         <p className="text-center text-xs">{restaurant.name}</p>
       </div>
     </div>

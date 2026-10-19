@@ -8,7 +8,10 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-synora}
       POSTGRES_DB: ${POSTGRES_DB:-synora}
     ports:
-      - "${POSTGRES_PORT:-55432}:5432"
+      # Loopback only: these dev stores use well-known default passwords, so they
+      # must not be reachable from the restaurant Wi-Fi. (Phones reach the app
+      # through the frontend on :3000, which proxies /api and WebSockets.)
+      - "127.0.0.1:${POSTGRES_PORT:-55432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -35,11 +38,11 @@ services:
       S3_ACCESS_KEY: ${MINIO_ROOT_USER:-synora}
       S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-synoraLocalPass1}
       S3_USE_PATH_STYLE: "true"
-      S3_PUBLIC_URL_BASE: http://localhost:9000
+      S3_PUBLIC_URL_BASE: /uploads
       # WAITER_RESTAURANT_SLUG (waiter kiosk PIN login) is read from
       # backend/.env via env_file above, not set here — see .env.example.
     ports:
-      - "${BACKEND_PORT:-8000}:8000"
+      - "127.0.0.1:${BACKEND_PORT:-8000}:8000"
     volumes:
       - uploads_data:/app/uploads
     depends_on:
@@ -61,8 +64,8 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-synora}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-synoraLocalPass1}
     ports:
-      - "${MINIO_PORT:-9000}:9000"    # S3 API (public-read objects / S3_PUBLIC_URL_BASE)
-      - "9001:9001"                   # web console (dev only)
+      - "127.0.0.1:${MINIO_PORT:-9000}:9000"    # S3 API (dev only)
+      - "127.0.0.1:9001:9001"                   # web console (dev only)
     volumes:
       - minio_data:/data
     healthcheck:
@@ -95,6 +98,7 @@ services:
       dockerfile: frontend/Dockerfile
       args:
         API_URL: http://backend:8000
+        MINIO_URL: http://minio:9000
     container_name: synora-frontend
     restart: unless-stopped
     environment:

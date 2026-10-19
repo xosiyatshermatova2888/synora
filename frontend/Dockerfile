@@ -13,6 +13,10 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # service name, not localhost. Default keeps plain local dev working.
 ARG API_URL=http://localhost:8000
 ENV API_URL=$API_URL
+# Uploaded images are served same-origin via /uploads/* -> MinIO, so image
+# URLs never embed a host that only resolves on the PC (e.g. localhost:9000).
+ARG MINIO_URL=http://localhost:9000
+ENV MINIO_URL=$MINIO_URL
 RUN npm run build
 
 FROM node:20-alpine AS runner

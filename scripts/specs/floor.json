@@ -1,0 +1,45 @@
+{
+  "path": "",
+  "uz": {
+    "floorShowcase": {
+      "eyebrow": "Zal boshqaruvi",
+      "title": "Butun zal bir ekranda",
+      "description": "Qaysi stol bo‘sh, qaysisida buyurtma berilgan, qaysisi to‘lovni kutmoqda — hammasi rangli holatlarda ko‘rinadi.",
+      "p1": "Ofitsiant telefondan buyurtma oladi, oshxonaga darhol tushadi",
+      "p2": "Stollarni ko‘chirish va birlashtirish",
+      "p3": "Hisobni bo‘lish, qisman va aralash to‘lov",
+      "p4": "Zallar bo‘yicha guruhlash va holat filtrlari",
+      "floorLabel": "Zal · {n} ta stol",
+      "live": "jonli",
+      "caption": "Namuna ko‘rinish — holatlar illyustrativ"
+    }
+  },
+  "ru": {
+    "floorShowcase": {
+      "eyebrow": "Управление залом",
+      "title": "Весь зал на одном экране",
+      "description": "Какой стол свободен, где принят заказ, а какой ждёт оплаты — всё видно по цветным статусам.",
+      "p1": "Официант принимает заказ с телефона, он сразу попадает на кухню",
+      "p2": "Перенос и объединение столов",
+      "p3": "Разделение счёта, частичная и смешанная оплата",
+      "p4": "Группировка по залам и фильтры по статусам",
+      "floorLabel": "Зал · столов: {n}",
+      "live": "онлайн",
+      "caption": "Пример интерфейса — статусы условные"
+    }
+  },
+  "en": {
+    "floorShowcase": {
+      "eyebrow": "Floor management",
+      "title": "The whole floor on one screen",
+      "description": "Which table is free, which has an order in, and which is waiting to pay — all shown as colour-coded states.",
+      "p1": "Waiters take orders from a phone and they reach the kitchen instantly",
+      "p2": "Move and merge tables",
+      "p3": "Split bills, partial and mixed payments",
+      "p4": "Group by hall and filter by status",
+      "floorLabel": "Floor · {n} tables",
+      "live": "live",
+      "caption": "Sample view — states are illustrative"
+    }
+  }
+}

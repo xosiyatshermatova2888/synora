@@ -1,0 +1,6 @@
+{
+  "path": "waiterPage",
+  "uz": { "requestBill": "Hisob so‘rash", "billRequested": "Hisob so‘ralgan — kassir olib keladi" },
+  "ru": { "requestBill": "Запросить счёт", "billRequested": "Счёт запрошен — кассир несёт" },
+  "en": { "requestBill": "Request the bill", "billRequested": "Bill requested — cashier is on the way" }
+}

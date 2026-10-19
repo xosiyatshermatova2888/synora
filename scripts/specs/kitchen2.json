@@ -1,0 +1,6 @@
+{
+  "path": "kitchenPage",
+  "uz": { "printed": "Chek chop etildi", "printFailed": "Chop etib bo‘lmadi", "printerError": "Printer xatosi" },
+  "ru": { "printed": "Чек напечатан", "printFailed": "Не удалось распечатать", "printerError": "Ошибка принтера" },
+  "en": { "printed": "Ticket printed", "printFailed": "Could not print", "printerError": "Printer error" }
+}

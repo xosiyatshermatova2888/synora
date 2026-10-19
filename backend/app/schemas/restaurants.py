@@ -14,6 +14,8 @@ class RestaurantUpdate(BaseModel):
     timezone: str | None = Field(default=None, max_length=64)
     currency: str | None = Field(default=None, pattern=r"^[A-Z]{3}$")
     status: str | None = Field(default=None, pattern="^(ACTIVE|SUSPENDED|CLOSED)$")
+    payment_card_number: str | None = Field(default=None, max_length=32)
+    payment_card_holder: str | None = Field(default=None, max_length=100)
 
 
 class RestaurantOut(BaseModel):
@@ -28,6 +30,21 @@ class RestaurantOut(BaseModel):
     currency: str
     status: str
     is_active: bool
+    # Never the raw token/secret — just enough for the Settings page to show
+    # connection status and the customer-facing t.me/<username> link.
+    telegram_bot_username: str | None = None
+    telegram_connected: bool = False
+    payment_card_number: str | None = None
+    payment_card_holder: str | None = None
+
+
+class TelegramConnectRequest(BaseModel):
+    bot_token: str = Field(min_length=10, max_length=200)
+
+
+class TelegramStatusOut(BaseModel):
+    telegram_connected: bool
+    telegram_bot_username: str | None
 
 
 class BranchCreate(BaseModel):

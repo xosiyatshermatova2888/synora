@@ -17,11 +17,45 @@ type Step =
 
 export default function WaiterPinLogin() {
   const t = useTranslations("waiterPage.pinLogin");
-  const { pinLogin } = useAuth();
+  const { pinLogin, login } = useAuth();
   const [step, setStep] = useState<Step>({ name: "loading" });
   const [pin, setPin] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [mode, setMode] = useState<"pin" | "password">("pin");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  async function submitPassword(e: React.FormEvent) {
+    e.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
+    setError(null);
+    try {
+      await login(username.trim(), password);
+    } catch (err) {
+      setError(
+        err instanceof ApiError && err.status === 429
+          ? t("tooManyAttempts")
+          : t("wrongCredentials")
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  const passwordToggle = (
+    <button
+      type="button"
+      onClick={() => {
+        setError(null);
+        setMode("password");
+      }}
+      className="text-sm font-medium text-accent-primary hover:opacity-80"
+    >
+      {t("usePassword")}
+    </button>
+  );
 
   useEffect(() => {
     void (async () => {
@@ -101,10 +135,71 @@ export default function WaiterPinLogin() {
     );
   }
 
+  if (mode === "password") {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-5 bg-background px-6 py-10">
+        <form onSubmit={submitPassword} className="flex w-full max-w-sm flex-col gap-4">
+          <div>
+            <label className="mb-1 block text-sm font-medium text-text-primary">
+              {t("loginLabel")}
+            </label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              autoCapitalize="none"
+              autoCorrect="off"
+              autoComplete="username"
+              required
+              className="w-full rounded-lg border border-border-default bg-surface px-3 py-3 text-base text-text-primary outline-none focus:border-accent-primary"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-text-primary">
+              {t("passwordLabel")}
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
+              required
+              className="w-full rounded-lg border border-border-default bg-surface px-3 py-3 text-base text-text-primary outline-none focus:border-accent-primary"
+            />
+          </div>
+          {error && (
+            <p role="alert" className="text-sm text-error">
+              {error}
+            </p>
+          )}
+          <button
+            type="submit"
+            disabled={submitting}
+            className="flex items-center justify-center gap-2 rounded-lg bg-accent-primary px-4 py-3 text-base font-medium text-white disabled:opacity-50"
+          >
+            {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
+            {t("submitLogin")}
+          </button>
+        </form>
+        <button
+          type="button"
+          onClick={() => {
+            setError(null);
+            setMode("pin");
+          }}
+          className="text-sm font-medium text-accent-primary hover:opacity-80"
+        >
+          {t("usePin")}
+        </button>
+      </div>
+    );
+  }
+
   if (step.name === "unconfigured") {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-2 bg-background px-6 text-center">
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-background px-6 text-center">
         <p className="text-sm font-medium text-text-primary">{t("notConfigured")}</p>
+        {passwordToggle}
       </div>
     );
   }
@@ -124,6 +219,7 @@ export default function WaiterPinLogin() {
             </button>
           ))}
         </div>
+        {passwordToggle}
       </div>
     );
   }
@@ -152,6 +248,7 @@ export default function WaiterPinLogin() {
             ))}
           </div>
         )}
+        {passwordToggle}
       </div>
     );
   }

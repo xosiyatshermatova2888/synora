@@ -1,0 +1,6 @@
+{
+  "path": "paymentsPage",
+  "uz": { "markDelivered": "Yetkazildi", "markHandedOver": "Topshirildi", "delivered": "Buyurtma yetkazildi, mijozga xabar yuborildi" },
+  "ru": { "markDelivered": "Доставлено", "markHandedOver": "Выдано", "delivered": "Заказ доставлен, клиенту отправлено уведомление" },
+  "en": { "markDelivered": "Delivered", "markHandedOver": "Handed over", "delivered": "Order delivered, customer notified" }
+}

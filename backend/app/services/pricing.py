@@ -16,6 +16,26 @@ def round_money(value: Decimal | int | float | str) -> Decimal:
     return Decimal(value).quantize(MINOR_UNIT, rounding=ROUND_HALF_UP)
 
 
+DISCOUNT_TYPES = ("FIXED", "PERCENT")
+
+
+def resolve_discount(
+    base_amount: Decimal, discount_type: str, discount_value: Decimal
+) -> Decimal:
+    """Turn a FIXED currency amount or a PERCENT (0-100) into a currency amount.
+
+    Never exceeds `base_amount` — a 100%+ percent or an over-sized fixed amount
+    both clamp to a full discount rather than producing a negative total.
+    """
+    if not discount_value:
+        return Decimal("0.00")
+    if discount_type == "PERCENT":
+        amount = round_money(base_amount * discount_value / Decimal("100"))
+    else:
+        amount = round_money(discount_value)
+    return min(amount, round_money(base_amount)) if base_amount > 0 else Decimal("0.00")
+
+
 @dataclass
 class OrderTotals:
     subtotal: Decimal

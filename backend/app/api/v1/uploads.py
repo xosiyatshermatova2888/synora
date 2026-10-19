@@ -17,6 +17,32 @@ from app.utils.errors import ValidationError
 
 router = APIRouter(prefix="/uploads", tags=["uploads"])
 
+def _image_extension(data: bytes) -> str | None:
+    """Extension implied by the magic bytes (None = not an accepted image)."""
+    if data.startswith(b"\xff\xd8\xff"):
+        return ".jpg"
+    if data.startswith(b"\x89PNG\r\n\x1a\n"):
+        return ".png"
+    if data[:6] in (b"GIF87a", b"GIF89a"):
+        return ".gif"
+    if data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+        return ".webp"
+    if data[4:8] == b"ftyp" and data[8:12] in (b"avif", b"avis"):
+        return ".avif"
+    return None
+
+
+def _looks_like_image(data: bytes) -> bool:
+    """The Content-Type header is client-supplied; check the magic bytes too."""
+    return (
+        data.startswith(b"\xff\xd8\xff")  # JPEG
+        or data.startswith(b"\x89PNG\r\n\x1a\n")
+        or data[:6] in (b"GIF87a", b"GIF89a")
+        or (data[:4] == b"RIFF" and data[8:12] == b"WEBP")
+        or (data[4:8] == b"ftyp" and data[8:12] in (b"avif", b"avis"))
+    )
+
+
 ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp", "image/avif", "image/gif"}
 MAX_SIZE_BYTES = 5 * 1024 * 1024  # 5 MB
 
@@ -37,7 +63,12 @@ async def upload_image(
     if len(data) > MAX_SIZE_BYTES:
         raise ValidationError(detail=f"File too large. Maximum size is {MAX_SIZE_BYTES // (1024 * 1024)} MB.")
 
-    filename = f"{uuid.uuid4().hex}{Path(file.filename or 'upload').suffix.lower() or '.bin'}"
+    if not _looks_like_image(data):
+        raise ValidationError(detail="The file is not a valid image.")
+
+    # Never trust the client's file name/extension ("a.png.html"): the stored
+    # name is random and its extension comes from the verified content.
+    filename = f"{uuid.uuid4().hex}{_image_extension(data)}"
 
     url = await storage_save(data, filename)
     return {"url": url, "filename": filename}

@@ -1,0 +1,15 @@
+{
+  "path": "printersSettings",
+  "uz": {
+    "autoPrintOrders": "Yangi buyurtmani to‘liq (narxlari bilan) avtomatik chiqarish",
+    "autoOrdersOn": "buyurtma nusxasi"
+  },
+  "ru": {
+    "autoPrintOrders": "Автоматически печатать новый заказ полностью (с ценами)",
+    "autoOrdersOn": "копия заказа"
+  },
+  "en": {
+    "autoPrintOrders": "Automatically print every new order in full (with prices)",
+    "autoOrdersOn": "order copy"
+  }
+}

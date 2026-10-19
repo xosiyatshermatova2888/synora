@@ -113,3 +113,84 @@ class TestListStaff:
     def test_waiter_cannot_list_staff(self, client, world):
         res = client.get("/api/v1/users", headers=waiter_headers(world))
         assert res.status_code == 403
+
+
+class TestUpdateStaff:
+    def test_owner_updates_profile(self, client, world):
+        res = client.patch(
+            f"/api/v1/users/{world.waiter_a.id}",
+            headers=owner_headers(world),
+            json={"full_name": "Wanda Updated", "phone": "+998901234567"},
+        )
+        assert res.status_code == 200, res.text
+        assert res.json()["full_name"] == "Wanda Updated"
+
+    def test_waiter_cannot_update_staff(self, client, world):
+        res = client.patch(
+            f"/api/v1/users/{world.waiter_a.id}",
+            headers=waiter_headers(world),
+            json={"full_name": "Sneaky"},
+        )
+        assert res.status_code == 403
+
+
+class TestChangeRole:
+    def test_owner_changes_role(self, client, world):
+        res = client.patch(
+            f"/api/v1/users/{world.waiter_a.id}/role",
+            headers=owner_headers(world),
+            json={"role": "CASHIER"},
+        )
+        assert res.status_code == 200, res.text
+        assert res.json()["roles"] == ["CASHIER"]
+
+    def test_owner_role_rejected_on_role_change(self, client, world):
+        res = client.patch(
+            f"/api/v1/users/{world.waiter_a.id}/role",
+            headers=owner_headers(world),
+            json={"role": "OWNER"},
+        )
+        assert res.status_code == 422
+
+
+class TestDeactivateStaff:
+    def test_deactivated_user_cannot_log_in(self, client, world):
+        res = client.patch(
+            f"/api/v1/users/{world.waiter_a.id}/active",
+            headers=owner_headers(world),
+            json={"is_active": False},
+        )
+        assert res.status_code == 200, res.text
+        assert res.json()["is_active"] is False
+
+        login = client.post(
+            "/api/v1/auth/login",
+            json={"username": world.waiter_a.username, "password": TEST_PASSWORD},
+        )
+        assert login.status_code == 401
+
+    def test_reactivated_user_can_log_in_again(self, client, world):
+        client.patch(
+            f"/api/v1/users/{world.waiter_a.id}/active",
+            headers=owner_headers(world),
+            json={"is_active": False},
+        )
+        res = client.patch(
+            f"/api/v1/users/{world.waiter_a.id}/active",
+            headers=owner_headers(world),
+            json={"is_active": True},
+        )
+        assert res.status_code == 200
+        login = client.post(
+            "/api/v1/auth/login",
+            json={"username": world.waiter_a.username, "password": TEST_PASSWORD},
+        )
+        assert login.status_code == 200
+
+    def test_waiter_cannot_deactivate_staff(self, client, world):
+        res = client.patch(
+            f"/api/v1/users/{world.owner_a.id}/active",
+            headers=waiter_headers(world),
+            json={"is_active": False},
+        )
+        assert res.status_code == 403

@@ -39,3 +39,16 @@ class ValidationError(APIError):
 class BusinessRuleError(APIError):
     status_code = 422
     default_detail = "Business rule violation."
+
+class PaymentRequiredError(APIError):
+    """402 — the restaurant's plan/subscription does not allow this.
+
+    `detail` is a dict (`code` + context) so the frontend can tell "upgrade
+    your plan" from "subscription expired" without parsing prose.
+    """
+
+    status_code = 402
+    default_detail = "Payment required."
+
+    def __init__(self, code: str, message: str, **extra):
+        super().__init__(detail={"code": code, "message": message, **extra})  # type: ignore[arg-type]

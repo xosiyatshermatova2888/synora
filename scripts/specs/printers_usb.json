@@ -1,0 +1,18 @@
+{
+  "path": "printersSettings",
+  "uz": {
+    "usbLabel": "USB (kompyuterga ulangan)",
+    "ipPlaceholderAgent": "bo‘sh = USB printer",
+    "ipHintAgent": "USB bilan ulangan printer uchun IP ni bo‘sh qoldiring: chek print agent o‘rnatilgan kompyuterdagi printerga yuboriladi. Tarmoqli printer bo‘lsa uning IP manzilini yozing."
+  },
+  "ru": {
+    "usbLabel": "USB (подключён к компьютеру)",
+    "ipPlaceholderAgent": "пусто = USB-принтер",
+    "ipHintAgent": "Для принтера по USB оставьте IP пустым: чек уйдёт на принтер компьютера, где запущен print-agent. Для сетевого принтера укажите его IP-адрес."
+  },
+  "en": {
+    "usbLabel": "USB (plugged into the PC)",
+    "ipPlaceholderAgent": "empty = USB printer",
+    "ipHintAgent": "For a USB printer leave the IP empty: the receipt goes to the printer on the PC running the print agent. For a network printer enter its IP address."
+  }
+}

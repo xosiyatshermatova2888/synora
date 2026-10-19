@@ -24,6 +24,7 @@ from app.schemas.menu import (
     ProductUpdate,
 )
 from app.utils.errors import NotFoundError, BusinessRuleError
+from app.utils.tenant_refs import require_category
 
 
 async def create_category(session: AsyncSession, restaurant_id: uuid.UUID, payload: CategoryCreate) -> Category:
@@ -53,6 +54,7 @@ async def create_product(
 ) -> Product:
     repo = ProductRepository(session)
     group_repo = ModifierGroupRepository(session)
+    await require_category(session, restaurant_id, payload.category_id)
     data = payload.model_dump(exclude={"modifier_group_ids"})
     product = Product(restaurant_id=restaurant_id, **data)
     product = await repo.add(product)
@@ -69,6 +71,8 @@ async def update_product(
     repo = ProductRepository(session)
     product = await repo.get_or_404(restaurant_id, product_id)
     data = payload.model_dump(exclude_unset=True, exclude={"modifier_group_ids"})
+    if "category_id" in data:
+        await require_category(session, restaurant_id, data["category_id"])
     for field, value in data.items():
         setattr(product, field, value)
     if payload.model_fields_set and "modifier_group_ids" in payload.model_fields_set:

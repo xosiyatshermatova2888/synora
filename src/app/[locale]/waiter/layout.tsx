@@ -33,7 +33,7 @@ export async function generateMetadata({
 }
 
 export const viewport: Viewport = {
-  themeColor: process.env.WAITER_APP_THEME_COLOR?.trim() || "#5b46e8",
+  themeColor: process.env.WAITER_APP_THEME_COLOR?.trim() || "#088a7d",
   colorScheme: "light",
   width: "device-width",
   initialScale: 1,

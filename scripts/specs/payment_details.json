@@ -1,0 +1,30 @@
+{
+  "path": "",
+  "uz": {
+    "paymentDetailsSettings": {
+      "title": "To‘lov rekvizitlari",
+      "description": "Telegram bot mijozlarga shu kartani ko‘rsatadi (karta orqali o‘tkazma tanlanganda)",
+      "cardNumber": "Karta raqami",
+      "cardHolder": "Karta egasi",
+      "hint": "Karta raqami kiritilmasa, botda “Karta orqali o‘tkazma” usuli ko‘rinmaydi."
+    }
+  },
+  "ru": {
+    "paymentDetailsSettings": {
+      "title": "Платёжные реквизиты",
+      "description": "Telegram-бот показывает клиентам эту карту (при выборе перевода на карту)",
+      "cardNumber": "Номер карты",
+      "cardHolder": "Владелец карты",
+      "hint": "Если номер карты не указан, способ «Перевод на карту» в боте не отображается."
+    }
+  },
+  "en": {
+    "paymentDetailsSettings": {
+      "title": "Payment details",
+      "description": "The Telegram bot shows this card to customers who choose card transfer",
+      "cardNumber": "Card number",
+      "cardHolder": "Card holder",
+      "hint": "Without a card number the “Card transfer” option is hidden in the bot."
+    }
+  }
+}
